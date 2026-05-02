@@ -1,10 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "[Feature] concise explanation of the feature"
+title: '[Feature] concise explanation of the feature'
 labels: enhancement
 assignees: sangwon-lee302
-
 ---
 
 ## 概要
