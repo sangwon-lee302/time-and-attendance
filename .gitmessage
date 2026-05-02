@@ -1,0 +1,11 @@
+type: concise explanation of the commit #issue
+
+# fix: バグ修正
+# feat: 新機能の実装
+# build: 環境構築
+# refactor: リファクタリング
+# chore: その他雑用
+
+- Explanations.
+
+# 対処されたイシュー: closes # (またはfixes #, resolves #)

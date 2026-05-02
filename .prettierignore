@@ -1,0 +1,12 @@
+# PHP files are formatted by Laravel Pint
+*.php
+!*.blade.php
+
+/node_modules
+/public
+/vendor
+/storage
+.env
+.env.example
+compose.yaml
+compose.override.yaml
