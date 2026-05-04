@@ -30,7 +30,9 @@ erDiagram
         unsignedBigInt id PK
         varchar(255) name
         varchar(255) email UK
+        datetime email_verified_at "nullable"
         tinyint(1) is_admin
+        varchar(255) password
         datetime created_at
         datetime updated_at
     }
