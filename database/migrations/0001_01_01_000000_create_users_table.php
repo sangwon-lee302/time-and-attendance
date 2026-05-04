@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->dateTime('email_verified_at')->nullable();
             $table->string('password');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->datetimes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
