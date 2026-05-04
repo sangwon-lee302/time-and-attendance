@@ -4,8 +4,9 @@ type: concise explanation of the commit #issue
 # feat: 新機能の実装
 # build: 環境構築
 # refactor: リファクタリング
+# docs: 文書やテンプレート作成
 # chore: その他雑用
 
-- Explanations.
+- Detail explanation(s), if any.
 
-# 対処されたイシュー: closes # (またはfixes #, resolves #)
+closes #issue (if any)
