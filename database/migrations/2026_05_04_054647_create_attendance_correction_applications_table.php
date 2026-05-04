@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('attendance_correction_applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attendance_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('attendance_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->unsignedTinyInteger('status')->default(0);
             $table->dateTime('new_clocked_in_at');
             $table->dateTime('new_clocked_out_at');
