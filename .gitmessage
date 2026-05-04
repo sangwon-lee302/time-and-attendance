@@ -1,4 +1,4 @@
-type: concise explanation of the commit #issue
+# type: concise explanation of the commit #issue
 
 # fix: バグ修正
 # feat: 新機能の実装
@@ -7,6 +7,8 @@ type: concise explanation of the commit #issue
 # docs: 文書やテンプレート作成
 # chore: その他雑用
 
-- Detail explanation(s), if any.
+# Comprehensive summary of the commit, if needed.
 
-closes #issue (if any)
+# - Detail of changes, if needed.
+
+# issues to be closed, if any

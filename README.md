@@ -30,9 +30,11 @@ erDiagram
         unsignedBigInt id PK
         varchar(255) name
         varchar(255) email UK
-        tinyint(1) is_admin
-        datetime created_at
-        datetime updated_at
+        datetime email_verified_at "nullable"
+        tinyint(1) is_admin "default false"
+        varchar(255) password
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
     }
 
     attendances {
@@ -41,6 +43,8 @@ erDiagram
         date date UK "unique([user_id, date])"
         datetime clocked_in_at
         datetime clocked_out_at "nullable"
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
     }
 
     breaks {
@@ -48,15 +52,18 @@ erDiagram
         unsignedBigInt attendance_id FK "index"
         datetime started_at
         datetime ended_at "nullable"
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
     }
 
     attnd-corrections["attendance_correction_applications"] {
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK
-        unsignedTinyInt status "0:pending 1:approved"
+        unsignedTinyInt status "0:pending 1:approved / default 0"
         datetime new_clocked_in_at
         datetime new_clocked_out_at
-        datetime applied_at
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
     }
 
     break-corrections["break_correction_applications"] {
@@ -65,5 +72,7 @@ erDiagram
         unsignedBigInt break_id FK "nullable"
         datetime new_started_at
         datetime new_ended_at
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
     }
 ```
