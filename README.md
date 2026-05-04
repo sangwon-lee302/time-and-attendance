@@ -21,7 +21,6 @@ config:
 ---
 erDiagram
     users ||..o{ attendances: "have"
-    users ||..o{ attnd-corrections: "apply"
     attendances ||..o{ breaks: "contain"
     attendances ||..o{ attnd-corrections: "have"
     attnd-corrections ||..o{ break-corrections: "contain"
