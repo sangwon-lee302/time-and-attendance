@@ -20,12 +20,12 @@ config:
     layout: elk
 ---
 erDiagram
-    users ||--o{ attendances: "have"
-    users ||--o{ attnd-corrections: "apply"
-    attendances ||--o{ breaks: "contain"
-    attendances ||--o{ attnd-corrections: "have"
-    attnd-corrections ||--o{ break-corrections: "contain"
-    breaks |o--o{ break-corrections: "have"
+    users ||..o{ attendances: "have"
+    users ||..o{ attnd-corrections: "apply"
+    attendances ||..o{ breaks: "contain"
+    attendances ||..o{ attnd-corrections: "have"
+    attnd-corrections ||..o{ break-corrections: "contain"
+    breaks |o..o{ break-corrections: "have"
 
     users {
         unsignedBigInt id PK
@@ -38,8 +38,8 @@ erDiagram
 
     attendances {
         unsignedBigInt id PK
-        unsignedBigInt user_id FK, UK "unique(user_id, date)"
-        date date UK "unique(user_id, date)"
+        unsignedBigInt user_id FK, UK "unique([user_id, date])"
+        date date UK "unique([user_id, date])"
         datetime clocked_in_at
         datetime clocked_out_at "nullable"
     }
@@ -54,12 +54,10 @@ erDiagram
     attnd-corrections["attendance_correction_applications"] {
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK
-        unsignedBigInt applied_by FK "user(id)"
         unsignedTinyInt status "0:pending 1:approved"
         datetime new_clocked_in_at
         datetime new_clocked_out_at
         datetime applied_at
-        datetime processed_at
     }
 
     break-corrections["break_correction_applications"] {
