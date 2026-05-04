@@ -31,7 +31,7 @@ erDiagram
         varchar(255) name
         varchar(255) email UK
         datetime email_verified_at "nullable"
-        tinyint(1) is_admin
+        tinyint(1) is_admin "default false"
         varchar(255) password
         datetime created_at "nullable"
         datetime updated_at "nullable"
@@ -59,7 +59,7 @@ erDiagram
     attnd-corrections["attendance_correction_applications"] {
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK
-        unsignedTinyInt status "0:pending 1:approved"
+        unsignedTinyInt status "0:pending 1:approved / default 0"
         datetime new_clocked_in_at
         datetime new_clocked_out_at
         datetime created_at "nullable"
