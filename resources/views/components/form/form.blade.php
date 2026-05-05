@@ -3,7 +3,10 @@
     'title'  => null,
 ])
 
-<form method="{{ $method }}" {{ $attributes }}>
+<form
+    method="{{ $method }}"
+    {{ $attributes->merge(['class' => 'max-w-3xl mx-auto flex flex-col gap-12']) }}
+>
     @if ($method == 'POST')
         @csrf
     @endif
@@ -13,7 +16,7 @@
     @endif
 
     @if ($title)
-        <h1 class="pb-20 text-center text-4xl font-bold">{{ $title }}</h1>
+        <h1 class="pb-8 text-center text-4xl font-bold">{{ $title }}</h1>
     @endif
 
     {{ $slot }}
