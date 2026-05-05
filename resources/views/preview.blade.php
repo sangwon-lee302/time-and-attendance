@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-form action="/" method="POST" title="This is a title."
+    <x-form action="/" method="POST" title="This is a preview."
         ><x-form.input
             field="name"
             type="text"
