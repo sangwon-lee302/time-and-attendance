@@ -26,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
                     {
                         return '';
                     }
+
+                    public function asset(string $asset, ?string $buildDirectory = null): string
+                    {
+                        return '';
+                    }
                 };
             });
         }
