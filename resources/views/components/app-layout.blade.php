@@ -8,14 +8,15 @@
 </head>
 <body>
     <header
-        class="flex items-center justify-between bg-black px-4 py-2 text-white lg:px-8 lg:py-4"
+        class="flex items-center justify-between bg-black px-4 py-2 text-white xl:px-8 xl:py-4"
     >
         <img
             src="{{ Vite::asset('resources/images/COACHTECH_logo.png') }}"
             alt="Logo"
+            class="max-xl:max-w-1/4"
         />
         @auth
-            <nav class="flex gap-4 lg:gap-8">
+            <nav class="flex gap-4 xl:gap-8">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button>ログアウト</button>
