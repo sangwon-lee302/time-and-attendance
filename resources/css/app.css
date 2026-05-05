@@ -14,7 +14,7 @@
 
 @layer base {
     .btn {
-        @apply cursor-pointer rounded-sm p-2 text-center text-2xl font-bold transition-all;
+        @apply cursor-pointer rounded-sm p-2 text-center text-xl font-medium transition-all;
     }
 
     .btn-primary {

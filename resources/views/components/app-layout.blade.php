@@ -16,11 +16,12 @@
             class="max-xl:max-w-1/4"
         />
         @auth
-            <nav class="flex gap-4 xl:gap-8">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button>ログアウト</button>
-                </form>
+            <nav class="flex gap-4 font-bold xl:gap-8">
+                <x-form action="{{ route('logout') }}" method="POST">
+                    <button class="cursor-pointer text-xl font-medium">
+                        ログアウト
+                    </button>
+                </x-form>
             </nav>
         @endauth
     </header>
