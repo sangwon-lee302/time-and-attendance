@@ -20,5 +20,8 @@
             type="password"
             placeholder="This is a password confirmation field."
         />
+        <button class="btn btn-primary mt-8">
+            This is an inner text of a button.
+        </button>
     </x-form>
 </x-app-layout>
