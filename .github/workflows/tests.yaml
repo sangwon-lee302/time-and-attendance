@@ -45,6 +45,9 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
+      - name: Generate app key
+        run: php artisan key:generate
+
       - name: Run Laravel Pint
         run: ./vendor/bin/pint --test
 
@@ -53,7 +56,6 @@ jobs:
 
       - name: Run Tests
         env:
-          APP_KEY: ${{ secrets.APP_KEY }}
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
