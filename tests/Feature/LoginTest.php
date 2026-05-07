@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
@@ -25,12 +24,12 @@ class LoginTest extends TestCase
         $this->get('/login')->assertOk();
 
         $response = $this->post('/login', [
-            'email' => '',
+            'email'    => '',
             'password' => $password,
         ]);
 
         $this->assertGuest();
-        
+
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
     }
@@ -44,12 +43,12 @@ class LoginTest extends TestCase
         $this->get('/login')->assertOk();
 
         $response = $this->post('/login', [
-            'email' => $user->email,
+            'email'    => $user->email,
             'password' => '',
         ]);
 
         $this->assertGuest();
-        
+
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
@@ -61,12 +60,12 @@ class LoginTest extends TestCase
         $this->get('/login')->assertOk();
 
         $response = $this->post('/login', [
-            'email' => $user->email,
+            'email'    => $user->email,
             'password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
-        
+
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors(['email' => 'ログイン情報が登録されていません']);
     }
@@ -80,12 +79,12 @@ class LoginTest extends TestCase
         $this->get('/login')->assertOk();
 
         $response = $this->post('/login', [
-            'email' => $user->email,
+            'email'    => $user->email,
             'password' => $password,
         ]);
 
         $this->assertAuthenticatedAs($user);
-        
+
         $response->assertRedirect('/preview');
     }
 }
