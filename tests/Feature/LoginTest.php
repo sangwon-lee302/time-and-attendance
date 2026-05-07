@@ -87,4 +87,12 @@ class LoginTest extends TestCase
 
         $response->assertRedirect('/preview');
     }
+
+    public function test_users_can_jump_to_register_page(): void
+    {
+        $response = $this->get('/login');
+
+        $response->assertOk();
+        $response->assertSee('/register');
+    }
 }
