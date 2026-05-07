@@ -124,4 +124,12 @@ class RegisterTest extends TestCase
 
         $response->assertRedirect('/preview');
     }
+
+    public function test_users_can_jump_to_login_page(): void
+    {
+        $response = $this->get('/register');
+
+        $response->assertOk();
+        $response->assertSee('/login');
+    }
 }
