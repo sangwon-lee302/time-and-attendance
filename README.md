@@ -7,10 +7,10 @@
 ## 使用技術
 
 - Laravel 13.7.0
-- PHP 8.5.5
+- PHP 8.5
 - Mysql 8.4.9
 - Mailpit v1.29.7
-- Node 24.15.0
+- Node 24
 
 ## ER図
 
