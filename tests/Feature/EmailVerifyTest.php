@@ -14,8 +14,7 @@ class EmailVerifyTest extends TestCase
 
     public function test_email_verification_view_is_shown_correctly(): void
     {
-        $response = $this->followingRedirects()
-            ->actingAs(User::factory()->unverified()->create())
+        $response = $this->actingAs(User::factory()->unverified()->create())
             ->get(route('verification.notice'));
 
         $response->assertOk();
@@ -44,5 +43,20 @@ class EmailVerifyTest extends TestCase
             ->assertRedirect(route('verification.notice'));
 
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    public function test_unverified_users_are_redirected_to_email_verification_view_after_authentication(): void
+    {
+        $this->get('/login')->assertOk();
+
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->followingRedirects()->post('/login', [
+            'email'    => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertOk();
+        $response->assertViewIs('staffs.verify-email');
     }
 }
