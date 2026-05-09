@@ -18,7 +18,7 @@ class EmailVerifyTest extends TestCase
             ->get(route('verification.notice'));
 
         $response->assertOk();
-        $response->assertViewIs('staffs.verify-email');
+        $response->assertViewIs('auth.verify-email');
     }
 
     public function test_users_can_jump_to_mailpit_dashboard(): void
@@ -57,6 +57,6 @@ class EmailVerifyTest extends TestCase
         ]);
 
         $response->assertOk();
-        $response->assertViewIs('staffs.verify-email');
+        $response->assertViewIs('auth.verify-email');
     }
 }
