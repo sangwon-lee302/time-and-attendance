@@ -115,4 +115,6 @@ return [
         'name'    => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    'mailpit_url' => env('MAILPIT_URL', 'http://localhost:8025'),
+
 ];

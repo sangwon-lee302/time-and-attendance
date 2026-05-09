@@ -2,4 +2,4 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/preview', fn () => view('preview'));
+Route::middleware(['auth', 'verified'])->get('/preview', fn () => view('preview'));

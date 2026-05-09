@@ -5,7 +5,7 @@
         <button class="btn btn-primary mt-8">ログインする</button>
         <a
             href="{{ route('register') }}"
-            class="mx-auto -mt-6 cursor-pointer text-blue-500 underline"
+            class="mx-auto -mt-6 cursor-pointer text-blue-500 hover:underline"
             >会員登録はこちら</a
         >
     </x-form>
