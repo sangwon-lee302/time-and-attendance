@@ -21,10 +21,10 @@ config:
 ---
 erDiagram
     users ||..o{ attendances: "have"
-    attendances ||..o{ breaks: "contain"
+    attendances ||..o{ break_times: "contain"
     attendances ||..o{ attnd-corrections: "have"
     attnd-corrections ||..o{ break-corrections: "contain"
-    breaks |o..o{ break-corrections: "have"
+    break_times |o..o{ break-corrections: "have"
 
     users {
         unsignedBigInt id PK
@@ -47,7 +47,7 @@ erDiagram
         datetime updated_at "nullable"
     }
 
-    breaks {
+    break_times {
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK "index"
         datetime started_at
@@ -69,7 +69,7 @@ erDiagram
     break-corrections["break_correction_applications"] {
         unsignedBigInt id PK
         unsignedBigInt attendance_correction_application_id FK
-        unsignedBigInt break_id FK "nullable"
+        unsignedBigInt break_time_id FK "nullable"
         datetime new_started_at
         datetime new_ended_at
         datetime created_at "nullable"
