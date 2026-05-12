@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -122,7 +122,7 @@ class RegisterTest extends TestCase
         ]);
         $this->assertAuthenticatedAs($registeredUser);
 
-        $response->assertRedirect('/preview');
+        $response->assertRedirect('/attendance');
     }
 
     public function test_users_can_jump_to_login_page(): void
