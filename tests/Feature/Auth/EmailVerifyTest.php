@@ -47,11 +47,11 @@ class EmailVerifyTest extends TestCase
 
     public function test_unverified_users_are_redirected_to_email_verification_view_after_authentication(): void
     {
-        $this->get('/login')->assertOk();
+        $this->get('login')->assertOk();
 
         $user = User::factory()->unverified()->create();
 
-        $response = $this->followingRedirects()->post('/login', [
+        $response = $this->followingRedirects()->post('login', [
             'email'    => $user->email,
             'password' => 'password',
         ]);
