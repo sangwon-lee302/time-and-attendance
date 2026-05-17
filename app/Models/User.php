@@ -67,7 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the attendances for the user.
-     * 
+     *
      * @return HasMany<Attendance, $this>
      */
     public function attendances(): HasMany

@@ -12,6 +12,35 @@
                     </button>
                 </x-form>
                 @break
+            @case ('出勤中')
+                <div class="flex gap-8">
+                    <x-form
+                        :action="route('time-logs.clock-out')"
+                        method="PATCH"
+                    >
+                        <button class="btn btn-primary rounded-xl px-12">
+                            退勤
+                        </button>
+                    </x-form>
+                    <x-form
+                        :action="route('time-logs.break-start')"
+                        method="POST"
+                    >
+                        <button class="btn btn-secondary rounded-xl px-12">
+                            休憩入
+                        </button>
+                    </x-form>
+                </div>
+                @break
+            @case ('休憩中')
+                <x-form :action="route('time-logs.break-end')" method="PATCH">
+                    <button class="btn btn-secondary rounded-xl px-12">
+                        休憩戻
+                    </button>
+                </x-form>
+                @break
+            @case ('退勤済')
+                <p class="text-xl font-bold tracking-widest">お疲れ様でした。</p>
         @endswitch
 
         @push ('scripts')

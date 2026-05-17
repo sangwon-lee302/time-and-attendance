@@ -36,7 +36,7 @@ class BreakTimeFactory extends Factory
      */
     public function withinAttendance(Attendance $attendance): static
     {
-        return $this->state(function (array $attributes) use ($attendance) {
+        return $this->state(function () use ($attendance) {
             $clockedInAt  = $attendance->clocked_in_at;
             $clockedOutAt = $attendance->clocked_out_at;
 
@@ -56,7 +56,7 @@ class BreakTimeFactory extends Factory
     /**
      * Indicate that the model's ended time should be null.
      */
-    public function unended(): static
+    public function notEnded(): static
     {
         return $this->state(fn (array $attributes) => [
             'ended_at'   => null,

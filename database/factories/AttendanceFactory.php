@@ -40,7 +40,7 @@ class AttendanceFactory extends Factory
         $clockedInAt  = fake()->dateTimeBetween(today()->startOfDay(), 'now');
         $clockedOutAt = fake()->dateTimeBetween($clockedInAt, 'now');
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'date'           => today()->toDateString(),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,

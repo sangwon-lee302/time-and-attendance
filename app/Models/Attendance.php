@@ -55,7 +55,7 @@ class Attendance extends Model
 
     /**
      * Get the break times for the attendance.
-     * 
+     *
      * @return HasMany<BreakTime, $this>
      */
     public function breakTimes(): HasMany
