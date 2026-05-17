@@ -39,7 +39,7 @@ class ResolveAttendanceStatusTest extends TestCase
             ->notClockedOut()
             ->create();
 
-        BreakTime::factory()->withinAttendance($attendance)->unended()->create();
+        BreakTime::factory()->withinAttendance($attendance)->notEnded()->create();
 
         $this->assertEquals('休憩中',
             Attendance::resolveStatusForToday($user)
