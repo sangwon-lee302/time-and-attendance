@@ -12,7 +12,7 @@ class RegisterTest extends TestCase
 
     public function test_register_view_is_shown_correctly(): void
     {
-        $this->get('/register')->assertOk();
+        $this->get('register')->assertOk();
     }
 
     public function test_staff_cannot_register_with_empty_name(): void
@@ -20,9 +20,9 @@ class RegisterTest extends TestCase
         $user     = User::factory()->make();
         $password = 'password123';
 
-        $this->get('/register')->assertOk();
+        $this->get('register')->assertOk();
 
-        $response = $this->post('/register', [
+        $response = $this->post('register', [
             'name'                  => '',
             'email'                 => $user->email,
             'password'              => $password,
@@ -33,7 +33,7 @@ class RegisterTest extends TestCase
             'email' => $user->email,
         ]);
 
-        $response->assertRedirect('/register');
+        $response->assertRedirect('register');
         $response->assertSessionHasErrors(['name' => 'お名前を入力してください']);
     }
 
@@ -42,9 +42,9 @@ class RegisterTest extends TestCase
         $user     = User::factory()->make();
         $password = 'password123';
 
-        $this->get('/register')->assertOk();
+        $this->get('register')->assertOk();
 
-        $response = $this->post('/register', [
+        $response = $this->post('register', [
             'name'                  => $user->name,
             'email'                 => '',
             'password'              => $password,
@@ -55,7 +55,7 @@ class RegisterTest extends TestCase
             'name' => $user->name,
         ]);
 
-        $response->assertRedirect('/register');
+        $response->assertRedirect('register');
         $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
     }
 
@@ -63,9 +63,9 @@ class RegisterTest extends TestCase
     {
         $user = User::factory()->make();
 
-        $this->get('/register')->assertOk();
+        $this->get('register')->assertOk();
 
-        $response = $this->post('/register', [
+        $response = $this->post('register', [
             'name'                  => $user->name,
             'email'                 => $user->email,
             'password'              => '',
@@ -76,7 +76,7 @@ class RegisterTest extends TestCase
             'email' => $user->email,
         ]);
 
-        $response->assertRedirect('/register');
+        $response->assertRedirect('register');
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
 
@@ -84,9 +84,9 @@ class RegisterTest extends TestCase
     {
         $user = User::factory()->make();
 
-        $this->get('/register')->assertOk();
+        $this->get('register')->assertOk();
 
-        $response = $this->post('/register', [
+        $response = $this->post('register', [
             'name'                  => $user->name,
             'email'                 => $user->email,
             'password'              => 'password123',
@@ -97,7 +97,7 @@ class RegisterTest extends TestCase
             'email' => $user->email,
         ]);
 
-        $response->assertRedirect('/register');
+        $response->assertRedirect('register');
         $response->assertSessionHasErrors(['password_confirmation' => 'パスワードと一致しません']);
     }
 
@@ -106,9 +106,9 @@ class RegisterTest extends TestCase
         $user     = User::factory()->make();
         $password = 'password123';
 
-        $this->get('/register')->assertOk();
+        $this->get('register')->assertOk();
 
-        $response = $this->post('/register', [
+        $response = $this->post('register', [
             'name'                  => $user->name,
             'email'                 => $user->email,
             'password'              => $password,
@@ -122,14 +122,14 @@ class RegisterTest extends TestCase
         ]);
         $this->assertAuthenticatedAs($registeredUser);
 
-        $response->assertRedirect('/attendance');
+        $response->assertRedirect('attendance');
     }
 
     public function test_users_can_jump_to_login_page(): void
     {
-        $response = $this->get('/register');
+        $response = $this->get('register');
 
         $response->assertOk();
-        $response->assertSee('/login');
+        $response->assertSee('login');
     }
 }

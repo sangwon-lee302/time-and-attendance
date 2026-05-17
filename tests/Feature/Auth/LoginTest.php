@@ -12,7 +12,7 @@ class LoginTest extends TestCase
 
     public function test_login_view_is_shown_correctly(): void
     {
-        $this->get('/login')->assertOk();
+        $this->get('login')->assertOk();
     }
 
     public function test_staff_cannot_login_with_empty_email(): void
@@ -21,16 +21,16 @@ class LoginTest extends TestCase
 
         User::factory()->create(['password' => $password]);
 
-        $this->get('/login')->assertOk();
+        $this->get('login')->assertOk();
 
-        $response = $this->post('/login', [
+        $response = $this->post('login', [
             'email'    => '',
             'password' => $password,
         ]);
 
         $this->assertGuest();
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('login');
         $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
     }
 
@@ -40,16 +40,16 @@ class LoginTest extends TestCase
 
         $user = User::factory()->create(['password' => $password]);
 
-        $this->get('/login')->assertOk();
+        $this->get('login')->assertOk();
 
-        $response = $this->post('/login', [
+        $response = $this->post('login', [
             'email'    => $user->email,
             'password' => '',
         ]);
 
         $this->assertGuest();
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('login');
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
 
@@ -57,16 +57,16 @@ class LoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->get('/login')->assertOk();
+        $this->get('login')->assertOk();
 
-        $response = $this->post('/login', [
+        $response = $this->post('login', [
             'email'    => $user->email,
             'password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('login');
         $response->assertSessionHasErrors(['email' => 'ログイン情報が登録されていません']);
     }
 
@@ -76,23 +76,23 @@ class LoginTest extends TestCase
 
         $user = User::factory()->create(['password' => $password]);
 
-        $this->get('/login')->assertOk();
+        $this->get('login')->assertOk();
 
-        $response = $this->post('/login', [
+        $response = $this->post('login', [
             'email'    => $user->email,
             'password' => $password,
         ]);
 
         $this->assertAuthenticatedAs($user);
 
-        $response->assertRedirect('/attendance');
+        $response->assertRedirect('attendance');
     }
 
     public function test_users_can_jump_to_register_page(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get('login');
 
         $response->assertOk();
-        $response->assertSee('/register');
+        $response->assertSee('register');
     }
 }
