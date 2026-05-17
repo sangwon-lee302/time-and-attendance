@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
+			message: '#^Method App\\Http\\Requests\\IThinkItIsAVeryBadIdeaToCreateThisCustomRegisterRequest\:\:passwordRules\(\) should return array\<int, array\<mixed\>\|Illuminate\\Contracts\\Validation\\ValidationRule\|string\> but returns array\<int, Illuminate\\Validation\\Rules\\Password\|string\>\.$#'
+			identifier: return.type
 			count: 1
-			path: tests/Unit/ExampleTest.php
+			path: app/Http/Requests/IThinkItIsAVeryBadIdeaToCreateThisCustomRegisterRequest.php
