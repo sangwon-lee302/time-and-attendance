@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,9 +15,9 @@ use Override;
 /**
  * @property int $id
  * @property int $user_id
- * @property string $date
- * @property string $clocked_in_at
- * @property string|null $clocked_out_at
+ * @property Carbon $date
+ * @property Carbon $clocked_in_at
+ * @property Carbon|null $clocked_out_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -28,6 +31,11 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUserId($value)
+ *
+ * @property-read Collection<int, BreakTime> $breakTimes
+ * @property-read int|null $break_times_count
+ *
+ * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
  *
  * @mixin \Eloquent
  */
@@ -45,7 +53,7 @@ class Attendance extends Model
     protected function casts(): array
     {
         return [
-            'date'           => 'datetime',
+            'date'           => 'date',
             'clocked_in_at'  => 'datetime',
             'clocked_out_at' => 'datetime',
             'created_at'     => 'datetime',
@@ -86,5 +94,42 @@ class Attendance extends Model
             ->exists();
 
         return $isBreakOngoing ? '休憩中' : '出勤中';
+    }
+
+    /**
+     * Get the total break time for the attendance.
+     */
+    protected function totalBreakTime(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $totalBreakSeconds = $this->breakTimes
+                    ->filter(fn (BreakTime $breakTime) => $breakTime->ended_at !== null)
+                    ->sum(function (BreakTime $breakTime) {
+                        return $breakTime->started_at->diffInSeconds($breakTime->ended_at);
+                    });
+
+                return CarbonInterval::seconds($totalBreakSeconds)->cascade();
+            }
+        );
+    }
+
+    /**
+     * Get the total working time for the attendance.
+     */
+    protected function totalWorkingTime(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (! $this->clocked_out_at) {
+                    return null;
+                }
+
+                $totalWorkingSeconds = $this->clocked_in_at->diffInSeconds($this->clocked_out_at)
+                    - (int) $this->total_break_time->totalSeconds;
+
+                return CarbonInterval::seconds($totalWorkingSeconds)->cascade();
+            }
+        );
     }
 }
