@@ -11,8 +11,8 @@ use Override;
 /**
  * @property int $id
  * @property int $attendance_id
- * @property string $started_at
- * @property string|null $ended_at
+ * @property Carbon $started_at
+ * @property Carbon|null $ended_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -25,6 +25,7 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereStartedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereUpdatedAt($value)
+ * @method static \Database\Factories\BreakTimeFactory factory($count = null, $state = [])
  *
  * @mixin \Eloquent
  */

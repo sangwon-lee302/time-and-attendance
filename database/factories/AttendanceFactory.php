@@ -24,7 +24,7 @@ class AttendanceFactory extends Factory
 
         return [
             'user_id'        => User::factory(),
-            'date'           => Carbon::instance($clockedInAt)->toDateString(),
+            'date'           => Carbon::instance($clockedInAt)->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,
@@ -41,7 +41,7 @@ class AttendanceFactory extends Factory
         $clockedOutAt = fake()->dateTimeBetween($clockedInAt, 'now');
 
         return $this->state(fn () => [
-            'date'           => today()->toDateString(),
+            'date'           => today()->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,
