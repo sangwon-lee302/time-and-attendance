@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('status')->default(0);
             $table->dateTime('new_clocked_in_at');
             $table->dateTime('new_clocked_out_at');
+            $table->text('remarks');
             $table->datetimes();
         });
     }

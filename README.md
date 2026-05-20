@@ -66,7 +66,7 @@ erDiagram
         datetime updated_at "nullable"
     }
 
-    break-corrections["break_correction_applications"] {
+    break-corrections["break_time_correction_applications"] {
         unsignedBigInt id PK
         unsignedBigInt attendance_correction_application_id FK
         unsignedBigInt break_time_id FK "nullable"

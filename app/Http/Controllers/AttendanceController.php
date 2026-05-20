@@ -46,7 +46,12 @@ class AttendanceController extends Controller
      */
     public function show(Attendance $attendance)
     {
-        $attendance->load('breakTimes');
+        $attendance->load([
+            'breakTimes',
+            'attendanceCorrectionApplications' => function ($query) {
+                $query->whereStatus('pending');
+            },
+        ]);
 
         return view('attendances.show', ['attendance' => $attendance]);
     }
