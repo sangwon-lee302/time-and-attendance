@@ -21,6 +21,6 @@ Route::middleware(['auth', 'verified'])->name('attendances.')->group(function ()
 });
 
 Route::middleware(['auth', 'verified'])->name('attendance-correction-applications.')->group(function () {
-    Route::post('attendance-correction-application', [AttendanceCorrectionApplicationController::class, 'store'])
+    Route::post('attendance-correction-application/{attendance}', [AttendanceCorrectionApplicationController::class, 'store'])
         ->name('store');
 });

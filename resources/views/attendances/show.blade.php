@@ -5,7 +5,7 @@
         <x-attendance-detail-table :attendance="$attendance" />
         <form
             id="attendance-correction-application"
-            action="{{ route('attendance-correction-applications.store') }}"
+            action="{{ route('attendance-correction-applications.store', $attendance) }}"
             class="mt-8 mr-0 ml-auto w-max"
         >
             <button class="btn btn-primary px-8">修正</button>
