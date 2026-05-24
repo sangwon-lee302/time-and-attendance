@@ -16,6 +16,7 @@ use Override;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
+ * @method static \Database\Factories\BreakTimeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime query()
@@ -25,7 +26,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereStartedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereUpdatedAt($value)
- * @method static \Database\Factories\BreakTimeFactory factory($count = null, $state = [])
  *
  * @mixin \Eloquent
  */

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceCorrectionApplicationController;
 use App\Http\Controllers\TimeLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,5 +17,11 @@ Route::middleware(['auth', 'verified'])->name('time-logs.')->group(function () {
 
 Route::middleware(['auth', 'verified'])->name('attendances.')->group(function () {
     Route::get('attendance/list', [AttendanceController::class, 'index'])->name('index');
-    Route::get('attendance/detail/{attendance}', [AttendanceController::class, 'show'])->name('show');
+    Route::get('attendance/detail/{attendance}', [AttendanceController::class, 'show'])
+        ->can('view', 'attendance')->name('show');
+});
+
+Route::middleware(['auth', 'verified'])->name('attendance-correction-applications.')->group(function () {
+    Route::post('attendance-correction-application/{attendance}', [AttendanceCorrectionApplicationController::class, 'store'])
+        ->name('store');
 });

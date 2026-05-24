@@ -12,6 +12,36 @@
         'Noto Color Emoji';
 }
 
+@layer base {
+    h1 {
+        @apply font-bold;
+    }
+
+    table {
+        @apply w-full table-fixed border-collapse rounded-lg bg-white font-bold text-neutral-500;
+    }
+
+    table thead:not(:empty) {
+        @apply border-b-4 border-neutral-200;
+    }
+
+    table tbody {
+        @apply divide-y-2 divide-neutral-200;
+    }
+
+    table :is(th, td) {
+        @apply py-4 text-center;
+    }
+
+    table tr > :first-child {
+        @apply pl-4 lg:pl-12;
+    }
+
+    table tr > :last-child {
+        @apply pr-4 lg:pr-12;
+    }
+}
+
 @layer components {
     .btn {
         @apply cursor-pointer rounded-sm p-2 text-center text-xl font-medium transition-all;

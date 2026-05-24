@@ -246,6 +246,7 @@ return [
         'referees'                 => '審判',
         'region'                   => 'region',
         'reject_reason'            => '拒否理由',
+        'remarks'                  => '備考',
         'remember'                 => 'ログイン状態を保持',
         'restored_at'              => '復元日',
         'result_text_under_image'  => '画像下の結果テキスト',

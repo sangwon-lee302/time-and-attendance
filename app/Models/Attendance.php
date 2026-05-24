@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Override;
@@ -21,6 +22,7 @@ use Override;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
+ * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
@@ -34,8 +36,11 @@ use Override;
  *
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
- *
- * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
+ * @property-read mixed $total_break_time
+ * @property-read mixed $total_working_time
+ * @property-read Collection<int, AttendanceCorrectionApplication> $attendanceCorrectionApplications
+ * @property-read int|null $attendance_correction_applications_count
+ * @property-read User $user
  *
  * @mixin \Eloquent
  */
@@ -59,6 +64,26 @@ class Attendance extends Model
             'created_at'     => 'datetime',
             'updated_at'     => 'datetime',
         ];
+    }
+
+    /**
+     * Get the user that owns the attendance.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the correction applications for the attendance.
+     *
+     * @return HasMany<AttendanceCorrectionApplication, $this>
+     */
+    public function attendanceCorrectionApplications(): HasMany
+    {
+        return $this->hasMany(AttendanceCorrectionApplication::class);
     }
 
     /**

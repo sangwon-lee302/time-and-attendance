@@ -8,10 +8,10 @@
     />
     @auth
         <nav class="flex gap-4 font-bold xl:gap-8">
+            <a href="{{ route('time-logs.create') }}">勤怠</a>
+            <a href="{{ route('attendances.index') }}">勤怠一覧</a>
             <x-form action="{{ route('logout') }}" method="POST">
-                <button class="cursor-pointer text-xl font-medium">
-                    ログアウト
-                </button>
+                <button class="cursor-pointer">ログアウト</button>
             </x-form>
         </nav>
     @endauth

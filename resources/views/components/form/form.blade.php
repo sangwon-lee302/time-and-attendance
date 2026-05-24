@@ -21,7 +21,7 @@
     @endif
 
     @if ($title)
-        <h1 class="pb-8 text-center text-4xl font-bold">{{ $title }}</h1>
+        <h1 class="pb-8 text-center text-4xl">{{ $title }}</h1>
     @endif
 
     {{ $slot }}

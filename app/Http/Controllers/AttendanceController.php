@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
@@ -46,8 +47,19 @@ class AttendanceController extends Controller
      */
     public function show(Attendance $attendance)
     {
-        $attendance->load('breakTimes');
+        $attendance->load([
+            'breakTimes',
+            'attendanceCorrectionApplications' => function ($query) {
+                $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
+                    ->select('attendance_id', 'remarks');
+            },
+        ]);
 
-        return view('attendances.show', ['attendance' => $attendance]);
+        $pendingApplication = $attendance->attendanceCorrectionApplications->first();
+
+        return view('attendances.show', [
+            'attendance'         => $attendance,
+            'pendingApplication' => $pendingApplication,
+        ]);
     }
 }
