@@ -1,5 +1,6 @@
 @props ([
     'attendance' => null,
+    'pendingApplication' => null,
     'text' => '',
     'useTextArea' => false,
     'inputType' => 'text',
@@ -7,7 +8,7 @@
     'field' => $inputName,
 ])
 
-@if ($attendance->attendance_correction_application)
+@if ($pendingApplication)
     <p class="whitespace-pre-wrap">{{ $text }}</p>
 @else
     <div class="flex flex-col gap-1">

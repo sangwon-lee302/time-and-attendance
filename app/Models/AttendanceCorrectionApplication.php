@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\AttendanceCorrectionApplicationStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Override;
 
@@ -46,8 +48,21 @@ class AttendanceCorrectionApplication extends Model
     protected function casts(): array
     {
         return [
+            'status'             => AttendanceCorrectionApplicationStatus::class,
             'new_clocked_in_at'  => 'datetime',
             'new_clocked_out_at' => 'datetime',
+            'created_at'         => 'datetime',
+            'updated_at'         => 'datetime',
         ];
+    }
+
+    /**
+     * Get the break time correction applications for the attendance correction application.
+     *
+     * @return HasMany<BreakTimeCorrectionApplication, $this>
+     */
+    public function breakTimeCorrectionApplications(): HasMany
+    {
+        return $this->hasMany(BreakTimeCorrectionApplication::class);
     }
 }
