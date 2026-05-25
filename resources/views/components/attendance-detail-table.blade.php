@@ -31,7 +31,7 @@
                 <x-attendance-show-page-conditional-field
                     :attendance="$attendance"
                     :pending-application="$pendingApplication"
-                    :text="$attendance->clocked_out_at->format('H:i')"
+                    :text="$attendance->clocked_out_at?->format('H:i') ?? ''"
                     input-name="new_clocked_out_at"
                 />
             </td>

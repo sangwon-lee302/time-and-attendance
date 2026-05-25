@@ -31,7 +31,7 @@
         @endif
 
         @error ($field)
-            <p class="text-red-500">{{ $message }}</p>
+            <p class="err-msg">{{ $message }}</p>
         @enderror
     </div>
 @endif

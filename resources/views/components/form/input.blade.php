@@ -11,6 +11,6 @@
         {{ $attributes->merge(['class' => 'border rounded-sm p-2']) }}
     />
     @error ($field)
-        <p class="text-red-500">{{ $message }}</p>
+        <p class="err-msg">{{ $message }}</p>
     @enderror
 </label>
