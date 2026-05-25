@@ -5,11 +5,62 @@ namespace App\Http\Requests;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 use Override;
 
 class AttendanceCorrectionApplicationRequest extends FormRequest
 {
+    /**
+     * Prepare the data for validation.
+     */
+    #[Override]
+    protected function prepareForValidation(): void
+    {
+        $date   = $this->route('attendance')->date->format('Y-m-d');
+        $errors = [];
+
+        $this->merge([
+            'new_clocked_in_at' => $this->mergeDateAndTime(
+                $date,
+                $this->input('new_clocked_in_at'),
+                'new_clocked_in_at',
+                $errors
+            ),
+            'new_clocked_out_at' => $this->mergeDateAndTime(
+                $date,
+                $this->input('new_clocked_out_at'),
+                'new_clocked_in_at',
+                $errors
+            ),
+            'breaks' => collect($this->input('breaks', []))
+                ->map(function ($break, $index) use ($date, &$errors) {
+                    return [
+                        ...$break,
+                        'new_started_at' => $this->mergeDateAndTime(
+                            $date,
+                            $break['new_started_at'] ?? null,
+                            "breaks.$index.new_started_at",
+                            $errors
+                        ),
+                        'new_ended_at' => $this->mergeDateAndTime(
+                            $date,
+                            $break['new_ended_at'] ?? null,
+                            "breaks.$index.new_ended_at",
+                            $errors
+                        ),
+                    ];
+                })
+                ->all(),
+        ]);
+
+        if (! empty($errors)) {
+            throw new HttpResponseException(
+                redirect()->back()->withInput()->withErrors($errors)
+            );
+        }
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -17,39 +68,6 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
     {
         return $this->user()
             ->can('createCorrectionApplication', $this->route('attendance'));
-    }
-
-    /**
-     * Prepare the data for validation.
-     */
-    #[Override]
-    protected function prepareForValidation(): void
-    {
-        $date = $this->route('attendance')->date->format('Y-m-d');
-
-        $this->merge([
-            'new_clocked_in_at' => $this->mergeDateAndTime(
-                $date,
-                $this->input('new_clocked_in_at')
-            ),
-            'new_clocked_out_at' => $this->mergeDateAndTime(
-                $date,
-                $this->input('new_clocked_out_at')
-            ),
-            'breaks' => collect($this->input('breaks', []))
-                ->map(fn ($break) => [
-                    ...$break,
-                    'new_started_at' => $this->mergeDateAndTime(
-                        $date,
-                        $break['new_started_at'] ?? null
-                    ),
-                    'new_ended_at' => $this->mergeDateAndTime(
-                        $date,
-                        $break['new_ended_at'] ?? null
-                    ),
-                ])
-                ->all(),
-        ]);
     }
 
     /**
@@ -63,7 +81,7 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
             'new_clocked_in_at' => [
                 'required',
                 'date_format:Y-m-d H:i:s',
-                'before:new_clocked_out_at',
+                'before_or_equal:new_clocked_out_at',
             ],
             'new_clocked_out_at' => [
                 'required',
@@ -80,14 +98,14 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
             'breaks.*.new_started_at' => [
                 'required_with:breaks.*.new_ended_at',
                 'date_format:Y-m-d H:i:s',
-                'after:new_clocked_in_at',
-                'before:new_clocked_out_at',
+                'after_or_equal:new_clocked_in_at',
+                'before_or_equal:new_clocked_out_at',
             ],
             'breaks.*.new_ended_at' => [
                 'required_with:breaks.*.new_started_at',
                 'date_format:Y-m-d H:i:s',
-                'after:breaks.*.new_started_at',
-                'before:new_clocked_out_at',
+                'after_or_equal:breaks.*.new_started_at',
+                'before_or_equal:new_clocked_out_at',
             ],
             'remarks' => ['required', 'string', 'max:65535'],
         ];
@@ -109,20 +127,26 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
     public function messages()
     {
         return [
-            'new_clocked_in_at.before'       => '出勤時間もしくは退勤時間が不適切な値です',
-            'breaks.*.new_started_at.after'  => '休憩時間が不適切な値です',
-            'breaks.*.new_started_at.before' => '休憩時間が不適切な値です',
-            'breaks.*.new_ended_at.before'   => '休憩時間もしくは退勤時間が不適切な値です',
-            'remarks.required'               => ':attributeを記入してください',
+            'new_clocked_in_at.before_or_equal'       => '出勤時間もしくは退勤時間が不適切な値です',
+            'breaks.*.new_started_at.after_or_equal'  => '休憩時間が不適切な値です',
+            'breaks.*.new_started_at.before_or_equal' => '休憩時間が不適切な値です',
+            'breaks.*.new_ended_at.before_or_equal'   => '休憩時間もしくは退勤時間が不適切な値です',
+            'remarks.required'                        => ':attributeを記入してください',
         ];
     }
 
     /**
      * Merge the given time with the date to create a datetime string.
      */
-    private function mergeDateAndTime(string $date, ?string $time): ?string
+    private function mergeDateAndTime(string $date, ?string $time, string $field, array &$errors): ?string
     {
         if (blank($time)) {
+            return null;
+        }
+
+        if (! preg_match('/^\d{1,2}:\d{2}$/', $time)) {
+            $errors[$field] = '時刻は「時:分」の形式（例: 9:05, 23:59）で入力してください。';
+
             return null;
         }
 
