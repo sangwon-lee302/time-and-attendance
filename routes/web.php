@@ -22,6 +22,8 @@ Route::middleware(['auth', 'verified'])->name('attendances.')->group(function ()
 });
 
 Route::middleware(['auth', 'verified'])->name('attendance-correction-applications.')->group(function () {
+    Route::get('stamp_correction_request/list', [AttendanceCorrectionApplicationController::class, 'index'])
+        ->name('index');
     Route::post('attendance-correction-application/{attendance}', [AttendanceCorrectionApplicationController::class, 'store'])
         ->name('store');
 });

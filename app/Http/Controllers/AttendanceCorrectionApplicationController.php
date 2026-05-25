@@ -2,12 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\AttendanceCorrectionApplicationStatus;
 use App\Http\Requests\AttendanceCorrectionApplicationRequest;
 use App\Models\Attendance;
+use App\Models\AttendanceCorrectionApplication;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceCorrectionApplicationController extends Controller
 {
+    /**
+     * Shows an index page for the attendance correction application.
+     */
+    public function index()
+    {
+        $query = AttendanceCorrectionApplication::query();
+
+        if (request()->query('status') == 'approved') {
+            $query->whereStatus(AttendanceCorrectionApplicationStatus::Approved);
+        } else {
+            $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending);
+        }
+
+        $applications = $query->whereHas('attendance.user', function ($query) {
+            $query->whereId(auth()->id());
+        })->with([
+            'attendance:id,date,user_id',
+            'attendance.user:id,name',
+        ])->get();
+
+        return view('attendance-correction-applications.show', [
+            'applications' => $applications,
+        ]);
+    }
+
     /**
      * Store a newly created attendance correction application in storage.
      */
