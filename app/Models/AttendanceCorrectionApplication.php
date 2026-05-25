@@ -6,6 +6,7 @@ use App\AttendanceCorrectionApplicationStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Override;
@@ -54,6 +55,16 @@ class AttendanceCorrectionApplication extends Model
             'created_at'         => 'datetime',
             'updated_at'         => 'datetime',
         ];
+    }
+
+    /**
+     * Get the attendance that owns the attendance correction application.
+     *
+     * @return BelongsTo<Attendance, $this>
+     */
+    public function attendance(): BelongsTo
+    {
+        return $this->belongsTo(Attendance::class);
     }
 
     /**

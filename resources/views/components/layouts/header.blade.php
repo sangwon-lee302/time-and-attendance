@@ -10,6 +10,9 @@
         <nav class="flex gap-4 font-bold xl:gap-8">
             <a href="{{ route('time-logs.create') }}">勤怠</a>
             <a href="{{ route('attendances.index') }}">勤怠一覧</a>
+            <a href="{{ route('attendance-correction-applications.index') }}"
+                >申請</a
+            >
             <x-form action="{{ route('logout') }}" method="POST">
                 <button class="cursor-pointer">ログアウト</button>
             </x-form>
