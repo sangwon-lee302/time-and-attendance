@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use Illuminate\Support\Facades\Auth;
 
 class TimeLogController extends Controller
 {
@@ -11,7 +12,7 @@ class TimeLogController extends Controller
      */
     public function create()
     {
-        $status = Attendance::resolveStatusForToday(auth()->user());
+        $status = Attendance::resolveStatusForToday(Auth::user());
 
         return view('time-logs.create', [
             'status' => $status,
@@ -23,7 +24,7 @@ class TimeLogController extends Controller
      */
     public function clockIn()
     {
-        auth()->user()->attendances()->create([
+        Auth::user()->attendances()->create([
             'date'          => today(),
             'clocked_in_at' => now(),
         ]);
@@ -36,7 +37,7 @@ class TimeLogController extends Controller
      */
     public function clockOut()
     {
-        $attendance = auth()->user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
             $attendance->update([
@@ -52,7 +53,7 @@ class TimeLogController extends Controller
      */
     public function breakStart()
     {
-        $attendance = auth()->user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
             $attendance->breakTimes()->create([
@@ -68,7 +69,7 @@ class TimeLogController extends Controller
      */
     public function breakEnd()
     {
-        $attendance = auth()->user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
             $attendance->breakTimes()->whereNull('ended_at')->first()?->update([

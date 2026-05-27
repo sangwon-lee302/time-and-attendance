@@ -6,6 +6,7 @@ use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
@@ -24,7 +25,7 @@ class AttendanceController extends Controller
             $month->endOfMonth()
         ))->map(fn ($date) => $date->format('Y-m-d'))->toArray();
 
-        $attendances = auth()->user()->attendances()
+        $attendances = Auth::user()->attendances()
             ->with(['breakTimes' => function ($query) {
                 $query->whereNotNull('ended_at');
             }])

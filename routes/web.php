@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminAuthenticatedSessionController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceCorrectionApplicationController;
 use App\Http\Controllers\TimeLogController;
@@ -26,4 +27,15 @@ Route::middleware(['auth', 'verified'])->name('attendance-correction-application
         ->name('index');
     Route::post('attendance-correction-application/{attendance}', [AttendanceCorrectionApplicationController::class, 'store'])
         ->name('store');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [AdminAuthenticatedSessionController::class, 'create'])->name('login');
+        Route::post('login', [AdminAuthenticatedSessionController::class, 'store'])->name('login');
+    });
+
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::post('logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
+    });
 });

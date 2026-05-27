@@ -6,6 +6,7 @@ use App\AttendanceCorrectionApplicationStatus;
 use App\Http\Requests\AttendanceCorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceCorrectionApplicationController extends Controller
@@ -24,7 +25,7 @@ class AttendanceCorrectionApplicationController extends Controller
         }
 
         $applications = $query->whereHas('attendance.user', function ($query) {
-            $query->whereId(auth()->id());
+            $query->whereId(Auth::id());
         })->with([
             'attendance:id,date,user_id',
             'attendance.user:id,name',
