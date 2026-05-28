@@ -62,7 +62,7 @@
                 </td>
             </tr>
         @endforeach
-        @if (! $pendingApplication)
+        @unless ($pendingApplication)
             <tr>
                 <th class="text-left">
                     休憩{{ $attendance->breakTimes ? count($attendance->breakTimes) + 1 : '' }}
@@ -85,12 +85,12 @@
                     />
                 </td>
             </tr>
-        @endif
+        @endunless
         <tr>
             <th class="text-left">備考</th>
             <td
                 class="text-black"
-                @if (! $pendingApplication) colspan="3"@endif
+                @unless ($pendingApplication) colspan="3"@endunless
             >
                 <x-attendance-show-page-conditional-field
                     :attendance="$attendance"

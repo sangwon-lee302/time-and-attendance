@@ -1,10 +1,10 @@
 @props ([
-    'attendance' => null,
-    'pendingApplication' => null,
+    'attendance',
+    'pendingApplication',
     'text' => '',
     'useTextArea' => false,
     'inputType' => 'text',
-    'inputName' => '',
+    'inputName',
     'field' => $inputName,
 ])
 

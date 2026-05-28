@@ -6,7 +6,7 @@
             :attendance="$attendance"
             :pending-application="$pendingApplication"
         />
-        @if (! $pendingApplication)
+        @unless ($pendingApplication)
             @foreach ($attendance->breakTimes as $breakTime)
                 <input
                     form="attendance-correction-application"
@@ -15,7 +15,7 @@
                     name="breaks[{{ $loop->index }}][break_time_id]"
                 />
             @endforeach
-        @endif
+        @endunless
         <div>
             @if ($pendingApplication)
                 <p class="mt-8 mr-0 ml-auto w-max font-bold text-red-400">*承認待ちのため修正はできません。</p>

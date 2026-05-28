@@ -23,7 +23,7 @@ class AdminAuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login', ['admin' => true]);
+        return view('auth.login', ['isAdminLogin' => true]);
     }
 
     /**

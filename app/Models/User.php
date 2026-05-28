@@ -21,7 +21,7 @@ use Override;
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
- * @property int $is_admin
+ * @property bool $is_admin
  * @property string $password
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

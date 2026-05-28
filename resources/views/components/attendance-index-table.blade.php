@@ -1,8 +1,8 @@
 @use ('Carbon\Carbon')
 
 @props ([
-    'dates' => [],
-    'attendances' => [],
+    'dates',
+    'attendances',
 ])
 
 <table>
