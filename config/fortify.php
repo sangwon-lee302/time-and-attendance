@@ -115,8 +115,7 @@ return [
     */
 
     'limiters' => [
-        'login'      => 'login',
-        'two-factor' => 'two-factor',
+        'login' => 'login',
     ],
 
     /*
@@ -148,4 +147,7 @@ return [
         Features::emailVerification(),
     ],
 
+    'redirects' => [
+        'logout' => '/login',
+    ],
 ];

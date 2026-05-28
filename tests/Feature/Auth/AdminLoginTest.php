@@ -6,37 +6,42 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class LoginTest extends TestCase
+class AdminLoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_view_is_shown_correctly(): void
+    public function test_admin_login_view_is_rendered_successfully(): void
     {
-        $this->get('login')->assertOk();
+        $response = $this->get('admin/login');
+
+        $response->assertOk();
+        $response->assertSee('管理者ログイン');
+        $response->assertSee('管理者ログインする');
+        $response->assertSee(url(route('admin.login')));
     }
 
-    public function test_staff_cannot_login_with_empty_email(): void
+    public function test_admin_user_cannot_login_with_empty_email(): void
     {
         $password = 'password123';
 
-        User::factory()->create(['password' => $password]);
+        User::factory()->admin()->create(['password' => $password]);
 
-        $this->get('login')->assertOk();
+        $this->get('admin/login')->assertOk();
 
-        $response = $this->post('login', [
+        $response = $this->post(route('admin.login'), [
             'email'    => '',
             'password' => $password,
         ]);
 
         $this->assertGuest();
 
-        $response->assertRedirect('login');
+        $response->assertRedirect('admin/login');
         $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
     }
 
-    public function test_staff_cannot_login_with_empty_password(): void
+    public function test_admin_user_cannot_login_with_empty_password(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $this->get('login')->assertOk();
 
@@ -51,9 +56,9 @@ class LoginTest extends TestCase
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
 
-    public function test_staff_cannot_login_with_invalid_credentials(): void
+    public function test_admin_user_cannot_login_with_invalid_credentials(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $this->get('login')->assertOk();
 
@@ -68,11 +73,11 @@ class LoginTest extends TestCase
         $response->assertSessionHasErrors(['email' => 'ログイン情報が登録されていません']);
     }
 
-    public function test_staff_can_login_with_valid_credentials(): void
+    public function test_admin_user_can_login_with_valid_credentials(): void
     {
         $password = 'password123';
 
-        $user = User::factory()->create(['password' => $password]);
+        $user = User::factory()->admin()->create(['password' => $password]);
 
         $this->get('login')->assertOk();
 
@@ -83,14 +88,6 @@ class LoginTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
 
-        $response->assertRedirect('attendance');
-    }
-
-    public function test_users_can_jump_to_register_page(): void
-    {
-        $response = $this->get('login');
-
-        $response->assertOk();
-        $response->assertSee('register');
+        $response->assertRedirect('admin/attendance/list');
     }
 }

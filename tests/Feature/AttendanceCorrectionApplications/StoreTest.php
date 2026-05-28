@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\AttendanceCorrectionApplication;
+namespace Tests\Feature\AttendanceCorrectionApplications;
 
 use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;

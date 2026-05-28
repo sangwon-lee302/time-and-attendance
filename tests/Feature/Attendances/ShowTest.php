@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Attendance;
+namespace Tests\Feature\Attendances;
 
 use App\Models\Attendance;
 use App\Models\BreakTime;

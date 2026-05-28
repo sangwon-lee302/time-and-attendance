@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class TimeLogController extends Controller
 {
     /**
      * Show time log creation view.
      */
-    public function create()
+    public function create(): View
     {
-        $status = Attendance::resolveStatusForToday(auth()->user());
+        $status = Attendance::resolveStatusForToday(Auth::user());
 
         return view('time-logs.create', [
             'status' => $status,
@@ -21,9 +24,9 @@ class TimeLogController extends Controller
     /**
      * Store a newly created attendance resource in storage.
      */
-    public function clockIn()
+    public function clockIn(): RedirectResponse
     {
-        auth()->user()->attendances()->create([
+        Auth::user()->attendances()->create([
             'date'          => today(),
             'clocked_in_at' => now(),
         ]);
@@ -34,9 +37,9 @@ class TimeLogController extends Controller
     /**
      * Update clocked out time for the attendance resource in storage.
      */
-    public function clockOut()
+    public function clockOut(): RedirectResponse
     {
-        $attendance = auth()->user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
             $attendance->update([
@@ -50,9 +53,9 @@ class TimeLogController extends Controller
     /**
      * Store a newly created break time resource in storage.
      */
-    public function breakStart()
+    public function breakStart(): RedirectResponse
     {
-        $attendance = auth()->user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
             $attendance->breakTimes()->create([
@@ -66,9 +69,9 @@ class TimeLogController extends Controller
     /**
      * Update break end time for the attendance resource in storage.
      */
-    public function breakEnd()
+    public function breakEnd(): RedirectResponse
     {
-        $attendance = auth()->user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
             $attendance->breakTimes()->whereNull('ended_at')->first()?->update([
