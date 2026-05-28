@@ -148,6 +148,7 @@ return [
     ],
 
     'redirects' => [
+        'login'  => '/attendance',
         'logout' => '/login',
     ],
 ];
