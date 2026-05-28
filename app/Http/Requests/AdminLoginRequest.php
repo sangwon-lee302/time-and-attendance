@@ -18,7 +18,7 @@ class AdminLoginRequest extends LoginRequest
         $this->whenHas(Fortify::username(), function () {
             $this->merge([
                 Fortify::username() => Str::lower($this->{Fortify::username()}),
-            ]);    
+            ]);
         });
     }
 }

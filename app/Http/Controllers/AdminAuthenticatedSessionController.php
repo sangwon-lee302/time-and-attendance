@@ -30,7 +30,7 @@ class AdminAuthenticatedSessionController extends Controller
     public function store(AdminLoginRequest $request)
     {
         $this->ensureLoginIsNotThrottled($request);
-        
+
         $this->attemptToAuthenticateAdminUser($request);
 
         if ($request->hasSession()) {
