@@ -11,6 +11,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Fortify;
+use Override;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,7 @@ class FortifyServiceProvider extends ServiceProvider
     {
         $this->app->instance(LoginResponse::class, new class implements LoginResponse
         {
+            #[Override]
             public function toResponse($request)
             {
                 if ($request->wantsJson()) {
