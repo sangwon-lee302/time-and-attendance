@@ -1,28 +1,31 @@
 @props ([
     'method' => 'GET',
-    'title'  => null,
+    'title' => '',
 ])
 
 @php
-    $spoofMethod = in_array(strtoupper($method), ['PUT', 'PATCH', 'DELETE']) ? $method : null;
-    $method = $spoofMethod ? 'POST' : $method;
+    $method = strtoupper($method);
+
+    $shouldSpoofMethod = in_array($method, ['PUT', 'PATCH', 'DELETE']);
+
+    $realMethod = $shouldSpoofMethod ? 'POST' : $method;
 @endphp
 
 <form
-    method="{{ $method }}"
+    method="{{ $realMethod }}"
     {{ $attributes->merge(['class' => 'max-w-3xl mx-auto flex flex-col gap-12']) }}
 >
-    @if ($method == 'POST')
+    @if ($realMethod === 'POST')
         @csrf
     @endif
 
-    @if ($spoofMethod)
-        @method ($spoofMethod)
+    @if ($shouldSpoofMethod)
+        @method ($method)
     @endif
 
-    @if ($title)
+    @unless (blank($title))
         <h1 class="pb-8 text-center text-4xl">{{ $title }}</h1>
-    @endif
+    @endunless
 
     {{ $slot }}
 </form>
