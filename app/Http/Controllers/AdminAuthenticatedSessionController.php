@@ -28,6 +28,8 @@ class AdminAuthenticatedSessionController extends Controller
 
     /**
      * Attempt to authenticate a new session.
+     *
+     * @throws ValidationException
      */
     public function store(AdminLoginRequest $request): RedirectResponse
     {
@@ -35,11 +37,7 @@ class AdminAuthenticatedSessionController extends Controller
 
         $this->attemptToAuthenticateAdminUser($request);
 
-        if ($request->hasSession()) {
-            $request->session()->regenerate();
-        }
-
-        $this->limiter->clear($request);
+        $this->prepareAuthenticatedSession($request);
 
         return redirect()->intended(route('admin.attendances.index'));
     }
@@ -105,5 +103,17 @@ class AdminAuthenticatedSessionController extends Controller
         throw ValidationException::withMessages([
             Fortify::username() => [trans('auth.failed')],
         ]);
+    }
+
+    /**
+     * Prepare for an authenticated session.
+     */
+    protected function prepareAuthenticatedSession(Request $request)
+    {
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
+
+        $this->limiter->clear($request);
     }
 }

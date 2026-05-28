@@ -43,16 +43,16 @@ class AdminLoginTest extends TestCase
     {
         $user = User::factory()->admin()->create();
 
-        $this->get('login')->assertOk();
+        $this->get('admin/login')->assertOk();
 
-        $response = $this->post('login', [
+        $response = $this->post(route('admin.login'), [
             'email'    => $user->email,
             'password' => '',
         ]);
 
         $this->assertGuest();
 
-        $response->assertRedirect('login');
+        $response->assertRedirect('admin/login');
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
 
@@ -60,16 +60,16 @@ class AdminLoginTest extends TestCase
     {
         $user = User::factory()->admin()->create();
 
-        $this->get('login')->assertOk();
+        $this->get('admin/login')->assertOk();
 
-        $response = $this->post('login', [
+        $response = $this->post(route('admin.login'), [
             'email'    => $user->email,
             'password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
 
-        $response->assertRedirect('login');
+        $response->assertRedirect('admin/login');
         $response->assertSessionHasErrors(['email' => 'ログイン情報が登録されていません']);
     }
 
@@ -79,9 +79,9 @@ class AdminLoginTest extends TestCase
 
         $user = User::factory()->admin()->create(['password' => $password]);
 
-        $this->get('login')->assertOk();
+        $this->get('admin/login')->assertOk();
 
-        $response = $this->post('login', [
+        $response = $this->post(route('admin.login'), [
             'email'    => $user->email,
             'password' => $password,
         ]);
