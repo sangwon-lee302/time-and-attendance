@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class TimeLogController extends Controller
@@ -10,7 +12,7 @@ class TimeLogController extends Controller
     /**
      * Show time log creation view.
      */
-    public function create()
+    public function create(): View
     {
         $status = Attendance::resolveStatusForToday(Auth::user());
 
@@ -22,7 +24,7 @@ class TimeLogController extends Controller
     /**
      * Store a newly created attendance resource in storage.
      */
-    public function clockIn()
+    public function clockIn(): RedirectResponse
     {
         Auth::user()->attendances()->create([
             'date'          => today(),
@@ -35,7 +37,7 @@ class TimeLogController extends Controller
     /**
      * Update clocked out time for the attendance resource in storage.
      */
-    public function clockOut()
+    public function clockOut(): RedirectResponse
     {
         $attendance = Auth::user()->attendances()->where('date', today())->first();
 
@@ -51,7 +53,7 @@ class TimeLogController extends Controller
     /**
      * Store a newly created break time resource in storage.
      */
-    public function breakStart()
+    public function breakStart(): RedirectResponse
     {
         $attendance = Auth::user()->attendances()->where('date', today())->first();
 
@@ -67,7 +69,7 @@ class TimeLogController extends Controller
     /**
      * Update break end time for the attendance resource in storage.
      */
-    public function breakEnd()
+    public function breakEnd(): RedirectResponse
     {
         $attendance = Auth::user()->attendances()->where('date', today())->first();
 

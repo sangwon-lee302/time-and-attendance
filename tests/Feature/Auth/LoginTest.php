@@ -36,9 +36,7 @@ class LoginTest extends TestCase
 
     public function test_staff_cannot_login_with_empty_password(): void
     {
-        $password = 'password123';
-
-        $user = User::factory()->create(['password' => $password]);
+        $user = User::factory()->create();
 
         $this->get('login')->assertOk();
 

@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,6 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return route('login');
+        });
+
+        $middleware->redirectUsersTo(function () {
+            if (Auth::user()->is_admin) {
+                return route('admin.attendances.index');
+            }
+
+            return route('time-logs.create');
         });
 
         $middleware->alias(['admin' => EnsureUserIsAdmin::class]);

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -19,7 +21,7 @@ class AdminAuthenticatedSessionController extends Controller
     /**
      * Show the login view.
      */
-    public function create()
+    public function create(): View
     {
         return view('auth.login', ['admin' => true]);
     }
@@ -27,7 +29,7 @@ class AdminAuthenticatedSessionController extends Controller
     /**
      * Attempt to authenticate a new session.
      */
-    public function store(AdminLoginRequest $request)
+    public function store(AdminLoginRequest $request): RedirectResponse
     {
         $this->ensureLoginIsNotThrottled($request);
 
@@ -45,7 +47,7 @@ class AdminAuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();
 
@@ -58,9 +60,11 @@ class AdminAuthenticatedSessionController extends Controller
     }
 
     /**
-     * Ensure if login is not throttled.
+     * Ensure login is not throttled.
+     *
+     * @throws ValidationException
      */
-    protected function ensureLoginIsNotThrottled(AdminLoginRequest $request)
+    protected function ensureLoginIsNotThrottled(AdminLoginRequest $request): void
     {
         if ($this->limiter->tooManyAttempts($request)) {
             throw ValidationException::withMessages([
@@ -73,8 +77,10 @@ class AdminAuthenticatedSessionController extends Controller
 
     /**
      * Attempt to authenticate an admin user.
+     *
+     * @throws ValidationException
      */
-    protected function attemptToAuthenticateAdminUser(AdminLoginRequest $request)
+    protected function attemptToAuthenticateAdminUser(AdminLoginRequest $request): void
     {
         if (! Auth::attempt($request->validated())) {
             $this->throwFailedAuthenticationException($request);
@@ -89,8 +95,10 @@ class AdminAuthenticatedSessionController extends Controller
 
     /**
      * Throw a failed authentication validation exception.
+     *
+     * @throws ValidationException
      */
-    protected function throwFailedAuthenticationException(Request $request)
+    protected function throwFailedAuthenticationException(Request $request): void
     {
         $this->limiter->increment($request);
 

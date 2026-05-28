@@ -6,6 +6,8 @@ use App\AttendanceCorrectionApplicationStatus;
 use App\Http\Requests\AttendanceCorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +16,7 @@ class AttendanceCorrectionApplicationController extends Controller
     /**
      * Shows an index page for the attendance correction application.
      */
-    public function index()
+    public function index(): View
     {
         $query = AttendanceCorrectionApplication::query();
 
@@ -39,8 +41,10 @@ class AttendanceCorrectionApplicationController extends Controller
     /**
      * Store a newly created attendance correction application in storage.
      */
-    public function store(AttendanceCorrectionApplicationRequest $request, Attendance $attendance)
-    {
+    public function store(
+        AttendanceCorrectionApplicationRequest $request,
+        Attendance $attendance
+    ): RedirectResponse {
         $validated = $request->validated();
 
         DB::transaction(function () use ($validated, $attendance) {

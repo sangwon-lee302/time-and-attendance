@@ -147,4 +147,7 @@ return [
         Features::emailVerification(),
     ],
 
+    'redirects' => [
+        'logout' => '/login',
+    ],
 ];

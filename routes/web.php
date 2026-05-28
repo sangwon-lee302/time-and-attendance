@@ -37,5 +37,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+        // details would be changed after implementation
+        Route::get('attendance/list', [AttendanceController::class, 'index'])->name('attendances.index');
     });
 });

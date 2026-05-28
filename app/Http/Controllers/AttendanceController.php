@@ -6,6 +6,7 @@ use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,7 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the attendances.
      */
-    public function index()
+    public function index(): View
     {
         $month = CarbonImmutable::createFromFormat('Y-m',
             request()->query('month', now()->format('Y-m'))
@@ -46,7 +47,7 @@ class AttendanceController extends Controller
     /**
      * Display the specified attendance.
      */
-    public function show(Attendance $attendance)
+    public function show(Attendance $attendance): View
     {
         $attendance->load([
             'breakTimes',
