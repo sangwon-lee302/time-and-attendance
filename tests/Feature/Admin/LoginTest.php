@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Auth;
+namespace Tests\Feature\Admin;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AdminLoginTest extends TestCase
+class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
