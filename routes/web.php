@@ -1,12 +1,11 @@
 <?php
 
-use App\Http\Controllers\AdminAuthenticatedSessionController;
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceCorrectionApplicationController;
 use App\Http\Controllers\TimeLogController;
 use Illuminate\Support\Facades\Route;
-
-Route::middleware(['auth', 'verified'])->get('preview', fn () => view('preview'));
 
 Route::middleware(['auth', 'verified'])->name('time-logs.')->group(function () {
     Route::get('attendance', [TimeLogController::class, 'create'])->name('create');
@@ -31,14 +30,14 @@ Route::middleware(['auth', 'verified'])->name('attendance-correction-application
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {
-        Route::get('login', [AdminAuthenticatedSessionController::class, 'create'])->name('login');
-        Route::post('login', [AdminAuthenticatedSessionController::class, 'store'])->name('login');
+        Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+        Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login');
     });
 
     Route::middleware(['auth', 'admin'])->group(function () {
-        Route::post('logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
+        Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-        // details would be changed after implementation
-        Route::get('attendance/list', [AttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('attendance/list', [AdminAttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendances.show');
     });
 });

@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -15,10 +16,10 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the attendances.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $month = CarbonImmutable::createFromFormat('Y-m',
-            request()->query('month', now()->format('Y-m'))
+            $request->query('month', now()->format('Y-m'))
         );
 
         $dates = collect(CarbonPeriod::create(
@@ -30,7 +31,8 @@ class AttendanceController extends Controller
             ->with(['breakTimes' => function ($query) {
                 $query->whereNotNull('ended_at');
             }])
-            // DATE() is necessary for sqlite in-memory testing since sqlite does not have a date type and stores dates as text
+            // DATE() is necessary for sqlite in-memory testing
+            // since sqlite does not have a date type and stores dates as text
             ->whereIn(DB::raw('DATE(date)'), $dates)
             ->get()
             ->keyBy(function ($attendance) {
