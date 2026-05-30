@@ -23,13 +23,10 @@ class AttendanceController extends Controller
         $attendances = Attendance::with([
             'user:id,name',
             'breakTimes' => function ($query) {
-                $query->whereNotNull('ended_at');
+                $query->whereNotNull('ended_at')
+                    ->select('attendance_id', 'started_at', 'ended_at');
             },
-        ])
-        // DATE() is necessary for sqlite in-memory testing
-        // since sqlite does not have a date type and stores dates as text
-            ->where(DB::raw('DATE(date)'), $date->format('Y-m-d'))
-            ->get();
+        ])->whereDate('date', $date->format('Y-m-d'))->get();
 
         return view('admin.attendances-index', [
             'date'        => $date,

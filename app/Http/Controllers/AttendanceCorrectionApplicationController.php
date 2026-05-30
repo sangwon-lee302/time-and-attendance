@@ -21,7 +21,7 @@ class AttendanceCorrectionApplicationController extends Controller
     {
         $query = AttendanceCorrectionApplication::query();
 
-        if ($request->query('status') == 'approved') {
+        if ($request->query('status') === 'approved') {
             $query->whereStatus(AttendanceCorrectionApplicationStatus::Approved);
         } else {
             $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending);

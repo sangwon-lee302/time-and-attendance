@@ -54,9 +54,7 @@ class AttendanceController extends Controller
     public function show(Attendance $attendance): View
     {
         $attendance->load([
-            'breakTimes' => function ($query) {
-                $query->select('id', 'attendance_id', 'started_at', 'ended_at');
-            },
+            'breakTimes:id,attendance_id,started_at,ended_at',
             'attendanceCorrectionApplications' => function ($query) {
                 $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
                     ->select('attendance_id', 'remarks');

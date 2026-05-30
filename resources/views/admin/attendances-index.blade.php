@@ -44,17 +44,15 @@
                 @foreach ($attendances as $attendance)
                     <tr>
                         <td>{{ $attendance->user->name }}</td>
+                        <td>{{ $attendance->clocked_in_at->format('H:i') }}</td>
                         <td>
-                            {{ $attendance->clocked_in_at->format('H:i') ?? '' }}
+                            {{ $attendance->clocked_out_at?->format('H:i') }}
                         </td>
                         <td>
-                            {{ $attendance->clocked_out_at?->format('H:i') ?? '' }}
+                            {{ $attendance->total_break_time->format('%h:%I') }}
                         </td>
                         <td>
-                            {{ $attendance->total_break_time->format('%h:%I') ?? '' }}
-                        </td>
-                        <td>
-                            {{ $attendance->total_working_time?->format('%h:%I') ?? '' }}
+                            {{ $attendance->total_working_time?->format('%h:%I') }}
                         </td>
                         <td>
                             <a
