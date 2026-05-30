@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
+use App\Services\AttendanceService;
+use App\Services\CorrectionApplicationService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -32,5 +35,25 @@ class AttendanceController extends Controller
             'date'        => $date,
             'attendances' => $attendances,
         ]);
+    }
+
+    /**
+     * Update the specified attendance and its corresponding breaks.
+     */
+    public function update(
+        AttendanceCorrectionRequest $request,
+        Attendance $attendance,
+        CorrectionApplicationService $correctionApplicationService,
+        AttendanceService $attendanceService
+    ): RedirectResponse {
+        $validated = $request->validated();
+
+        $correctionApplicationService->storeCorrectionApplication(
+            $validated, $attendance
+        );
+
+        $attendanceService->updateAttendance($validated, $attendance);
+
+        return redirect()->route('admin.attendances.show');
     }
 }
