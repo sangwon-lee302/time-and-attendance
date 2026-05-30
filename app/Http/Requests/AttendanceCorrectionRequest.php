@@ -34,15 +34,15 @@ class AttendanceCorrectionRequest extends FormRequest
                 'new_clocked_out_at'
             ),
             'breaks' => collect($this->input('breaks', []))
-                ->map(fn ($break, $index) => [
-                    ...$break,
+                ->map(fn (array $breakData, int $index) => [
+                    ...$breakData,
                     'new_started_at' => $this->canonicalizeTime(
-                        $break['new_started_at'] ?? null,
+                        $breakData['new_started_at'] ?? null,
                         $errors,
                         "breaks.$index.new_started_at"
                     ),
                     'new_ended_at' => $this->canonicalizeTime(
-                        $break['new_ended_at'] ?? null,
+                        $breakData['new_ended_at'] ?? null,
                         $errors,
                         "breaks.$index.new_ended_at"
                     ),
