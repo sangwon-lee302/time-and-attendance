@@ -38,5 +38,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
         Route::get('attendance/list', [AdminAttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendances.show');
     });
 });

@@ -58,7 +58,7 @@
                         </td>
                         <td>
                             <a
-                                href="{{ route('attendances.show', $attendance) }}"
+                                href="{{ route('admin.attendances.show', $attendance) }}"
                                 class="cursor-pointer text-black hover:underline"
                                 >詳細</a
                             >

@@ -34,13 +34,13 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUserId($value)
  *
+ * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
- * @property-read mixed $total_break_time
- * @property-read mixed $total_working_time
  * @property-read Collection<int, AttendanceCorrectionApplication> $attendanceCorrectionApplications
  * @property-read int|null $attendance_correction_applications_count
- * @property-read User $user
+ * @property-read CarbonInterval $total_break_time
+ * @property-read CarbonInterval $total_working_time
  *
  * @mixin \Eloquent
  */
@@ -123,6 +123,8 @@ class Attendance extends Model
 
     /**
      * Get the total break time for the attendance.
+     *
+     * @return Attribute<CarbonInterval, never>
      */
     protected function totalBreakTime(): Attribute
     {
@@ -141,6 +143,8 @@ class Attendance extends Model
 
     /**
      * Get the total working time for the attendance.
+     *
+     * @return Attribute<CarbonInterval, never>
      */
     protected function totalWorkingTime(): Attribute
     {

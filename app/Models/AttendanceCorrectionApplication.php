@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\AttendanceCorrectionApplicationStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ use Override;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
+ * @method static \Database\Factories\AttendanceCorrectionApplicationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication query()
@@ -32,6 +34,10 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereRemarks($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereUpdatedAt($value)
+ *
+ * @property-read Attendance $attendance
+ * @property-read Collection<int, BreakTimeCorrectionApplication> $breakTimeCorrectionApplications
+ * @property-read int|null $break_time_correction_applications_count
  *
  * @mixin \Eloquent
  */
