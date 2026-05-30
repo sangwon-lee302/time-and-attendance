@@ -1,9 +1,6 @@
 @use ('Carbon\Carbon')
 
-@props ([
-    'dates',
-    'attendances',
-])
+@props (['displayData'])
 
 <table>
     <thead>
@@ -16,27 +13,25 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($dates as $date)
-            @php
-                $attendance = $attendances[$date] ?? null;
-                $date = Carbon::parse($date)->isoFormat('MM/DD(ddd)');
-            @endphp
+        @foreach ($displayData as $row)
             <tr>
-                <td class="text-left">{{ $date }}</td>
-                <td>{{ $attendance?->clocked_in_at->format('H:i') ?? '' }}</td>
+                <td class="text-left">
+                    {{ $row['date']->isoFormat('MM/DD(ddd)') }}
+                </td>
+                <td>{{ $row['attendance']?->clocked_in_at->format('H:i') }}</td>
                 <td>
-                    {{ $attendance?->clocked_out_at?->format('H:i') ?? '' }}
+                    {{ $row['attendance']?->clocked_out_at?->format('H:i') }}
                 </td>
                 <td>
-                    {{ $attendance?->total_break_time->format('%h:%I') ?? '' }}
+                    {{ $row['attendance']?->total_break_time->format('%h:%I') }}
                 </td>
                 <td>
-                    {{ $attendance?->total_working_time?->format('%h:%I') ?? '' }}
+                    {{ $row['attendance']?->total_working_time?->format('%h:%I') }}
                 </td>
                 <td>
-                    @if ($attendance)
+                    @if ($row['attendance'])
                         <a
-                            href="{{ route('attendances.show', $attendance) }}"
+                            href="{{ route('attendances.show', $row['attendance']) }}"
                             class="cursor-pointer text-black hover:underline"
                             >詳細</a
                         >
