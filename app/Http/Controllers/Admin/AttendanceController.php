@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AttendanceCorrectionRequest;
+use App\Http\Requests\CorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Services\AttendanceService;
 use App\Services\CorrectionApplicationService;
@@ -41,7 +41,7 @@ class AttendanceController extends Controller
      * Update the specified attendance and its corresponding breaks.
      */
     public function update(
-        AttendanceCorrectionRequest $request,
+        CorrectionApplicationRequest $request,
         Attendance $attendance,
         CorrectionApplicationService $correctionApplicationService,
         AttendanceService $attendanceService

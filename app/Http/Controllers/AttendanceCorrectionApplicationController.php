@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AttendanceCorrectionApplicationStatus;
-use App\Http\Requests\AttendanceCorrectionRequest;
+use App\Http\Requests\CorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
 use App\Services\CorrectionApplicationService;
@@ -43,7 +43,7 @@ class AttendanceCorrectionApplicationController extends Controller
      * Store a newly created attendance correction application in storage.
      */
     public function store(
-        AttendanceCorrectionRequest $request,
+        CorrectionApplicationRequest $request,
         Attendance $attendance,
         CorrectionApplicationService $correctionApplicationService
     ): RedirectResponse {

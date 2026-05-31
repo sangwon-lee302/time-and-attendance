@@ -10,7 +10,7 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 use Override;
 
-class AttendanceCorrectionRequest extends FormRequest
+class CorrectionApplicationRequest extends FormRequest
 {
     /**
      * Prepare the data for validation.
