@@ -38,7 +38,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-        Route::get('attendance/list', [AdminAttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('attendance/list', [AdminAttendanceController::class, 'dailyIndex'])->name('attendances.daily-index');
         Route::get('attendance/staff/{user}', [AdminAttendanceController::class, 'monthlyIndex'])->name('attendances.monthly-index');
         Route::get('attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendances.show');
         Route::patch('attendance/{attendance}', [AdminAttendanceController::class, 'update'])->name('attendances.update');
