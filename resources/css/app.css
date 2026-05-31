@@ -55,6 +55,10 @@
         @apply bg-white text-black hover:bg-gray-200 focus:bg-gray-300 active:bg-gray-300;
     }
 
+    .bd-l-h1 {
+        @apply border-l-6 pl-4 text-2xl;
+    }
+
     .err-msg {
         @apply text-sm font-normal text-red-500;
     }

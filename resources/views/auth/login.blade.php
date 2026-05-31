@@ -14,7 +14,7 @@
             @unless ($isAdminLogin)
                 <a
                     href="{{ route('register') }}"
-                    class="mx-auto -mt-6 cursor-pointer text-blue-500 hover:underline"
+                    class="mx-auto -mt-6 text-blue-500 hover:underline"
                     >会員登録はこちら</a
                 >
             @endunless

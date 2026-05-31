@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CorrectionApplicationRequest;
 use App\Models\Attendance;
+use App\Models\User;
 use App\Services\AttendanceService;
 use App\Services\CorrectionApplicationService;
 use Carbon\CarbonImmutable;
@@ -35,6 +36,14 @@ class AttendanceController extends Controller
             'date'        => $date,
             'attendances' => $attendances,
         ]);
+    }
+
+    /**
+     * Display a listing of attendance resources of the given user.
+     */
+    public function monthlyIndex(User $user): View
+    {
+        return view('admin.attendances-monthly-index', $user);
     }
 
     /**
