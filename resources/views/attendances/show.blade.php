@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-layouts.header />
     <x-layouts.main>
-        <h1 class="mb-8 border-l-6 pl-4 text-2xl">勤怠詳細</h1>
+        <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
         <x-attendance-detail-table
             :attendance="$attendance"
             :pending-application="$pendingApplication"

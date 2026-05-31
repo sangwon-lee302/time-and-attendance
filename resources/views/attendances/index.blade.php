@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-layouts.header />
     <x-layouts.main>
-        <h1 class="border-l-6 pl-4 text-2xl">勤怠一覧</h1>
+        <h1 class="bd-l-h1">勤怠一覧</h1>
         <div
             class="my-12 flex justify-between rounded-lg bg-white px-4 py-2 font-semibold text-neutral-500"
         >

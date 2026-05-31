@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceCorrectionApplicationController;
 use App\Http\Controllers\TimeLogController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->name('time-logs.')->group(function () {
@@ -38,7 +39,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
         Route::get('attendance/list', [AdminAttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('attendance/staff/{user}', [AdminAttendanceController::class, 'monthlyIndex'])->name('attendances.monthly-index');
         Route::get('attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendances.show');
         Route::patch('attendance/{attendance}', [AdminAttendanceController::class, 'update'])->name('attendances.update');
+
+        Route::get('staff/list', [UserController::class, 'index'])->name('users.index');
     });
 });

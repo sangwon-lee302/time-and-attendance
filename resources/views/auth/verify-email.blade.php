@@ -12,7 +12,7 @@
         >
         <x-form :action="route('verification.send')" method="POST">
             <button
-                class="mt-12 cursor-pointer text-base font-normal text-blue-500 hover:underline"
+                class="mt-12 text-base font-normal text-blue-500 hover:underline"
             >
                 認証メールを再送する
             </button>

@@ -1,9 +1,7 @@
 <x-layouts.app>
     <x-layouts.header />
     <x-layouts.main>
-        <h1 class="border-l-6 pl-4 text-2xl">
-            {{ $date->isoFormat('LL') }}の勤怠
-        </h1>
+        <h1 class="bd-l-h1">{{ $date->isoFormat('LL') }}の勤怠</h1>
         <div
             class="my-12 flex justify-between rounded-lg bg-white px-4 py-2 font-semibold text-neutral-500"
         >
@@ -57,7 +55,7 @@
                         <td>
                             <a
                                 href="{{ route('admin.attendances.show', $attendance) }}"
-                                class="cursor-pointer text-black hover:underline"
+                                class="text-black hover:underline"
                                 >詳細</a
                             >
                         </td>

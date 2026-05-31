@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-layouts.header />
     <x-layouts.main>
-        <h1 class="mb-8 border-l-6 pl-4 text-2xl">申請一覧</h1>
+        <h1 class="bd-l-h1 mb-8">申請一覧</h1>
         <nav class="mb-8 flex gap-12 border-b px-12 py-4 lg:gap-24 lg:px-24">
             <a
                 href="{{ route('attendance-correction-applications.index', ['status' => 'pending']) }}"
@@ -40,7 +40,7 @@
                         <td>
                             <a
                                 href="{{ route('attendances.show', $application->attendance->id) }}"
-                                class="cursor-pointer text-black hover:underline"
+                                class="text-black hover:underline"
                                 >詳細</a
                             >
                         </td>

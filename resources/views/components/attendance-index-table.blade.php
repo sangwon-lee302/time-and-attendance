@@ -32,7 +32,7 @@
                     @if ($row['attendance'])
                         <a
                             href="{{ route('attendances.show', $row['attendance']) }}"
-                            class="cursor-pointer text-black hover:underline"
+                            class="text-black hover:underline"
                             >詳細</a
                         >
                     @else
