@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,10 @@ class AttendanceService
                         'ended_at'   => $breakData['new_ended_at'],
                     ]);
                 }
+
+                $attendance->attendanceCorrectionApplications()
+                    ->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
+                    ->update(['status' => AttendanceCorrectionApplicationStatus::Approved]);
 
                 return true;
             });

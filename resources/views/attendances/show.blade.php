@@ -22,7 +22,7 @@
             @else
                 <form
                     id="attendance-correction-application"
-                    action="{{ $isAdmin ? route('admin.attendances.update') : route('attendance-correction-applications.store', $attendance) }}"
+                    action="{{ $isAdmin ? route('admin.attendances.update', $attendance) : route('attendance-correction-applications.store', $attendance) }}"
                     method="POST"
                     class="mt-8 mr-0 ml-auto w-max"
                 >

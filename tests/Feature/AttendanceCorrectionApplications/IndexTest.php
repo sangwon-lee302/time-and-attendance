@@ -32,7 +32,6 @@ class IndexTest extends TestCase
         $remark      = '備考です';
         $application = AttendanceCorrectionApplication::factory()
             ->recycle($attendance)
-            ->pending()
             ->create(['remarks' => $remark]);
 
         $response = $this->actingAs($user)->get('stamp_correction_request/list');

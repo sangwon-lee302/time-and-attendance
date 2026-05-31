@@ -54,6 +54,6 @@ class AttendanceController extends Controller
 
         $attendanceService->updateAttendance($validated, $attendance);
 
-        return redirect()->route('admin.attendances.show');
+        return redirect()->route('admin.attendances.show', $attendance);
     }
 }
