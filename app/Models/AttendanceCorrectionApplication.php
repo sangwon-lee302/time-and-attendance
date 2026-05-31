@@ -15,9 +15,9 @@ use Override;
 /**
  * @property int $id
  * @property int $attendance_id
- * @property int $status
- * @property string $new_clocked_in_at
- * @property string $new_clocked_out_at
+ * @property AttendanceCorrectionApplicationStatus $status
+ * @property Carbon $new_clocked_in_at
+ * @property Carbon $new_clocked_out_at
  * @property string $remarks
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

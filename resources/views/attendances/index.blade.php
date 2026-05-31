@@ -30,6 +30,6 @@
                 </svg>
             </a>
         </div>
-        <x-attendance-index-table :dates="$dates" :attendances="$attendances" />
+        <x-attendance-index-table :display-data="$displayData" />
     </x-layouts.main>
 </x-layouts.app>

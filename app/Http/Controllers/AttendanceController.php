@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -21,28 +21,30 @@ class AttendanceController extends Controller
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
-
-        $dates = collect(CarbonPeriod::create(
-            $month->startOfMonth(),
-            $month->endOfMonth()
-        ))->map(fn ($date) => $date->format('Y-m-d'))->toArray();
+        $startOfMonth = $month->startOfMonth();
+        $endOfMonth   = $month->endOfMonth();
 
         $attendances = Auth::user()->attendances()
+            ->whereBetween('date', [
+                $startOfMonth->format('Y-m-d H:i:s'),
+                $endOfMonth->format('Y-m-d H:i:s'),
+            ])
             ->with(['breakTimes' => function ($query) {
-                $query->whereNotNull('ended_at');
+                $query->whereNotNull('ended_at')
+                    ->select('attendance_id', 'started_at', 'ended_at');
             }])
-            // DATE() is necessary for sqlite in-memory testing
-            // since sqlite does not have a date type and stores dates as text
-            ->whereIn(DB::raw('DATE(date)'), $dates)
             ->get()
-            ->keyBy(function ($attendance) {
-                return $attendance->date->format('Y-m-d');
-            });
+            ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
+
+        $displayData = collect(CarbonPeriod::create($startOfMonth, $endOfMonth))
+            ->map(fn (Carbon $date) => [
+                'date'       => $date,
+                'attendance' => $attendances->get($date->day),
+            ]);
 
         return view('attendances.index', [
             'month'       => $month,
-            'dates'       => $dates,
-            'attendances' => $attendances,
+            'displayData' => $displayData,
         ]);
     }
 
@@ -52,7 +54,7 @@ class AttendanceController extends Controller
     public function show(Attendance $attendance): View
     {
         $attendance->load([
-            'breakTimes',
+            'breakTimes:id,attendance_id,started_at,ended_at',
             'attendanceCorrectionApplications' => function ($query) {
                 $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
                     ->select('attendance_id', 'remarks');

@@ -129,15 +129,12 @@ class Attendance extends Model
     protected function totalBreakTime(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $totalBreakSeconds = $this->breakTimes
-                    ->filter(fn (BreakTime $breakTime) => $breakTime->ended_at !== null)
-                    ->sum(function (BreakTime $breakTime) {
-                        return $breakTime->started_at->diffInSeconds($breakTime->ended_at);
-                    });
-
-                return CarbonInterval::seconds($totalBreakSeconds)->cascade();
-            }
+            get: fn () => CarbonInterval::seconds($this->breakTimes
+                ->filter(fn (BreakTime $break) => $break->ended_at !== null)
+                ->sum(fn (BreakTime $break) => $break->started_at
+                    ->diffInSeconds($break->ended_at)
+                )
+            )->cascade()
         );
     }
 
@@ -150,14 +147,14 @@ class Attendance extends Model
     {
         return Attribute::make(
             get: function () {
-                if (! $this->clocked_out_at) {
+                if ($this->clocked_out_at === null) {
                     return null;
                 }
 
-                $totalWorkingSeconds = $this->clocked_in_at->diffInSeconds($this->clocked_out_at)
-                    - (int) $this->total_break_time->totalSeconds;
-
-                return CarbonInterval::seconds($totalWorkingSeconds)->cascade();
+                return CarbonInterval::seconds(
+                    $this->clocked_in_at->diffInSeconds($this->clocked_out_at)
+                    - $this->total_break_time->totalSeconds
+                )->cascade();
             }
         );
     }

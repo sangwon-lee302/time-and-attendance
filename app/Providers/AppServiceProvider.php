@@ -47,7 +47,10 @@ class AppServiceProvider extends ServiceProvider
             return Password::min(8)->max(255);
         });
 
-        View::composer(['components.layouts.header'], function ($view) {
+        View::composer([
+            'components.layouts.header',
+            'attendances.show',
+        ], function ($view) {
             $view->with('isAdmin', Auth::user()?->is_admin ?? false);
         });
     }

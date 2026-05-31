@@ -16,9 +16,7 @@ class TimeLogController extends Controller
     {
         $status = Attendance::resolveStatusForToday(Auth::user());
 
-        return view('time-logs.create', [
-            'status' => $status,
-        ]);
+        return view('time-logs.create', ['status' => $status]);
     }
 
     /**
@@ -42,9 +40,7 @@ class TimeLogController extends Controller
         $attendance = Auth::user()->attendances()->where('date', today())->first();
 
         if ($attendance) {
-            $attendance->update([
-                'clocked_out_at' => now(),
-            ]);
+            $attendance->update(['clocked_out_at' => now()]);
         }
 
         return redirect()->route('time-logs.create');
@@ -55,12 +51,11 @@ class TimeLogController extends Controller
      */
     public function breakStart(): RedirectResponse
     {
-        $attendance = Auth::user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->whereDate('date', today())
+            ->first();
 
         if ($attendance) {
-            $attendance->breakTimes()->create([
-                'started_at' => now(),
-            ]);
+            $attendance->breakTimes()->create(['started_at' => now()]);
         }
 
         return redirect()->route('time-logs.create');
@@ -71,12 +66,12 @@ class TimeLogController extends Controller
      */
     public function breakEnd(): RedirectResponse
     {
-        $attendance = Auth::user()->attendances()->where('date', today())->first();
+        $attendance = Auth::user()->attendances()->whereDate('date', today())
+            ->first();
 
         if ($attendance) {
-            $attendance->breakTimes()->whereNull('ended_at')->first()?->update([
-                'ended_at' => now(),
-            ]);
+            $attendance->breakTimes()->whereNull('ended_at')->first()
+                ?->update(['ended_at' => now()]);
         }
 
         return redirect()->route('time-logs.create');

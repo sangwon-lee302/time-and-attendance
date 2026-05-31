@@ -10,7 +10,7 @@
             >
             <a
                 href="{{ route('attendance-correction-applications.index', ['status' => 'approved']) }}"
-                @class (['font-bold' => request()->query('status') == 'approved'])
+                @class (['font-bold' => request()->query('status') === 'approved'])
                 >承認済み</a
             >
         </nav>

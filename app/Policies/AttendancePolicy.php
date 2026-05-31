@@ -29,10 +29,12 @@ class AttendancePolicy
      */
     public function createCorrectionApplication(User $user, Attendance $attendance): bool
     {
-        $hasPendingCorrectionApplication = $attendance->attendanceCorrectionApplications()
-            ->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
-            ->exists();
-
-        return $user->id === $attendance->user_id && ! $hasPendingCorrectionApplication;
+        return $user->is_admin
+            || (
+                $user->id === $attendance->user_id
+                && $attendance->attendanceCorrectionApplications()
+                    ->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
+                    ->doesntExist()
+            );
     }
 }

@@ -23,21 +23,10 @@ class AttendanceCorrectionApplicationFactory extends Factory
 
         return [
             'attendance_id'      => Attendance::factory(),
-            'status'             => fake()->randomElement(AttendanceCorrectionApplicationStatus::cases()),
             'new_clocked_in_at'  => $newClockedInAt,
             'new_clocked_out_at' => fake()->dateTime($newClockedInAt),
             'remarks'            => fake()->realText(),
         ];
-    }
-
-    /**
-     * Indicate that the model's status has to be 'pending'.
-     */
-    public function pending(): static
-    {
-        return $this->state(fn () => [
-            'status' => AttendanceCorrectionApplicationStatus::Pending,
-        ]);
     }
 
     /**

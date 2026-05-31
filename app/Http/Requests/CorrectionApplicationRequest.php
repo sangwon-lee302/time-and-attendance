@@ -6,55 +6,51 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 use Override;
 
-class AttendanceCorrectionApplicationRequest extends FormRequest
+class CorrectionApplicationRequest extends FormRequest
 {
     /**
      * Prepare the data for validation.
+     *
+     * @throws HttpResponseException
      */
     #[Override]
     protected function prepareForValidation(): void
     {
-        $date   = $this->route('attendance')->date->format('Y-m-d');
-        $errors = [];
+        $errors = new MessageBag;
 
         $this->merge([
-            'new_clocked_in_at' => $this->mergeDateAndTime(
-                $date,
+            'new_clocked_in_at' => $this->canonicalizeTime(
                 $this->input('new_clocked_in_at'),
-                'new_clocked_in_at',
-                $errors
+                $errors,
+                'new_clocked_in_at'
             ),
-            'new_clocked_out_at' => $this->mergeDateAndTime(
-                $date,
+            'new_clocked_out_at' => $this->canonicalizeTime(
                 $this->input('new_clocked_out_at'),
-                'new_clocked_in_at',
-                $errors
+                $errors,
+                'new_clocked_out_at'
             ),
             'breaks' => collect($this->input('breaks', []))
-                ->map(function ($break, $index) use ($date, &$errors) {
-                    return [
-                        ...$break,
-                        'new_started_at' => $this->mergeDateAndTime(
-                            $date,
-                            $break['new_started_at'] ?? null,
-                            "breaks.$index.new_started_at",
-                            $errors
-                        ),
-                        'new_ended_at' => $this->mergeDateAndTime(
-                            $date,
-                            $break['new_ended_at'] ?? null,
-                            "breaks.$index.new_ended_at",
-                            $errors
-                        ),
-                    ];
-                })
+                ->map(fn (array $breakData, int $index) => [
+                    ...$breakData,
+                    'new_started_at' => $this->canonicalizeTime(
+                        $breakData['new_started_at'] ?? null,
+                        $errors,
+                        "breaks.$index.new_started_at"
+                    ),
+                    'new_ended_at' => $this->canonicalizeTime(
+                        $breakData['new_ended_at'] ?? null,
+                        $errors,
+                        "breaks.$index.new_ended_at"
+                    ),
+                ])
                 ->all(),
         ]);
 
-        if (! empty($errors)) {
+        if ($errors->any()) {
             throw new HttpResponseException(
                 redirect()->back()->withInput()->withErrors($errors)
             );
@@ -111,8 +107,13 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
     #[Override]
-    public function attributes()
+    public function attributes(): array
     {
         return [
             'new_clocked_in_at'       => '出勤時間',
@@ -123,8 +124,13 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get the error messasges for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
     #[Override]
-    public function messages()
+    public function messages(): array
     {
         return [
             'new_clocked_in_at.before_or_equal'       => '出勤時間もしくは退勤時間が不適切な値です',
@@ -136,21 +142,27 @@ class AttendanceCorrectionApplicationRequest extends FormRequest
     }
 
     /**
-     * Merge the given time with the date to create a datetime string.
+     * Canonicalize the given time into datetime string.
      */
-    private function mergeDateAndTime(string $date, ?string $time, string $field, array &$errors): ?string
-    {
+    private function canonicalizeTime(
+        ?string $time,
+        MessageBag $errors,
+        string $errorKey
+    ): ?string {
         if (blank($time)) {
             return null;
         }
 
         if (! preg_match('/^\d{1,2}:\d{2}$/', $time)) {
-            $errors[$field] = '時刻は「時:分」の形式（例: 9:05, 23:59）で入力してください。';
+            $errors->add($errorKey,
+                '時刻は「時:分」の形式（例: 9:05, 23:59）で入力してください'
+            );
 
             return null;
         }
 
-        return Carbon::createFromFormat('Y-m-d G:i', "$date $time")
-            ->format('Y-m-d H:i:s');
+        return Carbon::createFromFormat('Y-m-d G:i',
+            $this->route('attendance')->date->format('Y-m-d').' '.$time
+        )->format('Y-m-d H:i:s');
     }
 }
