@@ -18,7 +18,7 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the attendances.
      */
-    public function index(Request $request): View
+    public function dailyIndex(Request $request): View
     {
         $date = CarbonImmutable::createFromFormat('Y-m-d',
             $request->query('date', now()->format('Y-m-d'))
