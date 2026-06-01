@@ -7,9 +7,11 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class AttendanceService
@@ -33,13 +35,62 @@ class AttendanceService
                 ])
                     ->with(['breakTimes' => function ($query) {
                         $query->whereNotNull('ended_at')
-                            ->select('attendance_id', 'started_at', 'ended_at');
+                            ->select(
+                                'id',
+                                'attendance_id',
+                                'started_at',
+                                'ended_at',
+                            );
                     }])
                     ->get()
                     ->keyBy(fn (Attendance $attendance) => $attendance->date->day)
                     ->get($date->day),
             ])
             ->all();
+    }
+
+    /**
+     * Export a user's monthly attendance list as a CSV.
+     */
+    public function CSVExport(User $user, Request $request): StreamedResponse
+    {
+        $month = CarbonImmutable::createFromFormat('Y-m',
+            $request->query('month', now()->format('Y-m'))
+        );
+
+        $query = $user->attendances()::whereBetween('date', [
+            $month->startOfMonth()->format('Y-m-d H:i:s'),
+            $month->endOfMonth()->format('Y-m-d H:i:s'),
+        ])
+            ->with(['breakTimes:id,attendance_id,started_at,ended_at']);
+
+        $response = new StreamedResponse(function () use ($query) {
+            $handle = fopen('php://output', 'w');
+
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            fputcsv($handle, ['日付', '出勤', '退勤', '休憩', '合計']);
+
+            foreach ($query->lazy() as $attendance) {
+                fputcsv($handle, [
+                    $attendance->date->isoFormat('MM/DD(ddd)'),
+                    $attendance->clocked_in_at,
+                    $attendance->clocked_out_at ?? '',
+                    $attendance->total_break_time,
+                    $attendance->total_working_time ?? '',
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set(
+            'Content-Disposition',
+            'attachment; filename="attendances.csv"'
+        );
+
+        return $response;
     }
 
     /**

@@ -53,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer([
             'components.layouts.header',
+            'attendances.index',
             'attendances.show',
         ], function ($view) {
             $view->with('isAdmin', Auth::user()?->is_admin ?? false);
