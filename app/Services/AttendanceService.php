@@ -7,8 +7,8 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -33,14 +33,13 @@ class AttendanceService
                     $start->format('Y-m-d H:i:s'),
                     $end->format('Y-m-d H:i:s'),
                 ])
-                    ->with(['breakTimes' => function ($query) {
-                        $query->whereNotNull('ended_at')
-                            ->select(
-                                'id',
-                                'attendance_id',
-                                'started_at',
-                                'ended_at',
-                            );
+                    ->with(['breakTimes' => function (Builder $query) {
+                        $query->whereNotNull('ended_at')->select(
+                            'id',
+                            'attendance_id',
+                            'started_at',
+                            'ended_at',
+                        );
                     }])
                     ->get()
                     ->keyBy(fn (Attendance $attendance) => $attendance->date->day)
@@ -133,11 +132,7 @@ class AttendanceService
                 return true;
             });
         } catch (Throwable $e) {
-            Log::error('勤怠修正エラー: '.$e->getMessage(), [
-                'exception' => $e,
-                'user_id'   => Auth::id(),
-                'input'     => $attributes,
-            ]);
+            Log::error('勤怠修正エラー: '.$e->getMessage(), ['exception' => $e]);
 
             return false;
         }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Attendance;
-use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -39,11 +38,7 @@ class CorrectionApplicationService
                 return true;
             });
         } catch (Throwable $e) {
-            Log::error('勤怠修正申請保存エラー: '.$e->getMessage(), [
-                'exception' => $e,
-                'user_id'   => Auth::id(),
-                'input'     => $attributes,
-            ]);
+            Log::error('勤怠修正申請保存エラー: '.$e->getMessage(), ['exception' => $e]);
 
             return false;
         }
