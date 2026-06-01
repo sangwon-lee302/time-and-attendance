@@ -7,7 +7,6 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,11 +28,12 @@ class AttendanceService
         return collect(CarbonPeriodImmutable::create($start, $end))
             ->map(fn (CarbonImmutable $date) => [
                 'date'       => $date,
-                'attendance' => $user->attendances()->whereBetween('date', [
-                    $start->format('Y-m-d H:i:s'),
-                    $end->format('Y-m-d H:i:s'),
-                ])
-                    ->with(['breakTimes' => function (Builder $query) {
+                'attendance' => $user->attendances()
+                    ->whereBetween('date', [
+                        $start->format('Y-m-d H:i:s'),
+                        $end->format('Y-m-d H:i:s')
+                    ])
+                    ->with(['breakTimes' => function ($query) {
                         $query->whereNotNull('ended_at')->select(
                             'id',
                             'attendance_id',
