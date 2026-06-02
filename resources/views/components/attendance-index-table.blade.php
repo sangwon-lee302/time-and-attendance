@@ -1,6 +1,7 @@
-@use ('Carbon\Carbon')
-
-@props (['displayData'])
+@props ([
+    'displayData',
+    'isAdmin' => false,
+])
 
 <table>
     <thead>
@@ -31,7 +32,9 @@
                 <td>
                     @if ($row['attendance'])
                         <a
-                            href="{{ route('attendances.show', $row['attendance']) }}"
+                            href="{{ $isAdmin
+                                ? route('admin.attendances.show', $row['attendance'])
+                                : route('attendances.show', $row['attendance']) }}"
                             class="text-black hover:underline"
                             >詳細</a
                         >

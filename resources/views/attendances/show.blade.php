@@ -16,20 +16,21 @@
                 />
             @endforeach
         @endunless
-        <div>
-            @if ($pendingApplication)
-                <p class="mt-8 mr-0 ml-auto w-max font-bold text-red-400">*承認待ちのため修正はできません。</p>
-            @else
-                <form
-                    id="attendance-correction-application"
-                    action="{{ $isAdmin ? route('admin.attendances.update', $attendance) : route('attendance-correction-applications.store', $attendance) }}"
-                    method="POST"
-                    class="mt-8 mr-0 ml-auto w-max"
-                >
-                    @csrf
-                    <button class="btn btn-primary px-8">修正</button>
-                </form>
-            @endif
-        </div>
+        @if ($pendingApplication)
+            <p class="mt-8 mr-0 ml-auto w-max font-bold text-red-400">*承認待ちのため修正はできません。</p>
+        @else
+            <form
+                id="attendance-correction-application"
+                action="{{ $isAdmin
+                    ? route('admin.attendances.update', $attendance)
+                    : route('attendance-correction-applications.store', $attendance) }}"
+                method="POST"
+                class="mt-8 mr-0 ml-auto w-max"
+            >
+                @csrf
+                @if ($isAdmin) @method ('PATCH')@endif
+                <button class="btn btn-primary px-8">修正</button>
+            </form>
+        @endif
     </x-layouts.main>
 </x-layouts.app>

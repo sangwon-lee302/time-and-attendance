@@ -1,12 +1,14 @@
 <x-layouts.app>
     <x-layouts.header />
     <x-layouts.main>
-        <h1 class="bd-l-h1">勤怠一覧</h1>
+        <h1 class="bd-l-h1">
+            {{ $isAdmin ? $user->name.'さんの勤怠' : '勤怠一覧' }}
+        </h1>
         <div
             class="my-12 flex justify-between rounded-lg bg-white px-4 py-2 font-semibold text-neutral-500"
         >
             <a
-                href="{{ route('attendances.index', ['month' => $month->subMonth()->format('Y-m')]) }}"
+                href="{{ $linkForPreviousMonth }}"
                 class="flex items-center gap-2"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
@@ -20,16 +22,26 @@
                 </svg>
                 <p class="text-xl font-bold text-black">{{ $month->format('Y/m') }}</p>
             </div>
-            <a
-                href="{{ route('attendances.index', ['month' => $month->addMonth()->format('Y-m')]) }}"
-                class="flex items-center gap-2"
-            >
+            <a href="{{ $linkForNextMonth }}" class="flex items-center gap-2">
                 <p>翌月</p>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
             </a>
         </div>
-        <x-attendance-index-table :display-data="$displayData" />
+        <x-attendance-index-table
+            :display-data="$displayData"
+            :is-admin="$isAdmin"
+        />
+        @if ($isAdmin)
+            <a
+                href="{{ route('admin.export', [
+                    'user' => $user,
+                    'month' => $month->format('Y-m')
+                ]) }}"
+                class="btn btn-primary mt-12 mr-0 ml-auto block w-max px-8"
+                >CSV出力</a
+            >
+        @endif
     </x-layouts.main>
 </x-layouts.app>

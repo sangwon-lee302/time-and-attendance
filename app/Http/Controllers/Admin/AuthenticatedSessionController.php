@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
 
         $this->prepareAuthenticatedSession($request);
 
-        return redirect()->intended(route('admin.attendances.index'));
+        return redirect()->intended(route('admin.attendances.daily-index'));
     }
 
     /**
