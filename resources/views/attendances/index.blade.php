@@ -34,12 +34,14 @@
             :is-admin="$isAdmin"
         />
         @if ($isAdmin)
-            <form
-                action="{{ route('admin.export', ['user' => $user, 'month' => $month]) }}"
-                class="mt-12 mr-0 ml-auto w-max"
+            <a
+                href="{{ route('admin.export', [
+                    'user' => $user,
+                    'month' => $month->format('Y-m')
+                ]) }}"
+                class="btn btn-primary mt-12 mr-0 ml-auto block w-max px-8"
+                >CSV出力</a
             >
-                <button class="btn btn-primary px-8">CSV出力</button>
-            </form>
         @endif
     </x-layouts.main>
 </x-layouts.app>

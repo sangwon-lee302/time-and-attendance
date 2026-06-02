@@ -57,10 +57,11 @@ class AttendanceService
             $request->query('month', now()->format('Y-m'))
         );
 
-        $query = $user->attendances()::whereBetween('date', [
-            $month->startOfMonth()->format('Y-m-d H:i:s'),
-            $month->endOfMonth()->format('Y-m-d H:i:s'),
-        ])
+        $query = $user->attendances()
+            ->whereBetween('date', [
+                $month->startOfMonth()->format('Y-m-d H:i:s'),
+                $month->endOfMonth()->format('Y-m-d H:i:s'),
+            ])
             ->with(['breakTimes:id,attendance_id,started_at,ended_at']);
 
         $response = new StreamedResponse(function () use ($query) {
@@ -75,8 +76,8 @@ class AttendanceService
                     $attendance->date->isoFormat('MM/DD(ddd)'),
                     $attendance->clocked_in_at,
                     $attendance->clocked_out_at ?? '',
-                    $attendance->total_break_time,
-                    $attendance->total_working_time ?? '',
+                    $attendance->total_break_time->format('%h:%I'),
+                    $attendance->total_working_time?->format('%h:%I') ?? '',
                 ]);
             }
 
