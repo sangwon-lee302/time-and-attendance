@@ -31,7 +31,7 @@ class AttendanceService
                 'attendance' => $user->attendances()
                     ->whereBetween('date', [
                         $start->format('Y-m-d H:i:s'),
-                        $end->format('Y-m-d H:i:s')
+                        $end->format('Y-m-d H:i:s'),
                     ])
                     ->with(['breakTimes' => function ($query) {
                         $query->whereNotNull('ended_at')->select(
