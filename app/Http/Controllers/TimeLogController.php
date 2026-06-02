@@ -37,7 +37,11 @@ class TimeLogController extends Controller
      */
     public function clockOut(): RedirectResponse
     {
-        $this->getAttendanceOfToday()->update(['clocked_out_at' => now()]);
+        $attendance = Auth::user()->attendances()->where('date', today())->first();
+
+        if ($attendance) {
+            $attendance->update(['clocked_out_at' => now()]);
+        }
 
         return redirect()->route('time-logs.create');
     }
@@ -47,7 +51,12 @@ class TimeLogController extends Controller
      */
     public function breakStart(): RedirectResponse
     {
-        $this->getAttendanceOfToday()->breakTimes()->create(['started_at' => now()]);
+        $attendance = Auth::user()->attendances()->whereDate('date', today())
+            ->first();
+
+        if ($attendance) {
+            $attendance->breakTimes()->create(['started_at' => now()]);
+        }
 
         return redirect()->route('time-logs.create');
     }
@@ -57,23 +66,14 @@ class TimeLogController extends Controller
      */
     public function breakEnd(): RedirectResponse
     {
-        $this->getAttendanceOfToday()
-            ->breakTimes()
-            ->whereNull('ended_at')
-            ->firstOrFail()
-            ->update(['ended_at' => now()]);
+        $attendance = Auth::user()->attendances()->whereDate('date', today())
+            ->first();
+
+        if ($attendance) {
+            $attendance->breakTimes()->whereNull('ended_at')->first()
+                ?->update(['ended_at' => now()]);
+        }
 
         return redirect()->route('time-logs.create');
-    }
-
-    /**
-     * Get an attendance of today for an authenticated user.
-     */
-    private function getAttendanceOfToday(): Attendance
-    {
-        return Auth::user()
-            ->attendances()
-            ->whereDate('date', today())
-            ->firstOrFail();
     }
 }

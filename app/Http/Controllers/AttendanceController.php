@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\AttendanceCorrectionApplicationStatus;
 use App\Models\Attendance;
-use App\Services\AttendanceService;
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,40 +16,35 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the attendances.
      */
-    public function index(
-        Request $request,
-        AttendanceService $attendanceService
-    ): View {
+    public function index(Request $request): View
+    {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
+        $startOfMonth = $month->startOfMonth();
+        $endOfMonth   = $month->endOfMonth();
 
-        [$linkForPreviousMonth, $linkForNextMonth] = [
-            $this->getMonthlyIndexUrl($month->subMonth()),
-            $this->getMonthlyIndexUrl($month->addMonth()),
-        ];
+        $attendances = Auth::user()->attendances()
+            ->whereBetween('date', [
+                $startOfMonth->format('Y-m-d H:i:s'),
+                $endOfMonth->format('Y-m-d H:i:s'),
+            ])
+            ->with(['breakTimes' => function ($query) {
+                $query->whereNotNull('ended_at')
+                    ->select('attendance_id', 'started_at', 'ended_at');
+            }])
+            ->get()
+            ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
 
-        $displayData = $attendanceService->prepareIndexView(
-            Auth::user(),
-            $month->startOfMonth(),
-            $month->endOfMonth()
-        );
+        $displayData = collect(CarbonPeriod::create($startOfMonth, $endOfMonth))
+            ->map(fn (Carbon $date) => [
+                'date'       => $date,
+                'attendance' => $attendances->get($date->day),
+            ]);
 
         return view('attendances.index', [
-            'month'                => $month,
-            'linkForPreviousMonth' => $linkForPreviousMonth,
-            'linkForNextMonth'     => $linkForNextMonth,
-            'displayData'          => $displayData,
-        ]);
-    }
-
-    /**
-     * Get a link for an attendance index page for the given month.
-     */
-    private function getMonthlyIndexUrl(CarbonImmutable $month): string
-    {
-        return route('attendances.index', [
-            'month' => $month->format('Y-m'),
+            'month'       => $month,
+            'displayData' => $displayData,
         ]);
     }
 
@@ -61,7 +57,7 @@ class AttendanceController extends Controller
             'breakTimes:id,attendance_id,started_at,ended_at',
             'attendanceCorrectionApplications' => function ($query) {
                 $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
-                    ->select('id', 'attendance_id', 'remarks');
+                    ->select('attendance_id', 'remarks');
             },
         ]);
 

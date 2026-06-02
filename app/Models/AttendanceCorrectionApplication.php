@@ -3,24 +3,24 @@
 namespace App\Models;
 
 use App\AttendanceCorrectionApplicationStatus;
-use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Override;
 
 /**
  * @property int $id
  * @property int $attendance_id
  * @property AttendanceCorrectionApplicationStatus $status
- * @property CarbonImmutable $new_clocked_in_at
- * @property CarbonImmutable $new_clocked_out_at
+ * @property Carbon $new_clocked_in_at
+ * @property Carbon $new_clocked_out_at
  * @property string $remarks
- * @property CarbonImmutable|null $created_at
- * @property CarbonImmutable|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * @method static \Database\Factories\AttendanceCorrectionApplicationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newModelQuery()

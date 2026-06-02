@@ -9,9 +9,7 @@
     @auth
         <nav class="flex gap-4 font-bold xl:gap-8">
             @if ($isAdmin)
-                <a href="{{ route('admin.attendances.daily-index') }}"
-                    >勤怠一覧</a
-                >
+                <a href="{{ route('admin.attendances.index') }}">勤怠一覧</a>
                 <a href="{{ route('admin.users.index') }}">スタッフ一覧</a>
                 <x-form :action="route('admin.logout')" method="POST">
                     <button class="cursor-pointer">ログアウト</button>

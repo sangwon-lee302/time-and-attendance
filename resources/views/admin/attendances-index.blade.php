@@ -6,7 +6,7 @@
             class="my-12 flex justify-between rounded-lg bg-white px-4 py-2 font-semibold text-neutral-500"
         >
             <a
-                href="{{ route('admin.attendances.daily-index', ['date' => $date->subDay()->format('Y-m-d')]) }}"
+                href="{{ route('admin.attendances.index', ['date' => $date->subDay()->format('Y-m-d')]) }}"
                 class="flex items-center gap-2"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
@@ -21,7 +21,7 @@
                 <p class="text-xl font-bold text-black">{{ $date->format('Y/m/d') }}</p>
             </div>
             <a
-                href="{{ route('admin.attendances.daily-index', ['date' => $date->addDay()->format('Y-m-d')]) }}"
+                href="{{ route('admin.attendances.index', ['date' => $date->addDay()->format('Y-m-d')]) }}"
                 class="flex items-center gap-2"
             >
                 <p>翌日</p>
