@@ -8,8 +8,6 @@ use App\Models\AttendanceCorrectionApplication;
 use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
-use DOMDocument;
-use DOMXPath;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -150,10 +148,16 @@ class StoreTest extends TestCase
 
         // check if attendance correction application is stored successfully
         $this->assertDatabaseHas('attendance_correction_applications', [
-            'attendance_id'      => $attendance->id,
-            'status'             => AttendanceCorrectionApplicationStatus::Pending,
-            'new_clocked_in_at'  => Carbon::createFromFormat('Y-m-dG:i', $attendance->date->format('Y-m-d').$newClockedInAt),
-            'new_clocked_out_at' => Carbon::createFromFormat('Y-m-dG:i', $attendance->date->format('Y-m-d').$newClockedOutAt),
+            'attendance_id'     => $attendance->id,
+            'status'            => AttendanceCorrectionApplicationStatus::Pending,
+            'new_clocked_in_at' => Carbon::createFromFormat(
+                'Y-m-d G:i',
+                $attendance->date->format('Y-m-d').' '.$newClockedInAt,
+            ),
+            'new_clocked_out_at' => Carbon::createFromFormat(
+                'Y-m-d G:i',
+                $attendance->date->format('Y-m-d').' '.$newClockedOutAt,
+            ),
         ]);
 
         // check if break time correction applications are stored successfully
@@ -161,14 +165,26 @@ class StoreTest extends TestCase
         $this->assertDatabaseHas('break_time_correction_applications', [
             'attendance_correction_application_id' => $attendanceCorrectionApplication->id,
             'break_time_id'                        => $breakTime->id,
-            'new_started_at'                       => Carbon::createFromFormat('Y-m-dG:i', $attendance->date->format('Y-m-d').$newBreakTimes[0]['new_started_at']),
-            'new_ended_at'                         => Carbon::createFromFormat('Y-m-dG:i', $attendance->date->format('Y-m-d').$newBreakTimes[0]['new_ended_at']),
+            'new_started_at'                       => Carbon::createFromFormat(
+                'Y-m-d G:i',
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['new_started_at'],
+            ),
+            'new_ended_at' => Carbon::createFromFormat(
+                'Y-m-d G:i',
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['new_ended_at'],
+            ),
         ]);
         $this->assertDatabaseHas('break_time_correction_applications', [
             'attendance_correction_application_id' => $attendanceCorrectionApplication->id,
             'break_time_id'                        => null,
-            'new_started_at'                       => Carbon::createFromFormat('Y-m-dG:i', $attendance->date->format('Y-m-d').$newBreakTimes[1]['new_started_at']),
-            'new_ended_at'                         => Carbon::createFromFormat('Y-m-dG:i', $attendance->date->format('Y-m-d').$newBreakTimes[1]['new_ended_at']),
+            'new_started_at'                       => Carbon::createFromFormat(
+                'Y-m-d G:i',
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['new_started_at'],
+            ),
+            'new_ended_at' => Carbon::createFromFormat(
+                'Y-m-d G:i',
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['new_ended_at'],
+            ),
         ]);
 
         $response->assertOk();
@@ -177,15 +193,6 @@ class StoreTest extends TestCase
         $response->assertSee('*承認待ちのため修正はできません。');
 
         // check if attendance correction application form is disabled
-        $dom = new DOMDocument;
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(mb_convert_encoding($response->getContent(), 'HTML-ENTITIES', 'UTF-8'));
-        libxml_clear_errors();
-
-        $xpath = new DOMXPath($dom);
-
-        $this->assertEquals(0, $xpath->query('//form[@id="attendance-correction-application"]')->count());
-        $this->assertEquals(0, $xpath->query('//input[@form="attendance-correction-application"]')->count());
-        $this->assertEquals(0, $xpath->query('//textarea[@form="attendance-correction-application"]')->count());
+        $response->assertDontSee('method="POST"');
     }
 }

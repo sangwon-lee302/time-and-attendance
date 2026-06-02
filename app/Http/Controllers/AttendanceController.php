@@ -61,7 +61,7 @@ class AttendanceController extends Controller
             'breakTimes:id,attendance_id,started_at,ended_at',
             'attendanceCorrectionApplications' => function ($query) {
                 $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
-                    ->select('attendance_id', 'remarks');
+                    ->select('id', 'attendance_id', 'remarks');
             },
         ]);
 
