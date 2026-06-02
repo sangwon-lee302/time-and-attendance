@@ -78,7 +78,7 @@ class AttendanceController extends Controller
         User $user,
         CarbonImmutable $month
     ): string {
-        return route('admin.attendaces.monthly-index', [
+        return route('admin.attendances.monthly-index', [
             'user'  => $user,
             'month' => $month->format('Y-m'),
         ]);
