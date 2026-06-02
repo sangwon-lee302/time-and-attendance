@@ -36,8 +36,9 @@
         @if ($isAdmin)
             <form
                 action="{{ route('admin.export', ['user' => $user, 'month' => $month]) }}"
+                class="mt-12 mr-0 ml-auto w-max"
             >
-                <button class="btn btn-primary">CSV出力</button>
+                <button class="btn btn-primary px-8">CSV出力</button>
             </form>
         @endif
     </x-layouts.main>
