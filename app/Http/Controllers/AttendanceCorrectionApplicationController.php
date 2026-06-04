@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use App\Http\Requests\CorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
@@ -19,22 +19,23 @@ class AttendanceCorrectionApplicationController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = AttendanceCorrectionApplication::query();
+        $applications = AttendanceCorrectionApplication::when(
+            $request->query('status') === 'approved',
+            fn ($query) => $query->where('status', ApplicationStatus::Approved),
+            fn ($query) => $query->where('status', ApplicationStatus::Pending),
+        )
+            ->when(! Auth::user()->is_admin, function ($query) {
+                $query->whereHas('attendance', function ($subQuery) {
+                    $subQuery->where('user_id', Auth::id());
+                });
+            })
+            ->with([
+                'attendance:id,date,user_id',
+                'attendance.user:id,name',
+            ])
+            ->get();
 
-        if ($request->query('status') === 'approved') {
-            $query->whereStatus(AttendanceCorrectionApplicationStatus::Approved);
-        } else {
-            $query->whereStatus(AttendanceCorrectionApplicationStatus::Pending);
-        }
-
-        $applications = $query->whereHas('attendance.user', function ($query) {
-            $query->whereId(Auth::id());
-        })->with([
-            'attendance:id,date,user_id',
-            'attendance.user:id,name',
-        ])->get();
-
-        return view('attendance-correction-applications.show', [
+        return view('attendance-correction-applications.index', [
             'applications' => $applications,
         ]);
     }

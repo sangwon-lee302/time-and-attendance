@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -127,8 +127,8 @@ class AttendanceService
                 }
 
                 $attendance->attendanceCorrectionApplications()
-                    ->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
-                    ->update(['status' => AttendanceCorrectionApplicationStatus::Approved]);
+                    ->where('status', ApplicationStatus::Pending)
+                    ->update(['status' => ApplicationStatus::Approved]);
 
                 return true;
             });

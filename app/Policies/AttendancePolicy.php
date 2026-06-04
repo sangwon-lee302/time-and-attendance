@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use App\Models\Attendance;
 use App\Models\User;
 
@@ -33,7 +33,7 @@ class AttendancePolicy
             || (
                 $user->id === $attendance->user_id
                 && $attendance->attendanceCorrectionApplications()
-                    ->whereStatus(AttendanceCorrectionApplicationStatus::Pending)
+                    ->where('status', ApplicationStatus::Pending)
                     ->doesntExist()
             );
     }

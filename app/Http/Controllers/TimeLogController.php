@@ -73,7 +73,7 @@ class TimeLogController extends Controller
     {
         return Auth::user()
             ->attendances()
-            ->whereDate('date', today())
+            ->whereBetween('date', [today()->startOfDay(), today()->endOfDay()])
             ->firstOrFail();
     }
 }

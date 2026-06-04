@@ -2,7 +2,7 @@
 
 namespace App;
 
-enum AttendanceCorrectionApplicationStatus: int
+enum ApplicationStatus: int
 {
     case Pending  = 0;
     case Approved = 1;
@@ -13,8 +13,8 @@ enum AttendanceCorrectionApplicationStatus: int
     public function label(): string
     {
         return match ($this) {
-            AttendanceCorrectionApplicationStatus::Pending  => '承認待ち',
-            AttendanceCorrectionApplicationStatus::Approved => '承認済み',
+            self::Pending  => '承認待ち',
+            self::Approved => '承認済み',
         };
     }
 }

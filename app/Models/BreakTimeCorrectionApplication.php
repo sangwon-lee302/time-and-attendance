@@ -19,13 +19,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereAttendanceCorrectionApplicationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereBreakTimeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereNewEndedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereNewStartedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrectionApplication whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\AttendanceCorrectionApplications;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
 use App\Models\BreakTime;
@@ -149,7 +149,7 @@ class StoreTest extends TestCase
         // check if attendance correction application is stored successfully
         $this->assertDatabaseHas('attendance_correction_applications', [
             'attendance_id'     => $attendance->id,
-            'status'            => AttendanceCorrectionApplicationStatus::Pending,
+            'status'            => ApplicationStatus::Pending,
             'new_clocked_in_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newClockedInAt,

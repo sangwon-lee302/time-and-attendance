@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,7 +15,7 @@ use Override;
 /**
  * @property int $id
  * @property int $attendance_id
- * @property AttendanceCorrectionApplicationStatus $status
+ * @property ApplicationStatus $status
  * @property CarbonImmutable $new_clocked_in_at
  * @property CarbonImmutable $new_clocked_out_at
  * @property string $remarks
@@ -26,14 +26,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereAttendanceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereNewClockedInAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereNewClockedOutAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereRemarks($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication whereUpdatedAt($value)
  *
  * @property-read Attendance $attendance
  * @property-read Collection<int, BreakTimeCorrectionApplication> $breakTimeCorrectionApplications
@@ -55,7 +47,7 @@ class AttendanceCorrectionApplication extends Model
     protected function casts(): array
     {
         return [
-            'status'             => AttendanceCorrectionApplicationStatus::class,
+            'status'             => ApplicationStatus::class,
             'new_clocked_in_at'  => 'datetime',
             'new_clocked_out_at' => 'datetime',
             'created_at'         => 'datetime',

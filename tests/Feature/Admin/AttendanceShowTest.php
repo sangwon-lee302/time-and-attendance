@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
 use App\Models\User;
@@ -64,7 +64,7 @@ class AttendanceShowTest extends TestCase
 
         $this->assertDatabaseHas('attendance_correction_applications', [
             'attendance_id'      => $attendance->id,
-            'status'             => AttendanceCorrectionApplicationStatus::Approved,
+            'status'             => ApplicationStatus::Approved,
             'new_clocked_in_at'  => $attendanceCorrectionApplication->new_clocked_in_at,
             'new_clocked_out_at' => $attendanceCorrectionApplication->new_clocked_out_at,
         ]);
