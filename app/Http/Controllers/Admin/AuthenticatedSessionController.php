@@ -85,7 +85,7 @@ class AuthenticatedSessionController extends Controller
             $this->throwFailedAuthenticationException($request);
         }
 
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->isAdmin) {
             Auth::logout();
 
             $this->throwFailedAuthenticationException($request);

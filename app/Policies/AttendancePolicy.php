@@ -21,7 +21,7 @@ class AttendancePolicy
      */
     public function view(User $user, Attendance $attendance): bool
     {
-        return $user->is_admin || $user->id === $attendance->user_id;
+        return $user->isAdmin || $user->id === $attendance->user_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class AttendancePolicy
      */
     public function createCorrectionApplication(User $user, Attendance $attendance): bool
     {
-        return $user->is_admin
+        return $user->isAdmin
             || (
                 $user->id === $attendance->user_id
                 && $attendance->attendanceCorrectionApplications()

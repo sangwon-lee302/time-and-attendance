@@ -20,15 +20,16 @@ class AttendanceCorrectionApplicationController extends Controller
     public function index(Request $request): View
     {
         $applications = AttendanceCorrectionApplication::when(
-            $request->query('status') === 'approved',
-            fn ($query) => $query->where('status', ApplicationStatus::Approved),
-            fn ($query) => $query->where('status', ApplicationStatus::Pending),
+            ! Auth::user()->isAdmin,
+            fn ($query) => $query->whereHas(
+                'attendance',
+                fn ($subQuery) => $subQuery->where('user_id', Auth::id()),
+            ),
         )
-            ->when(! Auth::user()->is_admin, function ($query) {
-                $query->whereHas('attendance', function ($subQuery) {
-                    $subQuery->where('user_id', Auth::id());
-                });
-            })
+            ->when($request->query('status') === 'approved',
+                fn ($query) => $query->where('status', ApplicationStatus::Approved),
+                fn ($query) => $query->where('status', ApplicationStatus::Pending),
+            )
             ->with([
                 'attendance:id,date,user_id',
                 'attendance.user:id,name',
