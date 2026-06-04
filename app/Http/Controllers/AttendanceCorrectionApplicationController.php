@@ -34,7 +34,7 @@ class AttendanceCorrectionApplicationController extends Controller
             'attendance.user:id,name',
         ])->get();
 
-        return view('attendance-correction-applications.show', [
+        return view('attendance-correction-applications.index', [
             'applications' => $applications,
         ]);
     }
