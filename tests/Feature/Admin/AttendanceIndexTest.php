@@ -25,7 +25,6 @@ class AttendanceIndexTest extends TestCase
 
         $request->assertOk();
         $request->assertSee(now()->isoFormat('LL').'の勤怠');
-        // dump($request->getContent());
         // check if links for yesterday and tomorrow exists
         $request->assertSee('date='.now()->subDay()->format('Y-m-d'));
         $request->assertSee('date='.now()->addDay()->format('Y-m-d'));

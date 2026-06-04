@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
             'attendances.index',
             'attendances.show',
         ], function ($view) {
-            $view->with('isAdmin', Auth::user()?->isAdmin ?? false);
+            $view->with('isAdmin', Auth::user()?->is_admin ?? false);
         });
     }
 }

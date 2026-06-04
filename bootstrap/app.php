@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $middleware->redirectUsersTo(function () {
-            if (Auth::user()->isAdmin) {
+            if (Auth::user()->is_admin) {
                 return route('admin.attendances.daily-index');
             }
 

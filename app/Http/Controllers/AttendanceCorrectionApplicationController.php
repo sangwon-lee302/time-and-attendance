@@ -20,7 +20,7 @@ class AttendanceCorrectionApplicationController extends Controller
     public function index(Request $request): View
     {
         $applications = AttendanceCorrectionApplication::when(
-            ! Auth::user()->isAdmin,
+            ! Auth::user()->is_admin,
             fn ($query) => $query->whereHas(
                 'attendance',
                 fn ($subQuery) => $subQuery->where('user_id', Auth::id()),
