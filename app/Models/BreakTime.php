@@ -20,12 +20,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereAttendanceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereEndedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereStartedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTime whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

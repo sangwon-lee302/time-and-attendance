@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -35,7 +35,7 @@ class AttendanceCorrectionApplicationFactory extends Factory
     public function approved(): static
     {
         return $this->state(fn () => [
-            'status' => AttendanceCorrectionApplicationStatus::Approved,
+            'status' => ApplicationStatus::Approved,
         ]);
     }
 }

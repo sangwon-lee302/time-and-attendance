@@ -1,6 +1,6 @@
 <?php
 
-use App\AttendanceCorrectionApplicationStatus;
+use App\ApplicationStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->unsignedTinyInteger('status')
-                ->default(AttendanceCorrectionApplicationStatus::Pending->value);
+                ->default(ApplicationStatus::Pending->value);
             $table->dateTime('new_clocked_in_at');
             $table->dateTime('new_clocked_out_at');
             $table->text('remarks');

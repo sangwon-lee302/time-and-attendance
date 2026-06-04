@@ -25,13 +25,16 @@ class AttendanceController extends Controller
             $request->query('date', now()->format('Y-m-d'))
         );
 
-        $attendances = Attendance::with([
-            'user:id,name',
-            'breakTimes' => function ($query) {
-                $query->whereNotNull('ended_at')
-                    ->select('id', 'attendance_id', 'started_at', 'ended_at');
-            },
-        ])->whereDate('date', $date->format('Y-m-d'))->get();
+        $attendances = Attendance::whereBetween('date', [
+            $date->startOfDay(),
+            $date->endOfDay(),
+        ])
+            ->with([
+                'user:id,name',
+                'breakTimes' => fn ($query) => $query->whereNotNull('ended_at')
+                    ->select('id', 'attendance_id', 'started_at', 'ended_at'),
+            ])
+            ->get();
 
         return view('admin.attendances-index', [
             'date'        => $date,

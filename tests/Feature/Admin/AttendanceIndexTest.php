@@ -69,7 +69,10 @@ class AttendanceIndexTest extends TestCase
 
         $this->assertStringContainsString("\xEF\xBB\xBF", $csvContent);
         $this->assertStringContainsString('日付,出勤,退勤,休憩,合計', $csvContent);
-        $attendances = Attendance::whereDate('date', today())
+        $attendances = Attendance::whereBetween('date', [
+            today()->startOfDay(),
+            today()->endOfDay(),
+        ])
             ->with('breakTimes', fn ($query) => $query->whereNotNull('ended_at')
                 ->select('id', 'attendance_id', 'started_at', 'ended_at')
             )

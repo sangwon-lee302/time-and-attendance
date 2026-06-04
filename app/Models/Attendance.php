@@ -26,13 +26,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereClockedInAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereClockedOutAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUserId($value)
  *
  * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
