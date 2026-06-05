@@ -13,6 +13,10 @@
                     >勤怠一覧</a
                 >
                 <a href="{{ route('admin.users.index') }}">スタッフ一覧</a>
+                <a
+                    href="{{ route('attendance-correction-applications.index') }}"
+                    >申請一覧</a
+                >
                 <x-form :action="route('admin.logout')" method="POST">
                     <button class="cursor-pointer">ログアウト</button>
                 </x-form>
