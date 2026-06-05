@@ -12,7 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AttendanceCorrectionApplicationController extends Controller
+class CorrectionApplicationController extends Controller
 {
     /**
      * Shows an index page for the attendance correction application.

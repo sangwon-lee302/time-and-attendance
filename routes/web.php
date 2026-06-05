@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
+use App\Http\Controllers\Admin\CorrectionApplicationController as AdminCorrectionApplicationController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AttendanceCorrectionApplicationController;
+use App\Http\Controllers\CorrectionApplicationController;
 use App\Http\Controllers\TimeLogController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,12 +30,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get(
         'stamp_correction_request/list',
-        [AttendanceCorrectionApplicationController::class, 'index']
+        [CorrectionApplicationController::class, 'index']
     )
         ->name('attendance-correction-applications.index');
     Route::post(
         'attendance-correction-application/{attendance}',
-        [AttendanceCorrectionApplicationController::class, 'store']
+        [CorrectionApplicationController::class, 'store']
     )
         ->name('attendance-correction-applications.store');
 });
