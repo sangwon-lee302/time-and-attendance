@@ -25,25 +25,18 @@ class AttendanceService
         CarbonImmutable $start,
         CarbonImmutable $end
     ): array {
+        $attendances = $user->attendances()
+            ->whereBetween('date', [$start, $end])
+            ->with(['breakTimes' => fn ($query) => $query->whereNotNull('ended_at')
+                ->select('id', 'attendance_id', 'started_at', 'ended_at')
+            ])
+            ->get()
+            ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
+
         return collect(CarbonPeriodImmutable::create($start, $end))
             ->map(fn (CarbonImmutable $date) => [
                 'date'       => $date,
-                'attendance' => $user->attendances()
-                    ->whereBetween('date', [
-                        $start->format('Y-m-d H:i:s'),
-                        $end->format('Y-m-d H:i:s'),
-                    ])
-                    ->with(['breakTimes' => function ($query) {
-                        $query->whereNotNull('ended_at')->select(
-                            'id',
-                            'attendance_id',
-                            'started_at',
-                            'ended_at',
-                        );
-                    }])
-                    ->get()
-                    ->keyBy(fn (Attendance $attendance) => $attendance->date->day)
-                    ->get($date->day),
+                'attendance' => $attendances->get($date->day),
             ])
             ->all();
     }
@@ -57,21 +50,19 @@ class AttendanceService
             $request->query('month', now()->format('Y-m'))
         );
 
-        $query = $user->attendances()
-            ->whereBetween('date', [
-                $month->startOfMonth()->format('Y-m-d H:i:s'),
-                $month->endOfMonth()->format('Y-m-d H:i:s'),
-            ])
-            ->with(['breakTimes:id,attendance_id,started_at,ended_at']);
+        $attendances = $user->attendances()
+            ->whereBetween('date', [$month->startOfMonth(), $month->endOfMonth()])
+            ->with(['breakTimes:id,attendance_id,started_at,ended_at'])
+            ->lazy();
 
-        $response = new StreamedResponse(function () use ($query) {
+        $response = new StreamedResponse(function () use ($attendances) {
             $handle = fopen('php://output', 'w');
 
             fwrite($handle, "\xEF\xBB\xBF");
 
             fputcsv($handle, ['日付', '出勤', '退勤', '休憩', '合計']);
 
-            foreach ($query->lazy() as $attendance) {
+            foreach ($attendances as $attendance) {
                 fputcsv($handle, [
                     $attendance->date->isoFormat('MM/DD(ddd)'),
                     $attendance->clocked_in_at,
@@ -103,11 +94,13 @@ class AttendanceService
     ): bool {
         try {
             return DB::transaction(function () use ($attributes, $attendance) {
+                // update the attendance resource
                 $attendance->update([
                     'clocked_in_at'  => $attributes['new_clocked_in_at'],
                     'clocked_out_at' => $attributes['new_clocked_out_at'],
                 ]);
 
+                // update or create corresponding break time resources
                 $breaks = $attendance->breakTimes()->get()->keyBy('id');
 
                 foreach ($attributes['breaks'] as $breakData) {
@@ -126,6 +119,7 @@ class AttendanceService
                     ]);
                 }
 
+                // set the status of the attendance correction application to 'approved'
                 $attendance->attendanceCorrectionApplications()
                     ->where('status', ApplicationStatus::Pending)
                     ->update(['status' => ApplicationStatus::Approved]);
