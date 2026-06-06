@@ -107,11 +107,11 @@ class Attendance extends Model
             return '退勤済';
         }
 
-        $isBreakOngoing = $attendance->breakTimes()
+        return $attendance->breakTimes()
             ->whereNull('ended_at')
-            ->exists();
-
-        return $isBreakOngoing ? '休憩中' : '出勤中';
+            ->exists()
+                ? '休憩中'
+                : '出勤中';
     }
 
     /**
@@ -123,9 +123,9 @@ class Attendance extends Model
     {
         return Attribute::make(
             get: fn () => CarbonInterval::seconds($this->breakTimes
-                ->filter(fn (BreakTime $break) => $break->ended_at !== null)
-                ->sum(fn (BreakTime $break) => $break->started_at
-                    ->diffInSeconds($break->ended_at)
+                ->filter(fn (BreakTime $breakTime) => $breakTime->ended_at !== null)
+                ->sum(fn (BreakTime $breakTime) => $breakTime->started_at
+                    ->diffInSeconds($breakTime->ended_at)
                 )
             )->cascade()
         );
@@ -134,7 +134,7 @@ class Attendance extends Model
     /**
      * Get the total working time for the attendance.
      *
-     * @return Attribute<CarbonInterval, never>
+     * @return Attribute<CarbonInterval|null, never>
      */
     protected function totalWorkingTime(): Attribute
     {
