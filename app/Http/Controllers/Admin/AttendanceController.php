@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\ApprovalStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStampCorrectionRequest;
 use App\Models\Attendance;
@@ -82,6 +83,27 @@ class AttendanceController extends Controller
         return route('admin.attendances.monthly-index', [
             'user'  => $user,
             'month' => $month->format('Y-m'),
+        ]);
+    }
+
+    /**
+     * Display the specified attendance.
+     */
+    public function show(Attendance $attendance): View
+    {
+        $attendance->load([
+            'breakTimes:id,attendance_id,started_at,ended_at',
+            'attendanceCorrections' => function ($query) {
+                $query->where('status', ApprovalStatus::Pending)
+                    ->select('id', 'attendance_id', 'remarks');
+            },
+        ]);
+
+        $pendingStampCorrection = $attendance->attendanceCorrections->first();
+
+        return view('attendances.show', [
+            'attendance'             => $attendance,
+            'pendingStampCorrection' => $pendingStampCorrection,
         ]);
     }
 

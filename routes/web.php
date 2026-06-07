@@ -49,7 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout');
 
     Route::controller(AdminAttendanceController::class)
         ->prefix('attendance')
@@ -57,12 +58,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         ->group(function () {
             Route::get('list', 'dailyIndex')->name('daily-index');
             Route::get('staff/{user}', 'monthlyIndex')->name('monthly-index');
+            Route::get('{attendance}', 'show')->can('view', 'attendance')->name('show');
             Route::patch('{attendance}', 'update')->name('update');
             Route::get('{user}/export', 'export')->name('export');
         });
-
-    Route::get('attendance/{attendance}', [AttendanceController::class, 'show'])
-        ->name('attendances.show');
 
     Route::get('staff/list', [UserController::class, 'index'])->name('users.index');
 
