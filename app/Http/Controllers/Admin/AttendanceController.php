@@ -87,27 +87,6 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Display the specified attendance.
-     */
-    public function show(Attendance $attendance): View
-    {
-        $attendance->load([
-            'breakTimes:id,attendance_id,started_at,ended_at',
-            'attendanceCorrections' => function ($query) {
-                $query->where('status', ApprovalStatus::Pending)
-                    ->select('id', 'attendance_id', 'remarks');
-            },
-        ]);
-
-        $pendingStampCorrection = $attendance->attendanceCorrections->first();
-
-        return view('attendances.show', [
-            'attendance'             => $attendance,
-            'pendingStampCorrection' => $pendingStampCorrection,
-        ]);
-    }
-
-    /**
      * Update the specified attendance and its corresponding breaks.
      */
     public function update(
