@@ -2,7 +2,7 @@
     <x-layouts.header />
     <x-layouts.main>
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
-        <x-attendance-detail-table
+        <x-stamp-detail-table
             :attendance="$attendance"
             :pending-stamp-correction="$pendingStampCorrection"
         />

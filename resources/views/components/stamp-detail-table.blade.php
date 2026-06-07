@@ -1,4 +1,4 @@
-@props (['attendance'])
+@props (['attendance', 'pendingStampCorrection'])
 
 <table>
     <tbody>
@@ -20,8 +20,7 @@
             <th class="text-left">出勤・退勤</th>
             <td class="text-black">
                 <x-conditional-field
-                    :attendance="$attendance"
-                    :pending-stamp-correction="$pendingStampCorrection"
+                    :input-field-enabled="$pendingStampCorrection === null"
                     :text="$attendance->clocked_in_at->format('H:i')"
                     input-name="new_clocked_in_at"
                 />
@@ -29,8 +28,7 @@
             <td class="text-black">～</td>
             <td class="text-black">
                 <x-conditional-field
-                    :attendance="$attendance"
-                    :pending-stamp-correction="$pendingStampCorrection"
+                    :input-field-enabled="$pendingStampCorrection === null"
                     :text="$attendance->clocked_out_at?->format('H:i')"
                     input-name="new_clocked_out_at"
                 />
@@ -43,8 +41,7 @@
                 </th>
                 <td class="text-black">
                     <x-conditional-field
-                        :attendance="$attendance"
-                        :pending-stamp-correction="$pendingStampCorrection"
+                        :input-field-enabled="$pendingStampCorrection === null"
                         :text="$breakTime->started_at->format('H:i')"
                         input-name="breaks[{{ $loop->index }}][new_started_at]"
                         field="breaks.{{ $loop->index }}.new_started_at"
@@ -53,8 +50,7 @@
                 <td class="text-black">～</td>
                 <td class="text-black">
                     <x-conditional-field
-                        :attendance="$attendance"
-                        :pending-stamp-correction="$pendingStampCorrection"
+                        :input-field-enabled="$pendingStampCorrection === null"
                         :text="$breakTime->ended_at->format('H:i')"
                         input-name="breaks[{{ $loop->index }}][new_ended_at]"
                         field="breaks.{{ $loop->index }}.new_ended_at"
@@ -69,8 +65,7 @@
                 </th>
                 <td class="text-black">
                     <x-conditional-field
-                        :attendance="$attendance"
-                        :pending-stamp-correction="$pendingStampCorrection"
+                        :input-field-enabled="$pendingStampCorrection === null"
                         input-name="breaks[{{ count($attendance->breakTimes) }}][new_started_at]"
                         field="breaks.{{ count($attendance->breakTimes) }}.new_started_at"
                     />
@@ -78,8 +73,7 @@
                 <td class="text-black">～</td>
                 <td class="text-black">
                     <x-conditional-field
-                        :attendance="$attendance"
-                        :pending-stamp-correction="$pendingStampCorrection"
+                        :input-field-enabled="$pendingStampCorrection === null"
                         input-name="breaks[{{ count($attendance->breakTimes) }}][new_ended_at]"
                         field="breaks.{{ count($attendance->breakTimes) }}.new_ended_at"
                     />
@@ -93,10 +87,9 @@
                 @unless ($pendingStampCorrection) colspan="3"@endunless
             >
                 <x-conditional-field
-                    :attendance="$attendance"
-                    :pending-stamp-correction="$pendingStampCorrection"
+                    :input-field-enabled="$pendingStampCorrection === null"
                     :text="$pendingStampCorrection?->remarks"
-                    :use-text-area="true"
+                    :enable-text-area="true"
                     input-name="remarks"
                     class="text-black"
                 />

@@ -1,18 +1,17 @@
 @props ([
-    'attendance',
-    'pendingStampCorrection',
+    'inputFieldEnabled' => true,
     'text' => '',
-    'useTextArea' => false,
+    'textAreaEnabled' => false,
     'inputType' => 'text',
     'inputName',
     'field' => $inputName,
 ])
 
-@if ($pendingStampCorrection)
+@if (! $inputFieldEnabled)
     <p class="whitespace-pre-wrap">{{ $text }}</p>
 @else
     <div class="flex flex-col gap-1">
-        @if ($useTextArea)
+        @if ($textAreaEnabled)
             <textarea
                 name="{{ $inputName }}"
                 form="stamp-correction"
