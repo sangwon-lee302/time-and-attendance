@@ -7,25 +7,24 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class StampCorrectionApplicationService
+class StampCorrectionService
 {
     /**
-     * Store a new attendance correction application resource and its
-     * corresponding break correction application resources.
+     * Store a new stamp correction.
      */
-    public function storeCorrectionApplication(
+    public function storeStampCorrection(
         array $attributes,
         Attendance $attendance
     ): bool {
         try {
             return DB::transaction(function () use ($attributes, $attendance) {
-                $attendance->attendanceCorrectionApplications()
+                $attendance->attendanceCorrections()
                     ->create([
                         'new_clocked_in_at'  => $attributes['new_clocked_in_at'],
                         'new_clocked_out_at' => $attributes['new_clocked_out_at'],
                         'remarks'            => $attributes['remarks'],
                     ])
-                    ->breakTimeCorrectionApplications()
+                    ->breakTimeCorrections()
                     ->createMany(collect($attributes['breaks'] ?? [])
                         ->map(fn (array $breakData) => [
                             'break_time_id'  => $breakData['break_time_id'] ?? null,

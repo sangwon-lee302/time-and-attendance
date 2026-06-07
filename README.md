@@ -22,9 +22,9 @@ config:
 erDiagram
     users ||..o{ attendances: "have"
     attendances ||..o{ break_times: "contain"
-    attendances ||..o{ attnd-corrections: "have"
+    attendances ||..o{ attnd-crr: "have"
     attnd-corrections ||..o{ break-corrections: "contain"
-    break_times |o..o{ break-corrections: "have"
+    break_times |o..o{ break-crr: "have"
 
     users {
         unsignedBigInt id PK
@@ -56,7 +56,7 @@ erDiagram
         datetime updated_at "nullable"
     }
 
-    attnd-corrections["attendance_correction_applications"] {
+    attnd-crr["attendance_corrections"] {
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK
         unsignedTinyInt status "0:pending 1:approved / default 0"
@@ -66,9 +66,9 @@ erDiagram
         datetime updated_at "nullable"
     }
 
-    break-corrections["break_time_correction_applications"] {
+    break-crr["break_time_corrections"] {
         unsignedBigInt id PK
-        unsignedBigInt attendance_correction_application_id FK
+        unsignedBigInt attendance_correction_id FK
         unsignedBigInt break_time_id FK "nullable"
         datetime new_started_at
         datetime new_ended_at

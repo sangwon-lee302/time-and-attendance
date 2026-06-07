@@ -4,26 +4,26 @@
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
         <x-attendance-detail-table
             :attendance="$attendance"
-            :pending-application="$pendingApplication"
+            :pending-stamp-correction="$pendingStampCorrection"
         />
-        @unless ($pendingApplication)
+        @unless ($pendingStampCorrection)
             @foreach ($attendance->breakTimes as $breakTime)
                 <input
-                    form="attendance-correction-application"
+                    form="stamp-correction"
                     type="hidden"
                     value="{{ $breakTime->id }}"
                     name="breaks[{{ $loop->index }}][break_time_id]"
                 />
             @endforeach
         @endunless
-        @if ($pendingApplication)
+        @if ($pendingStampCorrection)
             <p class="mt-8 mr-0 ml-auto w-max font-bold text-red-400">*承認待ちのため修正はできません。</p>
         @else
             <form
-                id="attendance-correction-application"
+                id="stamp-correction"
                 action="{{ $isAdmin
                     ? route('admin.attendances.update', $attendance)
-                    : route('attendance-correction-applications.store', $attendance) }}"
+                    : route('attendance-corrections.store', $attendance) }}"
                 method="POST"
                 class="mt-8 mr-0 ml-auto w-max"
             >

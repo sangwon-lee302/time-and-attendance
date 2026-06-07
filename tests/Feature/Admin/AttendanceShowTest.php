@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin;
 
-use App\ApplicationStatus;
+use App\ApprovalStatus;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrectionApplication;
+use App\Models\AttendanceCorrection;
 use App\Models\User;
 use DateTime;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,7 +40,7 @@ class AttendanceShowTest extends TestCase
 
         $attendance = Attendance::factory()->recycle($user)->today()->create();
 
-        $attendanceCorrectionApplication = AttendanceCorrectionApplication::factory()
+        $attendanceCorrection = AttendanceCorrection::factory()
             ->recycle($user)
             ->create([
                 'new_clocked_in_at'  => new DateTime('09:00'),
@@ -53,26 +53,26 @@ class AttendanceShowTest extends TestCase
         $response = $this->actingAs($adminUser)
             ->patch(route('admin.attendances.update', [
                 'attendance'        => $attendance,
-                'new_clocked_in_at' => $attendanceCorrectionApplication->new_clocked_in_at
+                'new_clocked_in_at' => $attendanceCorrection->new_clocked_in_at
                     ->format('H:i'),
-                'new_clocked_out_at' => $attendanceCorrectionApplication->new_clocked_out_at
+                'new_clocked_out_at' => $attendanceCorrection->new_clocked_out_at
                     ->format('H:i'),
-                'remarks' => $attendanceCorrectionApplication->remarks,
+                'remarks' => $attendanceCorrection->remarks,
             ]));
 
         $response->assertRedirect('admin/attendance/'.$attendance->id);
 
-        $this->assertDatabaseHas('attendance_correction_applications', [
+        $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id'      => $attendance->id,
-            'status'             => ApplicationStatus::Approved,
-            'new_clocked_in_at'  => $attendanceCorrectionApplication->new_clocked_in_at,
-            'new_clocked_out_at' => $attendanceCorrectionApplication->new_clocked_out_at,
+            'status'             => ApprovalStatus::Approved,
+            'new_clocked_in_at'  => $attendanceCorrection->new_clocked_in_at,
+            'new_clocked_out_at' => $attendanceCorrection->new_clocked_out_at,
         ]);
 
         $this->assertDatabaseHas('attendances', [
             'user_id'        => $user->id,
-            'clocked_in_at'  => $attendanceCorrectionApplication->new_clocked_in_at,
-            'clocked_out_at' => $attendanceCorrectionApplication->new_clocked_out_at,
+            'clocked_in_at'  => $attendanceCorrection->new_clocked_in_at,
+            'clocked_out_at' => $attendanceCorrection->new_clocked_out_at,
         ]);
     }
 }

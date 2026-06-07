@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\ApplicationStatus;
-use App\Http\Requests\CorrectionApplicationRequest;
+use App\ApprovalStatus;
+use App\Http\Requests\StoreStampCorrectionRequest;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrectionApplication;
-use App\Services\StampCorrectionApplicationService;
+use App\Models\AttendanceCorrection;
+use App\Services\StampCorrectionService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class StampCorrectionApplicationController extends Controller
+class StampCorrectionController extends Controller
 {
     /**
-     * Shows an index page for the attendance correction application.
+     * Display a listing of stamp corrections.
      */
     public function index(Request $request): View
     {
-        $applications = AttendanceCorrectionApplication::when(
+        $attendanceCorrections = AttendanceCorrection::when(
             ! Auth::user()->is_admin,
             fn ($query) => $query->whereHas(
                 'attendance',
@@ -27,8 +27,8 @@ class StampCorrectionApplicationController extends Controller
             ),
         )
             ->when($request->query('status') === 'approved',
-                fn ($query) => $query->where('status', ApplicationStatus::Approved),
-                fn ($query) => $query->where('status', ApplicationStatus::Pending),
+                fn ($query) => $query->where('status', ApprovalStatus::Approved),
+                fn ($query) => $query->where('status', ApprovalStatus::Pending),
             )
             ->with([
                 'attendance:id,date,user_id',
@@ -36,20 +36,20 @@ class StampCorrectionApplicationController extends Controller
             ])
             ->get();
 
-        return view('attendance-correction-applications.index', [
-            'applications' => $applications,
+        return view('attendance-corrections.index', [
+            'attendanceCorrections' => $attendanceCorrections,
         ]);
     }
 
     /**
-     * Store a newly created attendance correction application in storage.
+     * Store a newly created stamp correction in storage.
      */
     public function store(
-        CorrectionApplicationRequest $request,
+        StoreStampCorrectionRequest $request,
         Attendance $attendance,
-        StampCorrectionApplicationService $stampCorrectionApplicationService
+        StampCorrectionService $stampCorrectionService
     ): RedirectResponse {
-        $stampCorrectionApplicationService->storeCorrectionApplication(
+        $stampCorrectionService->storeStampCorrection(
             $request->validated(), $attendance
         );
 

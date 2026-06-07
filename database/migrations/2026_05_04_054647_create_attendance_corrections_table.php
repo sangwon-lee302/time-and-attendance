@@ -1,6 +1,6 @@
 <?php
 
-use App\ApplicationStatus;
+use App\ApprovalStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,13 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendance_correction_applications', function (Blueprint $table) {
+        Schema::create('attendance_corrections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->unsignedTinyInteger('status')
-                ->default(ApplicationStatus::Pending->value);
+                ->default(ApprovalStatus::Pending->value);
             $table->dateTime('new_clocked_in_at');
             $table->dateTime('new_clocked_out_at');
             $table->text('remarks');
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_correction_applications');
+        Schema::dropIfExists('attendance_corrections');
     }
 };

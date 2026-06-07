@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Feature\AttendanceCorrectionApplications;
+namespace Tests\Feature\AttendanceCorrections;
 
-use App\ApplicationStatus;
+use App\ApprovalStatus;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrectionApplication;
+use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
@@ -15,7 +15,7 @@ class StoreTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_cannot_make_attendance_correction_application_with_invalid_clock_in_and_out_time(): void
+    public function test_user_cannot_make_stamp_correction_with_invalid_clock_in_and_out_time(): void
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
@@ -23,7 +23,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-correction-applications.store', [
+        $response = $this->post(route('attendance-corrections.store', [
             'attendance'         => $attendance,
             'new_clocked_in_at'  => '9:01',
             'new_clocked_out_at' => '9:00',
@@ -35,7 +35,7 @@ class StoreTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_make_attendance_correction_application_with_too_early_break_start_time(): void
+    public function test_user_cannot_make_stamp_correction_with_too_early_break_start_time(): void
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
@@ -43,7 +43,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-correction-applications.store', [
+        $response = $this->post(route('attendance-corrections.store', [
             'attendance'                => $attendance,
             'new_clocked_in_at'         => '9:00',
             'new_clocked_out_at'        => '10:00',
@@ -56,7 +56,7 @@ class StoreTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_make_attendance_correction_application_with_too_late_break_start_time(): void
+    public function test_user_cannot_make_stamp_correction_with_too_late_break_start_time(): void
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
@@ -64,7 +64,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-correction-applications.store', [
+        $response = $this->post(route('attendance-corrections.store', [
             'attendance'                => $attendance,
             'new_clocked_in_at'         => '9:00',
             'new_clocked_out_at'        => '10:00',
@@ -77,7 +77,7 @@ class StoreTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_make_attendance_correction_application_with_too_late_break_end_time(): void
+    public function test_user_cannot_make_stamp_correction_with_too_late_break_end_time(): void
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
@@ -85,7 +85,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-correction-applications.store', [
+        $response = $this->post(route('attendance-corrections.store', [
             'attendance'              => $attendance,
             'new_clocked_in_at'       => '9:00',
             'new_clocked_out_at'      => '10:00',
@@ -98,7 +98,7 @@ class StoreTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_make_attendance_correction_application_with_empty_remarks(): void
+    public function test_user_cannot_make_stamp_correction_with_empty_remarks(): void
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
@@ -106,7 +106,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-correction-applications.store', [
+        $response = $this->post(route('attendance-corrections.store', [
             'attendance' => $attendance,
             'remarks'    => '',
         ]));
@@ -117,7 +117,7 @@ class StoreTest extends TestCase
         ]);
     }
 
-    public function test_user_can_make_attendance_correction_application_with_valid_input(): void
+    public function test_user_can_make_stamp_correction_with_valid_input(): void
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
@@ -134,7 +134,7 @@ class StoreTest extends TestCase
 
         $response = $this->followingRedirects()
             ->actingAs($user)
-            ->post(route('attendance-correction-applications.store', [
+            ->post(route('attendance-corrections.store', [
                 'attendance'                => $attendance,
                 'new_clocked_in_at'         => $newClockedInAt,
                 'new_clocked_out_at'        => $newClockedOutAt,
@@ -146,10 +146,10 @@ class StoreTest extends TestCase
                 'remarks'                   => '空白ではない備考',
             ]));
 
-        // check if attendance correction application is stored successfully
-        $this->assertDatabaseHas('attendance_correction_applications', [
+        // check if attendance correction is stored successfully
+        $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id'     => $attendance->id,
-            'status'            => ApplicationStatus::Pending,
+            'status'            => ApprovalStatus::Pending,
             'new_clocked_in_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newClockedInAt,
@@ -160,12 +160,12 @@ class StoreTest extends TestCase
             ),
         ]);
 
-        // check if break time correction applications are stored successfully
-        $attendanceCorrectionApplication = AttendanceCorrectionApplication::first();
-        $this->assertDatabaseHas('break_time_correction_applications', [
-            'attendance_correction_application_id' => $attendanceCorrectionApplication->id,
-            'break_time_id'                        => $breakTime->id,
-            'new_started_at'                       => Carbon::createFromFormat(
+        // check if break time corrections are stored successfully
+        $attendanceCorrection = AttendanceCorrection::first();
+        $this->assertDatabaseHas('break_time_corrections', [
+            'attendance_correction_id' => $attendanceCorrection->id,
+            'break_time_id'            => $breakTime->id,
+            'new_started_at'           => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['new_started_at'],
             ),
@@ -174,10 +174,10 @@ class StoreTest extends TestCase
                 $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['new_ended_at'],
             ),
         ]);
-        $this->assertDatabaseHas('break_time_correction_applications', [
-            'attendance_correction_application_id' => $attendanceCorrectionApplication->id,
-            'break_time_id'                        => null,
-            'new_started_at'                       => Carbon::createFromFormat(
+        $this->assertDatabaseHas('break_time_corrections', [
+            'attendance_correction_id' => $attendanceCorrection->id,
+            'break_time_id'            => null,
+            'new_started_at'           => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['new_started_at'],
             ),
@@ -192,7 +192,7 @@ class StoreTest extends TestCase
         $response->assertViewIs('attendances.show');
         $response->assertSee('*承認待ちのため修正はできません。');
 
-        // check if attendance correction application form is disabled
+        // check if stamp correction form is disabled
         $response->assertDontSee('method="POST"');
     }
 }

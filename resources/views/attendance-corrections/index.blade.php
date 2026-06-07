@@ -4,12 +4,12 @@
         <h1 class="bd-l-h1 mb-8">申請一覧</h1>
         <nav class="mb-8 flex gap-12 border-b px-12 py-4 lg:gap-24 lg:px-24">
             <a
-                href="{{ route('attendance-correction-applications.index', ['status' => 'pending']) }}"
+                href="{{ route('attendance-corrections.index', ['status' => 'pending']) }}"
                 @class (['font-bold' => request()->query('status') != 'approved'])
                 >承認待ち</a
             >
             <a
-                href="{{ route('attendance-correction-applications.index', ['status' => 'approved']) }}"
+                href="{{ route('attendance-corrections.index', ['status' => 'approved']) }}"
                 @class (['font-bold' => request()->query('status') === 'approved'])
                 >承認済み</a
             >
@@ -26,20 +26,24 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($applications as $application)
+                @foreach ($attendanceCorrections as $attendanceCorrection)
                     <tr>
-                        <td>{{ $application->status->label() }}</td>
-                        <td>{{ $application->attendance->user->name }}</td>
+                        <td>{{ $attendanceCorrection->status->label() }}</td>
                         <td>
-                            {{ $application->attendance->date->format('Y/m/d') }}
+                            {{ $attendanceCorrection->attendance->user->name }}
+                        </td>
+                        <td>
+                            {{ $attendanceCorrection->attendance->date->format('Y/m/d') }}
                         </td>
                         <td class="max-w-1/6 truncate">
-                            {{ $application->remarks }}
+                            {{ $attendanceCorrection->remarks }}
                         </td>
-                        <td>{{ $application->created_at->format('Y/m/d') }}</td>
+                        <td>
+                            {{ $attendanceCorrection->created_at->format('Y/m/d') }}
+                        </td>
                         <td>
                             <a
-                                href="{{ route('attendances.show', $application->attendance->id) }}"
+                                href="{{ route('attendances.show', $attendanceCorrection->attendance) }}"
                                 class="text-black hover:underline"
                                 >詳細</a
                             >

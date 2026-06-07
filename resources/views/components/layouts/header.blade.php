@@ -13,8 +13,7 @@
                     >勤怠一覧</a
                 >
                 <a href="{{ route('admin.users.index') }}">スタッフ一覧</a>
-                <a
-                    href="{{ route('attendance-correction-applications.index') }}"
+                <a href="{{ route('attendance-corrections.index') }}"
                     >申請一覧</a
                 >
                 <x-form :action="route('admin.logout')" method="POST">
@@ -23,10 +22,7 @@
             @else
                 <a href="{{ route('time-logs.create') }}">勤怠</a>
                 <a href="{{ route('attendances.index') }}">勤怠一覧</a>
-                <a
-                    href="{{ route('attendance-correction-applications.index') }}"
-                    >申請</a
-                >
+                <a href="{{ route('attendance-corrections.index') }}">申請</a>
                 <x-form :action="route('logout')" method="POST">
                     <button class="cursor-pointer">ログアウト</button>
                 </x-form>

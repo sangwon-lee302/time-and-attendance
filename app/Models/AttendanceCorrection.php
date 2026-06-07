@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\ApplicationStatus;
+use App\ApprovalStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,26 +15,26 @@ use Override;
 /**
  * @property int $id
  * @property int $attendance_id
- * @property ApplicationStatus $status
+ * @property ApprovalStatus $status
  * @property CarbonImmutable $new_clocked_in_at
  * @property CarbonImmutable $new_clocked_out_at
  * @property string $remarks
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  *
- * @method static \Database\Factories\AttendanceCorrectionApplicationFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrectionApplication query()
+ * @method static \Database\Factories\AttendanceCorrectionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrection newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrection newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrection query()
  *
  * @property-read Attendance $attendance
- * @property-read Collection<int, BreakTimeCorrectionApplication> $breakTimeCorrectionApplications
- * @property-read int|null $break_time_correction_applications_count
+ * @property-read Collection<int, BreakTimeCorrection> $breakTimeCorrections
+ * @property-read int|null $break_time_corrections_count
  *
  * @mixin \Eloquent
  */
 #[Fillable('status', 'new_clocked_in_at', 'new_clocked_out_at', 'remarks')]
-class AttendanceCorrectionApplication extends Model
+class AttendanceCorrection extends Model
 {
     use HasFactory;
 
@@ -47,7 +47,7 @@ class AttendanceCorrectionApplication extends Model
     protected function casts(): array
     {
         return [
-            'status'             => ApplicationStatus::class,
+            'status'             => ApprovalStatus::class,
             'new_clocked_in_at'  => 'datetime',
             'new_clocked_out_at' => 'datetime',
             'created_at'         => 'datetime',
@@ -56,7 +56,7 @@ class AttendanceCorrectionApplication extends Model
     }
 
     /**
-     * Get the attendance that owns the attendance correction application.
+     * Get the attendance that owns the attendance correction.
      *
      * @return BelongsTo<Attendance, $this>
      */
@@ -66,12 +66,12 @@ class AttendanceCorrectionApplication extends Model
     }
 
     /**
-     * Get the break time correction applications for the attendance correction application.
+     * Get the break time corrections for the attendance correction.
      *
-     * @return HasMany<BreakTimeCorrectionApplication, $this>
+     * @return HasMany<BreakTimeCorrection, $this>
      */
-    public function breakTimeCorrectionApplications(): HasMany
+    public function breakTimeCorrections(): HasMany
     {
-        return $this->hasMany(BreakTimeCorrectionApplication::class);
+        return $this->hasMany(BreakTimeCorrection::class);
     }
 }

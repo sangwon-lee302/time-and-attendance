@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CorrectionApplicationRequest;
+use App\Http\Requests\StoreStampCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\User;
 use App\Services\AttendanceService;
-use App\Services\StampCorrectionApplicationService;
+use App\Services\StampCorrectionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -91,14 +91,14 @@ class AttendanceController extends Controller
      * Update the specified attendance and its corresponding breaks.
      */
     public function update(
-        CorrectionApplicationRequest $request,
+        StoreStampCorrectionRequest $request,
         Attendance $attendance,
-        StampCorrectionApplicationService $stampCorrectionApplicationService,
+        StampCorrectionService $stampCorrectionService,
         AttendanceService $attendanceService
     ): RedirectResponse {
         $validated = $request->validated();
 
-        $stampCorrectionApplicationService->storeCorrectionApplication(
+        $stampCorrectionService->storeStampCorrection(
             $validated, $attendance
         );
 

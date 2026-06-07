@@ -30,8 +30,8 @@ use Override;
  * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
- * @property-read Collection<int, AttendanceCorrectionApplication> $attendanceCorrectionApplications
- * @property-read int|null $attendance_correction_applications_count
+ * @property-read Collection<int, AttendanceCorrection> $attendanceCorrections
+ * @property-read int|null $attendance_corrections_count
  * @property-read CarbonInterval $total_break_time
  * @property-read CarbonInterval $total_working_time
  *
@@ -70,13 +70,13 @@ class Attendance extends Model
     }
 
     /**
-     * Get the correction applications for the attendance.
+     * Get the attendance corrections for the attendance.
      *
-     * @return HasMany<AttendanceCorrectionApplication, $this>
+     * @return HasMany<AttendanceCorrection, $this>
      */
-    public function attendanceCorrectionApplications(): HasMany
+    public function attendanceCorrections(): HasMany
     {
-        return $this->hasMany(AttendanceCorrectionApplication::class);
+        return $this->hasMany(AttendanceCorrection::class);
     }
 
     /**

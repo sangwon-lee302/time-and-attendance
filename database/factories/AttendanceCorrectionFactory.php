@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\ApplicationStatus;
+use App\ApprovalStatus;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrectionApplication;
+use App\Models\AttendanceCorrection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<AttendanceCorrectionApplication>
+ * @extends Factory<AttendanceCorrection>
  */
-class AttendanceCorrectionApplicationFactory extends Factory
+class AttendanceCorrectionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -35,7 +35,7 @@ class AttendanceCorrectionApplicationFactory extends Factory
     public function approved(): static
     {
         return $this->state(fn () => [
-            'status' => ApplicationStatus::Approved,
+            'status' => ApprovalStatus::Approved,
         ]);
     }
 }

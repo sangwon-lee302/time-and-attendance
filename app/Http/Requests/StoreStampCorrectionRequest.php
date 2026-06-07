@@ -10,7 +10,7 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 use Override;
 
-class CorrectionApplicationRequest extends FormRequest
+class StoreStampCorrectionRequest extends FormRequest
 {
     /**
      * Prepare the data for validation.
@@ -63,7 +63,7 @@ class CorrectionApplicationRequest extends FormRequest
     public function authorize(): bool
     {
         return $this->user()
-            ->can('createCorrectionApplication', $this->route('attendance'));
+            ->can('createStampCorrection', $this->route('attendance'));
     }
 
     /**

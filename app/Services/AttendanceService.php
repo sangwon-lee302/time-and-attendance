@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\ApplicationStatus;
+use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -28,7 +28,7 @@ class AttendanceService
         $attendances = $user->attendances()
             ->whereBetween('date', [$start, $end])
             ->with(['breakTimes' => fn ($query) => $query->whereNotNull('ended_at')
-                ->select('id', 'attendance_id', 'started_at', 'ended_at')
+                ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])
             ->get()
             ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
@@ -119,10 +119,10 @@ class AttendanceService
                     ]);
                 }
 
-                // set the status of the attendance correction application to 'approved'
-                $attendance->attendanceCorrectionApplications()
-                    ->where('status', ApplicationStatus::Pending)
-                    ->update(['status' => ApplicationStatus::Approved]);
+                // set the status of the attendance correction to 'approved'
+                $attendance->attendanceCorrections()
+                    ->where('status', ApprovalStatus::Pending)
+                    ->update(['status' => ApprovalStatus::Approved]);
 
                 return true;
             });

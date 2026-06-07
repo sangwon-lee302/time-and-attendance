@@ -21,7 +21,7 @@
             <td class="text-black">
                 <x-attendance-show-page-conditional-field
                     :attendance="$attendance"
-                    :pending-application="$pendingApplication"
+                    :pending-stamp-correction="$pendingStampCorrection"
                     :text="$attendance->clocked_in_at->format('H:i')"
                     input-name="new_clocked_in_at"
                 />
@@ -30,7 +30,7 @@
             <td class="text-black">
                 <x-attendance-show-page-conditional-field
                     :attendance="$attendance"
-                    :pending-application="$pendingApplication"
+                    :pending-stamp-correction="$pendingStampCorrection"
                     :text="$attendance->clocked_out_at?->format('H:i')"
                     input-name="new_clocked_out_at"
                 />
@@ -44,7 +44,7 @@
                 <td class="text-black">
                     <x-attendance-show-page-conditional-field
                         :attendance="$attendance"
-                        :pending-application="$pendingApplication"
+                        :pending-stamp-correction="$pendingStampCorrection"
                         :text="$breakTime->started_at->format('H:i')"
                         input-name="breaks[{{ $loop->index }}][new_started_at]"
                         field="breaks.{{ $loop->index }}.new_started_at"
@@ -54,7 +54,7 @@
                 <td class="text-black">
                     <x-attendance-show-page-conditional-field
                         :attendance="$attendance"
-                        :pending-application="$pendingApplication"
+                        :pending-stamp-correction="$pendingStampCorrection"
                         :text="$breakTime->ended_at->format('H:i')"
                         input-name="breaks[{{ $loop->index }}][new_ended_at]"
                         field="breaks.{{ $loop->index }}.new_ended_at"
@@ -62,7 +62,7 @@
                 </td>
             </tr>
         @endforeach
-        @unless ($pendingApplication)
+        @unless ($pendingStampCorrection)
             <tr>
                 <th class="text-left">
                     休憩{{ $attendance->breakTimes ? count($attendance->breakTimes) + 1 : '' }}
@@ -70,7 +70,7 @@
                 <td class="text-black">
                     <x-attendance-show-page-conditional-field
                         :attendance="$attendance"
-                        :pending-application="$pendingApplication"
+                        :pending-stamp-correction="$pendingStampCorrection"
                         input-name="breaks[{{ count($attendance->breakTimes) }}][new_started_at]"
                         field="breaks.{{ count($attendance->breakTimes) }}.new_started_at"
                     />
@@ -79,7 +79,7 @@
                 <td class="text-black">
                     <x-attendance-show-page-conditional-field
                         :attendance="$attendance"
-                        :pending-application="$pendingApplication"
+                        :pending-stamp-correction="$pendingStampCorrection"
                         input-name="breaks[{{ count($attendance->breakTimes) }}][new_ended_at]"
                         field="breaks.{{ count($attendance->breakTimes) }}.new_ended_at"
                     />
@@ -90,12 +90,12 @@
             <th class="text-left">備考</th>
             <td
                 class="text-black"
-                @unless ($pendingApplication) colspan="3"@endunless
+                @unless ($pendingStampCorrection) colspan="3"@endunless
             >
                 <x-attendance-show-page-conditional-field
                     :attendance="$attendance"
-                    :pending-application="$pendingApplication"
-                    :text="$pendingApplication?->remarks"
+                    :pending-stamp-correction="$pendingStampCorrection"
+                    :text="$pendingStampCorrection?->remarks"
                     :use-text-area="true"
                     input-name="remarks"
                     class="text-black"
