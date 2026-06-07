@@ -48,28 +48,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 });
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+            ->name('logout');
 
-    Route::controller(AdminAttendanceController::class)
-        ->prefix('attendance')
-        ->name('attendances.')
-        ->group(function () {
-            Route::get('list', 'dailyIndex')->name('daily-index');
-            Route::get('staff/{user}', 'monthlyIndex')->name('monthly-index');
-            Route::get('{attendance}', 'show')->can('view', 'attendance')->name('show');
-            Route::patch('{attendance}', 'update')->name('update');
-            Route::get('{user}/export', 'export')->name('export');
-        });
+        Route::controller(AdminAttendanceController::class)
+            ->prefix('attendance')
+            ->name('attendances.')
+            ->group(function () {
+                Route::get('list', 'dailyIndex')->name('daily-index');
+                Route::get('staff/{user}', 'monthlyIndex')->name('monthly-index');
+                Route::get('{attendance}', 'show')->name('show');
+                Route::patch('{attendance}', 'update')->name('update');
+                Route::get('{user}/export', 'export')->name('export');
+            });
 
-    Route::get('staff/list', [UserController::class, 'index'])->name('users.index');
+        Route::get('staff/list', [UserController::class, 'index'])
+            ->name('users.index');
 
-    Route::controller(AdminStampCorrectionController::class)
-        ->prefix('stamp_correction_request/approve/{attendance_correction}')
-        ->name('stamp-corrections.')
-        ->group(function () {
-            Route::get('/', 'show')->name('show');
-            Route::patch('/', 'approve')->name('approve');
-        });
+        Route::controller(AdminStampCorrectionController::class)
+            ->prefix('stamp_correction_request/approve/{attendance_correction}')
+            ->name('stamp-corrections.')
+            ->group(function () {
+                Route::get('/', 'show')->name('show');
+                Route::patch('/', 'approve')->name('approve');
+            });
 });
