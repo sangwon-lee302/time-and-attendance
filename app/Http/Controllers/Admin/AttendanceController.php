@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\ApprovalStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStampCorrectionRequest;
 use App\Models\Attendance;
