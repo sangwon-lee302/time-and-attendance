@@ -17,7 +17,9 @@
             @endforeach
         @endunless
         @if ($pendingStampCorrection)
-            <p class="mt-8 mr-0 ml-auto w-max font-bold text-red-400">*承認待ちのため修正はできません。</p>
+            <p
+                class="mt-8 mr-0 ml-auto w-max font-bold text-red-400"
+            >*承認待ちのため修正はできません。</p>
         @else
             <form
                 id="stamp-correction"
