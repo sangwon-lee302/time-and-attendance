@@ -19,8 +19,8 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->unsignedTinyInteger('status')
                 ->default(ApprovalStatus::Pending->value);
-            $table->dateTime('new_clocked_in_at');
-            $table->dateTime('new_clocked_out_at');
+            $table->dateTime('clocked_in_at');
+            $table->dateTime('clocked_out_at');
             $table->text('remarks');
             $table->datetimes();
         });

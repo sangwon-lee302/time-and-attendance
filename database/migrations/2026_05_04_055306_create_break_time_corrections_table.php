@@ -18,8 +18,8 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->dateTime('new_started_at');
-            $table->dateTime('new_ended_at');
+            $table->dateTime('started_at');
+            $table->dateTime('ended_at');
             $table->datetimes();
         });
     }

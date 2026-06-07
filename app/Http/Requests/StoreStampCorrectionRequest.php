@@ -23,28 +23,28 @@ class StoreStampCorrectionRequest extends FormRequest
         $errors = new MessageBag;
 
         $this->merge([
-            'new_clocked_in_at' => $this->canonicalizeTime(
-                $this->input('new_clocked_in_at'),
+            'clocked_in_at' => $this->canonicalizeTime(
+                $this->input('clocked_in_at'),
                 $errors,
-                'new_clocked_in_at'
+                'clocked_in_at'
             ),
-            'new_clocked_out_at' => $this->canonicalizeTime(
-                $this->input('new_clocked_out_at'),
+            'clocked_out_at' => $this->canonicalizeTime(
+                $this->input('clocked_out_at'),
                 $errors,
-                'new_clocked_out_at'
+                'clocked_out_at'
             ),
             'breaks' => collect($this->input('breaks', []))
                 ->map(fn (array $breakData, int $index) => [
                     ...$breakData,
-                    'new_started_at' => $this->canonicalizeTime(
-                        $breakData['new_started_at'] ?? null,
+                    'started_at' => $this->canonicalizeTime(
+                        $breakData['started_at'] ?? null,
                         $errors,
-                        "breaks.$index.new_started_at"
+                        "breaks.$index.started_at"
                     ),
-                    'new_ended_at' => $this->canonicalizeTime(
-                        $breakData['new_ended_at'] ?? null,
+                    'ended_at' => $this->canonicalizeTime(
+                        $breakData['ended_at'] ?? null,
                         $errors,
-                        "breaks.$index.new_ended_at"
+                        "breaks.$index.ended_at"
                     ),
                 ])
                 ->all(),
@@ -74,12 +74,12 @@ class StoreStampCorrectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'new_clocked_in_at' => [
+            'clocked_in_at' => [
                 'required',
                 'date_format:Y-m-d H:i:s',
-                'before_or_equal:new_clocked_out_at',
+                'before_or_equal:clocked_out_at',
             ],
-            'new_clocked_out_at' => [
+            'clocked_out_at' => [
                 'required',
                 'date_format:Y-m-d H:i:s',
             ],
@@ -91,17 +91,17 @@ class StoreStampCorrectionRequest extends FormRequest
                     $this->route('attendance')->id
                 ),
             ],
-            'breaks.*.new_started_at' => [
-                'required_with:breaks.*.new_ended_at',
+            'breaks.*.started_at' => [
+                'required_with:breaks.*.ended_at',
                 'date_format:Y-m-d H:i:s',
-                'after_or_equal:new_clocked_in_at',
-                'before_or_equal:new_clocked_out_at',
+                'after_or_equal:clocked_in_at',
+                'before_or_equal:clocked_out_at',
             ],
-            'breaks.*.new_ended_at' => [
-                'required_with:breaks.*.new_started_at',
+            'breaks.*.ended_at' => [
+                'required_with:breaks.*.started_at',
                 'date_format:Y-m-d H:i:s',
-                'after_or_equal:breaks.*.new_started_at',
-                'before_or_equal:new_clocked_out_at',
+                'after_or_equal:breaks.*.started_at',
+                'before_or_equal:clocked_out_at',
             ],
             'remarks' => ['required', 'string', 'max:65535'],
         ];
@@ -116,11 +116,11 @@ class StoreStampCorrectionRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'new_clocked_in_at'       => '出勤時間',
-            'new_clocked_out_at'      => '退勤時間',
+            'clocked_in_at'       => '出勤時間',
+            'clocked_out_at'      => '退勤時間',
             'breaks.*.break_time_id'  => '休憩ID',
-            'breaks.*.new_started_at' => '休憩開始時間',
-            'breaks.*.new_ended_at'   => '休憩終了時間',
+            'breaks.*.started_at' => '休憩開始時間',
+            'breaks.*.ended_at'   => '休憩終了時間',
         ];
     }
 
@@ -133,10 +133,10 @@ class StoreStampCorrectionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'new_clocked_in_at.before_or_equal'       => '出勤時間もしくは退勤時間が不適切な値です',
-            'breaks.*.new_started_at.after_or_equal'  => '休憩時間が不適切な値です',
-            'breaks.*.new_started_at.before_or_equal' => '休憩時間が不適切な値です',
-            'breaks.*.new_ended_at.before_or_equal'   => '休憩時間もしくは退勤時間が不適切な値です',
+            'clocked_in_at.before_or_equal'       => '出勤時間もしくは退勤時間が不適切な値です',
+            'breaks.*.started_at.after_or_equal'  => '休憩時間が不適切な値です',
+            'breaks.*.started_at.before_or_equal' => '休憩時間が不適切な値です',
+            'breaks.*.ended_at.before_or_equal'   => '休憩時間もしくは退勤時間が不適切な値です',
             'remarks.required'                        => ':attributeを記入してください',
         ];
     }

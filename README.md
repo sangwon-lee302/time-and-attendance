@@ -60,8 +60,8 @@ erDiagram
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK
         unsignedTinyInt status "0:pending 1:approved / default 0"
-        datetime new_clocked_in_at
-        datetime new_clocked_out_at
+        datetime clocked_in_at
+        datetime clocked_out_at
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
@@ -70,8 +70,8 @@ erDiagram
         unsignedBigInt id PK
         unsignedBigInt attendance_correction_id FK
         unsignedBigInt break_time_id FK "nullable"
-        datetime new_started_at
-        datetime new_ended_at
+        datetime started_at
+        datetime ended_at
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }

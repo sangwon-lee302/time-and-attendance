@@ -20,16 +20,16 @@ class StampCorrectionService
             return DB::transaction(function () use ($attributes, $attendance) {
                 $attendance->attendanceCorrections()
                     ->create([
-                        'new_clocked_in_at'  => $attributes['new_clocked_in_at'],
-                        'new_clocked_out_at' => $attributes['new_clocked_out_at'],
+                        'clocked_in_at'  => $attributes['clocked_in_at'],
+                        'clocked_out_at' => $attributes['clocked_out_at'],
                         'remarks'            => $attributes['remarks'],
                     ])
                     ->breakTimeCorrections()
                     ->createMany(collect($attributes['breaks'] ?? [])
                         ->map(fn (array $breakData) => [
                             'break_time_id'  => $breakData['break_time_id'] ?? null,
-                            'new_started_at' => $breakData['new_started_at'],
-                            'new_ended_at'   => $breakData['new_ended_at'],
+                            'started_at' => $breakData['started_at'],
+                            'ended_at'   => $breakData['ended_at'],
                         ])
                         ->all()
                     );

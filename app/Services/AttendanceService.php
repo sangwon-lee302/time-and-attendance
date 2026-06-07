@@ -96,8 +96,8 @@ class AttendanceService
             return DB::transaction(function () use ($attributes, $attendance) {
                 // update the attendance resource
                 $attendance->update([
-                    'clocked_in_at'  => $attributes['new_clocked_in_at'],
-                    'clocked_out_at' => $attributes['new_clocked_out_at'],
+                    'clocked_in_at'  => $attributes['clocked_in_at'],
+                    'clocked_out_at' => $attributes['clocked_out_at'],
                 ]);
 
                 // update or create corresponding break time resources
@@ -106,16 +106,16 @@ class AttendanceService
                 foreach ($attributes['breaks'] as $breakData) {
                     if ($breaks->has($breakData['break_time_id'])) {
                         $breaks->get($breakData['break_time_id'])->update([
-                            'started_at' => $breakData['new_started_at'],
-                            'ended_at'   => $breakData['new_ended_at'],
+                            'started_at' => $breakData['started_at'],
+                            'ended_at'   => $breakData['ended_at'],
                         ]);
 
                         continue;
                     }
 
                     $attendance->breakTimes()->create([
-                        'started_at' => $breakData['new_started_at'],
-                        'ended_at'   => $breakData['new_ended_at'],
+                        'started_at' => $breakData['started_at'],
+                        'ended_at'   => $breakData['ended_at'],
                     ]);
                 }
 

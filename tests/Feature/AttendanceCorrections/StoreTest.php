@@ -25,13 +25,13 @@ class StoreTest extends TestCase
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'         => $attendance,
-            'new_clocked_in_at'  => '9:01',
-            'new_clocked_out_at' => '9:00',
+            'clocked_in_at'  => '9:01',
+            'clocked_out_at' => '9:00',
         ]));
 
         $response->assertRedirect('attendance/detail/'.$attendance->id);
         $response->assertSessionHasErrors([
-            'new_clocked_in_at' => '出勤時間もしくは退勤時間が不適切な値です',
+            'clocked_in_at' => '出勤時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
@@ -45,14 +45,14 @@ class StoreTest extends TestCase
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'                => $attendance,
-            'new_clocked_in_at'         => '9:00',
-            'new_clocked_out_at'        => '10:00',
-            'breaks[0][new_started_at]' => '8:59',
+            'clocked_in_at'         => '9:00',
+            'clocked_out_at'        => '10:00',
+            'breaks[0][started_at]' => '8:59',
         ]));
 
         $response->assertRedirect('attendance/detail/'.$attendance->id);
         $response->assertSessionHasErrors([
-            'breaks.0.new_started_at' => '休憩時間が不適切な値です',
+            'breaks.0.started_at' => '休憩時間が不適切な値です',
         ]);
     }
 
@@ -66,14 +66,14 @@ class StoreTest extends TestCase
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'                => $attendance,
-            'new_clocked_in_at'         => '9:00',
-            'new_clocked_out_at'        => '10:00',
-            'breaks[0][new_started_at]' => '10:01',
+            'clocked_in_at'         => '9:00',
+            'clocked_out_at'        => '10:00',
+            'breaks[0][started_at]' => '10:01',
         ]));
 
         $response->assertRedirect('attendance/detail/'.$attendance->id);
         $response->assertSessionHasErrors([
-            'breaks.0.new_started_at' => '休憩時間が不適切な値です',
+            'breaks.0.started_at' => '休憩時間が不適切な値です',
         ]);
     }
 
@@ -87,14 +87,14 @@ class StoreTest extends TestCase
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'              => $attendance,
-            'new_clocked_in_at'       => '9:00',
-            'new_clocked_out_at'      => '10:00',
-            'breaks[0][new_ended_at]' => '10:01',
+            'clocked_in_at'       => '9:00',
+            'clocked_out_at'      => '10:00',
+            'breaks[0][ended_at]' => '10:01',
         ]));
 
         $response->assertRedirect('attendance/detail/'.$attendance->id);
         $response->assertSessionHasErrors([
-            'breaks.0.new_ended_at' => '休憩時間もしくは退勤時間が不適切な値です',
+            'breaks.0.ended_at' => '休憩時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
@@ -128,21 +128,21 @@ class StoreTest extends TestCase
         $newClockedInAt  = '9:00';
         $newClockedOutAt = '18:00';
         $newBreakTimes   = [
-            ['new_started_at' => '12:00', 'new_ended_at' => '12:30'],
-            ['new_started_at' => '15:00', 'new_ended_at' => '15:30'],
+            ['started_at' => '12:00', 'ended_at' => '12:30'],
+            ['started_at' => '15:00', 'ended_at' => '15:30'],
         ];
 
         $response = $this->followingRedirects()
             ->actingAs($user)
             ->post(route('stamp-corrections.store', [
                 'attendance'                => $attendance,
-                'new_clocked_in_at'         => $newClockedInAt,
-                'new_clocked_out_at'        => $newClockedOutAt,
+                'clocked_in_at'         => $newClockedInAt,
+                'clocked_out_at'        => $newClockedOutAt,
                 'breaks[0][break_time_id]'  => $breakTime->id,
-                'breaks[0][new_started_at]' => $newBreakTimes[0]['new_started_at'],
-                'breaks[0][new_ended_at]'   => $newBreakTimes[0]['new_ended_at'],
-                'breaks[1][new_started_at]' => $newBreakTimes[1]['new_started_at'],
-                'breaks[1][new_ended_at]'   => $newBreakTimes[1]['new_ended_at'],
+                'breaks[0][started_at]' => $newBreakTimes[0]['started_at'],
+                'breaks[0][ended_at]'   => $newBreakTimes[0]['ended_at'],
+                'breaks[1][started_at]' => $newBreakTimes[1]['started_at'],
+                'breaks[1][ended_at]'   => $newBreakTimes[1]['ended_at'],
                 'remarks'                   => '空白ではない備考',
             ]));
 
@@ -150,11 +150,11 @@ class StoreTest extends TestCase
         $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id'     => $attendance->id,
             'status'            => ApprovalStatus::Pending,
-            'new_clocked_in_at' => Carbon::createFromFormat(
+            'clocked_in_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newClockedInAt,
             ),
-            'new_clocked_out_at' => Carbon::createFromFormat(
+            'clocked_out_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newClockedOutAt,
             ),
@@ -165,25 +165,25 @@ class StoreTest extends TestCase
         $this->assertDatabaseHas('break_time_corrections', [
             'attendance_correction_id' => $attendanceCorrection->id,
             'break_time_id'            => $breakTime->id,
-            'new_started_at'           => Carbon::createFromFormat(
+            'started_at'           => Carbon::createFromFormat(
                 'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['new_started_at'],
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['started_at'],
             ),
-            'new_ended_at' => Carbon::createFromFormat(
+            'ended_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['new_ended_at'],
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['ended_at'],
             ),
         ]);
         $this->assertDatabaseHas('break_time_corrections', [
             'attendance_correction_id' => $attendanceCorrection->id,
             'break_time_id'            => null,
-            'new_started_at'           => Carbon::createFromFormat(
+            'started_at'           => Carbon::createFromFormat(
                 'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['new_started_at'],
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['started_at'],
             ),
-            'new_ended_at' => Carbon::createFromFormat(
+            'ended_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['new_ended_at'],
+                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['ended_at'],
             ),
         ]);
 

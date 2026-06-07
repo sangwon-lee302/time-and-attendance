@@ -43,8 +43,8 @@ class AttendanceShowTest extends TestCase
         $attendanceCorrection = AttendanceCorrection::factory()
             ->recycle($user)
             ->create([
-                'new_clocked_in_at'  => new DateTime('09:00'),
-                'new_clocked_out_at' => new DateTime('18:00'),
+                'clocked_in_at'  => new DateTime('09:00'),
+                'clocked_out_at' => new DateTime('18:00'),
             ]);
 
         $this->actingAs($adminUser)->get('admin/attendance/'.$attendance->id)
@@ -53,9 +53,9 @@ class AttendanceShowTest extends TestCase
         $response = $this->actingAs($adminUser)
             ->patch(route('admin.attendances.update', [
                 'attendance'        => $attendance,
-                'new_clocked_in_at' => $attendanceCorrection->new_clocked_in_at
+                'clocked_in_at' => $attendanceCorrection->clocked_in_at
                     ->format('H:i'),
-                'new_clocked_out_at' => $attendanceCorrection->new_clocked_out_at
+                'clocked_out_at' => $attendanceCorrection->clocked_out_at
                     ->format('H:i'),
                 'remarks' => $attendanceCorrection->remarks,
             ]));
@@ -65,14 +65,14 @@ class AttendanceShowTest extends TestCase
         $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id'      => $attendance->id,
             'status'             => ApprovalStatus::Approved,
-            'new_clocked_in_at'  => $attendanceCorrection->new_clocked_in_at,
-            'new_clocked_out_at' => $attendanceCorrection->new_clocked_out_at,
+            'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
+            'clocked_out_at' => $attendanceCorrection->clocked_out_at,
         ]);
 
         $this->assertDatabaseHas('attendances', [
             'user_id'        => $user->id,
-            'clocked_in_at'  => $attendanceCorrection->new_clocked_in_at,
-            'clocked_out_at' => $attendanceCorrection->new_clocked_out_at,
+            'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
+            'clocked_out_at' => $attendanceCorrection->clocked_out_at,
         ]);
     }
 }

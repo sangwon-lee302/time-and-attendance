@@ -16,8 +16,8 @@ use Override;
  * @property int $id
  * @property int $attendance_id
  * @property ApprovalStatus $status
- * @property CarbonImmutable $new_clocked_in_at
- * @property CarbonImmutable $new_clocked_out_at
+ * @property CarbonImmutable $clocked_in_at
+ * @property CarbonImmutable $clocked_out_at
  * @property string $remarks
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -33,7 +33,7 @@ use Override;
  *
  * @mixin \Eloquent
  */
-#[Fillable('status', 'new_clocked_in_at', 'new_clocked_out_at', 'remarks')]
+#[Fillable('status', 'clocked_in_at', 'clocked_out_at', 'remarks')]
 class AttendanceCorrection extends Model
 {
     use HasFactory;
@@ -48,8 +48,8 @@ class AttendanceCorrection extends Model
     {
         return [
             'status'             => ApprovalStatus::class,
-            'new_clocked_in_at'  => 'datetime',
-            'new_clocked_out_at' => 'datetime',
+            'clocked_in_at'  => 'datetime',
+            'clocked_out_at' => 'datetime',
             'created_at'         => 'datetime',
             'updated_at'         => 'datetime',
         ];
