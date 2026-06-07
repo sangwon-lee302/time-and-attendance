@@ -76,4 +76,4 @@ Route::middleware(['auth', 'admin'])
                 Route::get('/', 'show')->name('show');
                 Route::patch('/', 'approve')->name('approve');
             });
-});
+    });
