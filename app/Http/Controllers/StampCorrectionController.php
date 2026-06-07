@@ -19,7 +19,7 @@ class StampCorrectionController extends Controller
      */
     public function index(Request $request): View
     {
-        $attendanceCorrections = AttendanceCorrection::when(
+        $stampCorrections = AttendanceCorrection::when(
             ! Auth::user()->is_admin,
             fn ($query) => $query->whereHas(
                 'attendance',
@@ -36,8 +36,8 @@ class StampCorrectionController extends Controller
             ])
             ->get();
 
-        return view('attendance-corrections.index', [
-            'attendanceCorrections' => $attendanceCorrections,
+        return view('stamp-corrections.index', [
+            'stampCorrections' => $stampCorrections,
         ]);
     }
 

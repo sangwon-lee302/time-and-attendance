@@ -32,12 +32,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'stamp_correction_request/list',
         [StampCorrectionController::class, 'index']
     )
-        ->name('attendance-corrections.index');
+        ->name('stamp-corrections.index');
     Route::post(
-        'attendance-correction/{attendance}',
+        'stamp-correction/{attendance}',
         [StampCorrectionController::class, 'store']
     )
-        ->name('attendance-corrections.store');
+        ->name('stamp-corrections.store');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

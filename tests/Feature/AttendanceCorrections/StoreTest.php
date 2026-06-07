@@ -23,7 +23,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-corrections.store', [
+        $response = $this->post(route('stamp-corrections.store', [
             'attendance'         => $attendance,
             'new_clocked_in_at'  => '9:01',
             'new_clocked_out_at' => '9:00',
@@ -43,7 +43,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-corrections.store', [
+        $response = $this->post(route('stamp-corrections.store', [
             'attendance'                => $attendance,
             'new_clocked_in_at'         => '9:00',
             'new_clocked_out_at'        => '10:00',
@@ -64,7 +64,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-corrections.store', [
+        $response = $this->post(route('stamp-corrections.store', [
             'attendance'                => $attendance,
             'new_clocked_in_at'         => '9:00',
             'new_clocked_out_at'        => '10:00',
@@ -85,7 +85,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-corrections.store', [
+        $response = $this->post(route('stamp-corrections.store', [
             'attendance'              => $attendance,
             'new_clocked_in_at'       => '9:00',
             'new_clocked_out_at'      => '10:00',
@@ -106,7 +106,7 @@ class StoreTest extends TestCase
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
-        $response = $this->post(route('attendance-corrections.store', [
+        $response = $this->post(route('stamp-corrections.store', [
             'attendance' => $attendance,
             'remarks'    => '',
         ]));
@@ -134,7 +134,7 @@ class StoreTest extends TestCase
 
         $response = $this->followingRedirects()
             ->actingAs($user)
-            ->post(route('attendance-corrections.store', [
+            ->post(route('stamp-corrections.store', [
                 'attendance'                => $attendance,
                 'new_clocked_in_at'         => $newClockedInAt,
                 'new_clocked_out_at'        => $newClockedOutAt,

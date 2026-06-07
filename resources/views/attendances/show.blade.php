@@ -23,7 +23,7 @@
                 id="stamp-correction"
                 action="{{ $isAdmin
                     ? route('admin.attendances.update', $attendance)
-                    : route('attendance-corrections.store', $attendance) }}"
+                    : route('stamp-corrections.store', $attendance) }}"
                 method="POST"
                 class="mt-8 mr-0 ml-auto w-max"
             >
