@@ -7,7 +7,7 @@ use App\Http\Requests\CorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Models\User;
 use App\Services\AttendanceService;
-use App\Services\CorrectionApplicationService;
+use App\Services\StampCorrectionApplicationService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -93,12 +93,12 @@ class AttendanceController extends Controller
     public function update(
         CorrectionApplicationRequest $request,
         Attendance $attendance,
-        CorrectionApplicationService $correctionApplicationService,
+        StampCorrectionApplicationService $stampCorrectionApplicationService,
         AttendanceService $attendanceService
     ): RedirectResponse {
         $validated = $request->validated();
 
-        $correctionApplicationService->storeCorrectionApplication(
+        $stampCorrectionApplicationService->storeCorrectionApplication(
             $validated, $attendance
         );
 

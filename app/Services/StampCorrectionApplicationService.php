@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class CorrectionApplicationService
+class StampCorrectionApplicationService
 {
     /**
      * Store a new attendance correction application resource and its

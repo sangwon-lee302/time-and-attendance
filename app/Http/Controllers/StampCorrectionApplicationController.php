@@ -6,7 +6,7 @@ use App\ApplicationStatus;
 use App\Http\Requests\CorrectionApplicationRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionApplication;
-use App\Services\CorrectionApplicationService;
+use App\Services\StampCorrectionApplicationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,9 +47,9 @@ class StampCorrectionApplicationController extends Controller
     public function store(
         CorrectionApplicationRequest $request,
         Attendance $attendance,
-        CorrectionApplicationService $correctionApplicationService
+        StampCorrectionApplicationService $stampCorrectionApplicationService
     ): RedirectResponse {
-        $correctionApplicationService->storeCorrectionApplication(
+        $stampCorrectionApplicationService->storeCorrectionApplication(
             $request->validated(), $attendance
         );
 
