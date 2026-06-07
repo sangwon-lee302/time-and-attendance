@@ -22,10 +22,10 @@ class AttendanceCorrectionFactory extends Factory
         $newClockedInAt = fake()->dateTime();
 
         return [
-            'attendance_id'      => Attendance::factory(),
+            'attendance_id'  => Attendance::factory(),
             'clocked_in_at'  => $newClockedInAt,
             'clocked_out_at' => fake()->dateTime($newClockedInAt),
-            'remarks'            => fake()->realText(),
+            'remarks'        => fake()->realText(),
         ];
     }
 

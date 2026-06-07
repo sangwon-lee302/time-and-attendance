@@ -116,11 +116,11 @@ class StoreStampCorrectionRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'clocked_in_at'       => '出勤時間',
-            'clocked_out_at'      => '退勤時間',
-            'breaks.*.break_time_id'  => '休憩ID',
-            'breaks.*.started_at' => '休憩開始時間',
-            'breaks.*.ended_at'   => '休憩終了時間',
+            'clocked_in_at'          => '出勤時間',
+            'clocked_out_at'         => '退勤時間',
+            'breaks.*.break_time_id' => '休憩ID',
+            'breaks.*.started_at'    => '休憩開始時間',
+            'breaks.*.ended_at'      => '休憩終了時間',
         ];
     }
 
@@ -137,7 +137,7 @@ class StoreStampCorrectionRequest extends FormRequest
             'breaks.*.started_at.after_or_equal'  => '休憩時間が不適切な値です',
             'breaks.*.started_at.before_or_equal' => '休憩時間が不適切な値です',
             'breaks.*.ended_at.before_or_equal'   => '休憩時間もしくは退勤時間が不適切な値です',
-            'remarks.required'                        => ':attributeを記入してください',
+            'remarks.required'                    => ':attributeを記入してください',
         ];
     }
 

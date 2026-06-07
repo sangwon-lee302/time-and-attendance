@@ -21,10 +21,12 @@ class StoreTest extends TestCase
         $attendance = Attendance::factory()->recycle($user)->create();
         BreakTime::factory()->withinAttendance($attendance)->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
-            'attendance'         => $attendance,
+            'attendance'     => $attendance,
             'clocked_in_at'  => '9:01',
             'clocked_out_at' => '9:00',
         ]));
@@ -41,10 +43,12 @@ class StoreTest extends TestCase
         $attendance = Attendance::factory()->recycle($user)->create();
         BreakTime::factory()->withinAttendance($attendance)->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
-            'attendance'                => $attendance,
+            'attendance'            => $attendance,
             'clocked_in_at'         => '9:00',
             'clocked_out_at'        => '10:00',
             'breaks[0][started_at]' => '8:59',
@@ -62,10 +66,12 @@ class StoreTest extends TestCase
         $attendance = Attendance::factory()->recycle($user)->create();
         BreakTime::factory()->withinAttendance($attendance)->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
-            'attendance'                => $attendance,
+            'attendance'            => $attendance,
             'clocked_in_at'         => '9:00',
             'clocked_out_at'        => '10:00',
             'breaks[0][started_at]' => '10:01',
@@ -86,7 +92,7 @@ class StoreTest extends TestCase
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
-            'attendance'              => $attendance,
+            'attendance'          => $attendance,
             'clocked_in_at'       => '9:00',
             'clocked_out_at'      => '10:00',
             'breaks[0][ended_at]' => '10:01',
@@ -104,7 +110,9 @@ class StoreTest extends TestCase
         $attendance = Attendance::factory()->recycle($user)->create();
         BreakTime::factory()->withinAttendance($attendance)->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance' => $attendance,
@@ -121,9 +129,13 @@ class StoreTest extends TestCase
     {
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->create();
-        $breakTime  = BreakTime::factory()->withinAttendance($attendance)->create();
+        $breakTime  = BreakTime::factory()
+            ->withinAttendance($attendance)
+            ->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $newClockedInAt  = '9:00';
         $newClockedOutAt = '18:00';
@@ -135,21 +147,21 @@ class StoreTest extends TestCase
         $response = $this->followingRedirects()
             ->actingAs($user)
             ->post(route('stamp-corrections.store', [
-                'attendance'                => $attendance,
-                'clocked_in_at'         => $newClockedInAt,
-                'clocked_out_at'        => $newClockedOutAt,
-                'breaks[0][break_time_id]'  => $breakTime->id,
-                'breaks[0][started_at]' => $newBreakTimes[0]['started_at'],
-                'breaks[0][ended_at]'   => $newBreakTimes[0]['ended_at'],
-                'breaks[1][started_at]' => $newBreakTimes[1]['started_at'],
-                'breaks[1][ended_at]'   => $newBreakTimes[1]['ended_at'],
-                'remarks'                   => '空白ではない備考',
+                'attendance'               => $attendance,
+                'clocked_in_at'            => $newClockedInAt,
+                'clocked_out_at'           => $newClockedOutAt,
+                'breaks[0][break_time_id]' => $breakTime->id,
+                'breaks[0][started_at]'    => $newBreakTimes[0]['started_at'],
+                'breaks[0][ended_at]'      => $newBreakTimes[0]['ended_at'],
+                'breaks[1][started_at]'    => $newBreakTimes[1]['started_at'],
+                'breaks[1][ended_at]'      => $newBreakTimes[1]['ended_at'],
+                'remarks'                  => '空白ではない備考',
             ]));
 
         // check if attendance correction is stored successfully
         $this->assertDatabaseHas('attendance_corrections', [
-            'attendance_id'     => $attendance->id,
-            'status'            => ApprovalStatus::Pending,
+            'attendance_id' => $attendance->id,
+            'status'        => ApprovalStatus::Pending,
             'clocked_in_at' => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newClockedInAt,
@@ -165,7 +177,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseHas('break_time_corrections', [
             'attendance_correction_id' => $attendanceCorrection->id,
             'break_time_id'            => $breakTime->id,
-            'started_at'           => Carbon::createFromFormat(
+            'started_at'               => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['started_at'],
             ),
@@ -177,7 +189,7 @@ class StoreTest extends TestCase
         $this->assertDatabaseHas('break_time_corrections', [
             'attendance_correction_id' => $attendanceCorrection->id,
             'break_time_id'            => null,
-            'started_at'           => Carbon::createFromFormat(
+            'started_at'               => Carbon::createFromFormat(
                 'Y-m-d G:i',
                 $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['started_at'],
             ),
@@ -188,7 +200,10 @@ class StoreTest extends TestCase
         ]);
 
         $response->assertOk();
-        $this->assertEquals(url('attendance/detail/'.$attendance->id), request()->url());
+        $this->assertEquals(
+            url('attendance/detail/'.$attendance->id),
+            request()->url()
+        );
         $response->assertViewIs('attendances.show');
         $response->assertSee('*承認待ちのため修正はできません。');
 

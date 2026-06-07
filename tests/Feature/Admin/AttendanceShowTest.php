@@ -52,7 +52,7 @@ class AttendanceShowTest extends TestCase
 
         $response = $this->actingAs($adminUser)
             ->patch(route('admin.attendances.update', [
-                'attendance'        => $attendance,
+                'attendance'    => $attendance,
                 'clocked_in_at' => $attendanceCorrection->clocked_in_at
                     ->format('H:i'),
                 'clocked_out_at' => $attendanceCorrection->clocked_out_at
@@ -63,8 +63,8 @@ class AttendanceShowTest extends TestCase
         $response->assertRedirect('admin/attendance/'.$attendance->id);
 
         $this->assertDatabaseHas('attendance_corrections', [
-            'attendance_id'      => $attendance->id,
-            'status'             => ApprovalStatus::Approved,
+            'attendance_id'  => $attendance->id,
+            'status'         => ApprovalStatus::Approved,
             'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
             'clocked_out_at' => $attendanceCorrection->clocked_out_at,
         ]);

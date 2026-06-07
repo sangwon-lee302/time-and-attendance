@@ -31,8 +31,8 @@ class BreakTimeCorrection extends Model
         return [
             'started_at' => 'datetime',
             'ended_at'   => 'datetime',
-            'created_at'     => 'datetime',
-            'updated_at'     => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 }

@@ -47,11 +47,11 @@ class AttendanceCorrection extends Model
     protected function casts(): array
     {
         return [
-            'status'             => ApprovalStatus::class,
+            'status'         => ApprovalStatus::class,
             'clocked_in_at'  => 'datetime',
             'clocked_out_at' => 'datetime',
-            'created_at'         => 'datetime',
-            'updated_at'         => 'datetime',
+            'created_at'     => 'datetime',
+            'updated_at'     => 'datetime',
         ];
     }
 

@@ -22,14 +22,14 @@ class StampCorrectionService
                     ->create([
                         'clocked_in_at'  => $attributes['clocked_in_at'],
                         'clocked_out_at' => $attributes['clocked_out_at'],
-                        'remarks'            => $attributes['remarks'],
+                        'remarks'        => $attributes['remarks'],
                     ])
                     ->breakTimeCorrections()
                     ->createMany(collect($attributes['breaks'] ?? [])
                         ->map(fn (array $breakData) => [
-                            'break_time_id'  => $breakData['break_time_id'] ?? null,
-                            'started_at' => $breakData['started_at'],
-                            'ended_at'   => $breakData['ended_at'],
+                            'break_time_id' => $breakData['break_time_id'] ?? null,
+                            'started_at'    => $breakData['started_at'],
+                            'ended_at'      => $breakData['ended_at'],
                         ])
                         ->all()
                     );
