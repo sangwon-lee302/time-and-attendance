@@ -51,7 +51,7 @@ class AttendanceIndexTest extends TestCase
             'admin/attendance/staff/'.$user->id
         )->assertOk();
 
-        $response = $this->actingAs($adminUser)->get(route('admin.export', [
+        $response = $this->actingAs($adminUser)->get(route('admin.attendances.export', [
             'user'  => $user,
             'month' => now()->format('Y-m'),
         ]));
