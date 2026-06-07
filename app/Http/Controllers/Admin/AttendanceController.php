@@ -54,10 +54,8 @@ class AttendanceController extends Controller
             $request->query('month', now()->format('Y-m'))
         );
 
-        [$linkForPreviousMonth, $linkForNextMonth] = [
-            $this->getMonthlyIndexUrl($user, $month->subMonth()),
-            $this->getMonthlyIndexUrl($user, $month->addMonth()),
-        ];
+        $linkForPreviousMonth = $this->getMonthlyIndexUrl($user, $month->subMonth());
+        $linkForNextMonth = $this->getMonthlyIndexUrl($user, $month->addMonth());
 
         $displayData = $attendanceService->prepareIndexView(
             $user,
