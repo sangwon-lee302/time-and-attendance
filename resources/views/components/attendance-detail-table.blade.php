@@ -19,7 +19,7 @@
         <tr>
             <th class="text-left">出勤・退勤</th>
             <td class="text-black">
-                <x-attendance-show-page-conditional-field
+                <x-conditional-field
                     :attendance="$attendance"
                     :pending-stamp-correction="$pendingStampCorrection"
                     :text="$attendance->clocked_in_at->format('H:i')"
@@ -28,7 +28,7 @@
             </td>
             <td class="text-black">～</td>
             <td class="text-black">
-                <x-attendance-show-page-conditional-field
+                <x-conditional-field
                     :attendance="$attendance"
                     :pending-stamp-correction="$pendingStampCorrection"
                     :text="$attendance->clocked_out_at?->format('H:i')"
@@ -42,7 +42,7 @@
                     休憩{{ ! $loop->first ? $loop->iteration : '' }}
                 </th>
                 <td class="text-black">
-                    <x-attendance-show-page-conditional-field
+                    <x-conditional-field
                         :attendance="$attendance"
                         :pending-stamp-correction="$pendingStampCorrection"
                         :text="$breakTime->started_at->format('H:i')"
@@ -52,7 +52,7 @@
                 </td>
                 <td class="text-black">～</td>
                 <td class="text-black">
-                    <x-attendance-show-page-conditional-field
+                    <x-conditional-field
                         :attendance="$attendance"
                         :pending-stamp-correction="$pendingStampCorrection"
                         :text="$breakTime->ended_at->format('H:i')"
@@ -68,7 +68,7 @@
                     休憩{{ $attendance->breakTimes ? count($attendance->breakTimes) + 1 : '' }}
                 </th>
                 <td class="text-black">
-                    <x-attendance-show-page-conditional-field
+                    <x-conditional-field
                         :attendance="$attendance"
                         :pending-stamp-correction="$pendingStampCorrection"
                         input-name="breaks[{{ count($attendance->breakTimes) }}][new_started_at]"
@@ -77,7 +77,7 @@
                 </td>
                 <td class="text-black">～</td>
                 <td class="text-black">
-                    <x-attendance-show-page-conditional-field
+                    <x-conditional-field
                         :attendance="$attendance"
                         :pending-stamp-correction="$pendingStampCorrection"
                         input-name="breaks[{{ count($attendance->breakTimes) }}][new_ended_at]"
@@ -92,7 +92,7 @@
                 class="text-black"
                 @unless ($pendingStampCorrection) colspan="3"@endunless
             >
-                <x-attendance-show-page-conditional-field
+                <x-conditional-field
                     :attendance="$attendance"
                     :pending-stamp-correction="$pendingStampCorrection"
                     :text="$pendingStampCorrection?->remarks"
