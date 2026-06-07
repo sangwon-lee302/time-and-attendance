@@ -35,7 +35,7 @@
         />
         @if ($isAdmin)
             <a
-                href="{{ route('admin.export', [
+                href="{{ route('admin.attendances.export', [
                     'user' => $user,
                     'month' => $month->format('Y-m')
                 ]) }}"
