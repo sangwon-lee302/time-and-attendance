@@ -1,81 +1,78 @@
-@props (['attendance', 'pendingStampCorrection'])
+@props (['displayData'])
 
 <table>
     <tbody>
         <tr>
             <th class="text-left">名前</th>
-            <td class="text-black">{{ $attendance->user->name }}</td>
+            <td class="text-black">{{ $displayData['name'] }}</td>
             <td></td>
             <td></td>
         </tr>
         <tr>
             <th class="text-left">日付</th>
-            <td class="text-black">{{ $attendance->date->format('Y年') }}</td>
+            <td class="text-black">{{ $displayData['year'] }}</td>
             <td></td>
-            <td class="text-black">
-                {{ $attendance->date->format('n月j日') }}
-            </td>
+            <td class="text-black">{{ $displayData['date'] }}</td>
         </tr>
         <tr>
             <th class="text-left">出勤・退勤</th>
             <td class="text-black">
                 <x-conditional-field
-                    :input-field-enabled="$pendingStampCorrection === null"
-                    :text="$attendance->clocked_in_at->format('H:i')"
-                    input-name="new_clocked_in_at"
+                    :input-field-enabled="! $displayData['isPending']"
+                    :place-holder="$displayData['clockedInAt']"
+                    field="clocked_in_at"
                 />
             </td>
             <td class="text-black">～</td>
             <td class="text-black">
                 <x-conditional-field
-                    :input-field-enabled="$pendingStampCorrection === null"
-                    :text="$attendance->clocked_out_at?->format('H:i')"
-                    input-name="new_clocked_out_at"
+                    :input-field-enabled="! $displayData['isPending']"
+                    :place-holder="$displayData['clockedOutAt']"
+                    field="clocked_out_at"
                 />
             </td>
         </tr>
-        @foreach ($attendance->breakTimes as $breakTime)
+        @foreach ($displayData['breakTimes'] as $breakTime)
             <tr>
                 <th class="text-left">
                     休憩{{ ! $loop->first ? $loop->iteration : '' }}
                 </th>
                 <td class="text-black">
                     <x-conditional-field
-                        :input-field-enabled="$pendingStampCorrection === null"
-                        :text="$breakTime->started_at->format('H:i')"
-                        input-name="breaks[{{ $loop->index }}][new_started_at]"
-                        field="breaks.{{ $loop->index }}.new_started_at"
+                        :input-field-enabled="! $displayData['isPending']"
+                        :place-holder="$breakTime['startedAt']"
+                        field="breaks.{{ $loop->index }}.started_at"
                     />
                 </td>
                 <td class="text-black">～</td>
                 <td class="text-black">
                     <x-conditional-field
-                        :input-field-enabled="$pendingStampCorrection === null"
-                        :text="$breakTime->ended_at->format('H:i')"
-                        input-name="breaks[{{ $loop->index }}][new_ended_at]"
-                        field="breaks.{{ $loop->index }}.new_ended_at"
+                        :input-field-enabled="! $displayData['isPending']"
+                        :place-holder="$breakTime['endedAt']"
+                        field="breaks.{{ $loop->index }}.ended_at"
                     />
                 </td>
             </tr>
         @endforeach
-        @unless ($pendingStampCorrection)
+        {{-- field for a new break time --}}
+        @unless ($displayData['isPending'])
             <tr>
                 <th class="text-left">
-                    休憩{{ $attendance->breakTimes ? count($attendance->breakTimes) + 1 : '' }}
+                    休憩{{ $displayData['breaksCount'] > 0
+                        ? $displayData['breaksCount'] + 1
+                        : '' }}
                 </th>
                 <td class="text-black">
                     <x-conditional-field
-                        :input-field-enabled="$pendingStampCorrection === null"
-                        input-name="breaks[{{ count($attendance->breakTimes) }}][new_started_at]"
-                        field="breaks.{{ count($attendance->breakTimes) }}.new_started_at"
+                        :input-field-enabled="! $displayData['isPending']"
+                        field="breaks.{{ $displayData['breaksCount'] }}.started_at"
                     />
                 </td>
                 <td class="text-black">～</td>
                 <td class="text-black">
                     <x-conditional-field
-                        :input-field-enabled="$pendingStampCorrection === null"
-                        input-name="breaks[{{ count($attendance->breakTimes) }}][new_ended_at]"
-                        field="breaks.{{ count($attendance->breakTimes) }}.new_ended_at"
+                        :input-field-enabled="! $displayData['isPending']"
+                        field="breaks.{{ $displayData['breaksCount'] }}.ended_at"
                     />
                 </td>
             </tr>
@@ -84,13 +81,13 @@
             <th class="text-left">備考</th>
             <td
                 class="text-black"
-                @unless ($pendingStampCorrection) colspan="3"@endunless
+                @unless ($displayData['isPending']) colspan="3"@endunless
             >
                 <x-conditional-field
-                    :input-field-enabled="$pendingStampCorrection === null"
-                    :text="$pendingStampCorrection?->remarks"
+                    :input-field-enabled="! $displayData['isPending']"
+                    :place-holder="$displayData['remarks']"
                     :enable-text-area="true"
-                    input-name="remarks"
+                    field="remarks"
                     class="text-black"
                 />
             </td>

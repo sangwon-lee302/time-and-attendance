@@ -1,15 +1,4 @@
-@props ([
-    'inputFieldEnabled' => true,
-    'text' => '',
-    'textAreaEnabled' => false,
-    'inputType' => 'text',
-    'inputName',
-    'field' => $inputName,
-])
-
-@if (! $inputFieldEnabled)
-    <p class="whitespace-pre-wrap">{{ $text }}</p>
-@else
+@if ($inputFieldEnabled)
     <div class="flex flex-col gap-1">
         @if ($textAreaEnabled)
             <textarea
@@ -17,14 +6,14 @@
                 form="stamp-correction"
                 rows="5"
                 class="rounded-sm border border-neutral-200 px-2 py-1"
-                >{{ old($field, $text) }}</textarea
+                >{{ old($field, $placeHolder) }}</textarea
             >
         @else
             <input
                 type="{{ $inputType }}"
                 name="{{ $inputName }}"
                 form="stamp-correction"
-                value="{{ old($field, $text) }}"
+                value="{{ old($field, $placeHolder) }}"
                 class="rounded-sm border border-neutral-200 px-2 py-1 text-center"
             />
         @endif
@@ -33,4 +22,6 @@
             <p class="err-msg">{{ $message }}</p>
         @enderror
     </div>
+@else
+    <p class="whitespace-pre-wrap">{{ $placeHolder }}</p>
 @endif

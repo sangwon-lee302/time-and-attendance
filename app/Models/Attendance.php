@@ -153,4 +153,31 @@ class Attendance extends Model
             },
         );
     }
+
+    /**
+     * Convert the given attendance into a display data for the stamp detail table.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDisplayData(): array
+    {
+        $pendingStampCorrection = $this->attendanceCorrections->first();
+
+        return [
+            'id'           => $this->id,
+            'name'         => $this->user->name,
+            'year'         => $this->date->format('Y年'),
+            'date'         => $this->date->format('n月j日'),
+            'clockedInAt'  => $this->clocked_in_at->format('H:i'),
+            'clockedOutAt' => $this->clocked_out_at?->format('H:i') ?? '',
+            'breakTimes'   => $this->breakTimes->map(fn (BreakTime $breakTime) => [
+                'id'        => $breakTime->id,
+                'startedAt' => $breakTime->started_at->format('H:i'),
+                'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
+            ]),
+            'remarks'     => $pendingStampCorrection?->remarks ?? '',
+            'isPending'   => $pendingStampCorrection !== null,
+            'breaksCount' => $this->breakTimes->count(),
+        ];
+    }
 }

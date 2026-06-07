@@ -56,6 +56,7 @@ class AttendanceController extends Controller
     public function show(Attendance $attendance): View
     {
         $attendance->load([
+            'user:id,name',
             'breakTimes:id,attendance_id,started_at,ended_at',
             'attendanceCorrections' => function ($query) {
                 $query->where('status', ApprovalStatus::Pending)
@@ -63,11 +64,8 @@ class AttendanceController extends Controller
             },
         ]);
 
-        $pendingStampCorrection = $attendance->attendanceCorrections->first();
+        $displayData = $attendance->toDisplayData();
 
-        return view('attendances.show', [
-            'attendance'             => $attendance,
-            'pendingStampCorrection' => $pendingStampCorrection,
-        ]);
+        return view('attendances.show', ['displayData' => $displayData]);
     }
 }
