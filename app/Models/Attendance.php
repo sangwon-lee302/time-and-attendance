@@ -127,7 +127,8 @@ class Attendance extends Model
                 ->sum(fn (BreakTime $breakTime) => $breakTime->started_at
                     ->diffInSeconds($breakTime->ended_at)
                 )
-            )->cascade()
+            )
+                ->cascade(),
         );
     }
 
@@ -147,8 +148,9 @@ class Attendance extends Model
                 return CarbonInterval::seconds(
                     $this->clocked_in_at->diffInSeconds($this->clocked_out_at)
                     - $this->total_break_time->totalSeconds
-                )->cascade();
-            }
+                )
+                    ->cascade();
+            },
         );
     }
 }
