@@ -91,8 +91,8 @@ class AttendanceController extends Controller
      * Update the specified attendance and its corresponding breaks.
      */
     public function update(
-        StoreStampCorrectionRequest $request,
         Attendance $attendance,
+        StoreStampCorrectionRequest $request,
         StampCorrectionService $stampCorrectionService,
         AttendanceService $attendanceService
     ): RedirectResponse {

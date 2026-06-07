@@ -45,8 +45,8 @@ class StampCorrectionController extends Controller
      * Store a newly created stamp correction in storage.
      */
     public function store(
-        StoreStampCorrectionRequest $request,
         Attendance $attendance,
+        StoreStampCorrectionRequest $request,
         StampCorrectionService $stampCorrectionService
     ): RedirectResponse {
         $stampCorrectionService->storeStampCorrection(
