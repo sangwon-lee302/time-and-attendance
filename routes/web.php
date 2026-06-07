@@ -16,7 +16,7 @@ Route::middleware(['guest'])
     ->group(function () {
         Route::get('/', 'create');
         Route::post('/', 'store');
-});
+    });
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::controller(TimeLogController::class)
