@@ -8,7 +8,7 @@
     />
     @auth
         <nav class="flex gap-4 font-bold xl:gap-8">
-            @if ($isAdmin)
+            @if (auth()->user()?->is_admin)
                 <a href="{{ route('admin.attendances.daily-index') }}"
                     >勤怠一覧</a
                 >

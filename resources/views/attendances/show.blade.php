@@ -21,14 +21,14 @@
         @else
             <form
                 id="stamp-correction"
-                action="{{ $isAdmin
+                action="{{ auth()->user()?->is_admin
                     ? route('admin.attendances.update', $displayData['id'])
                     : route('stamp-corrections.store', $displayData['id']) }}"
                 method="POST"
                 class="mt-8 mr-0 ml-auto w-max"
             >
                 @csrf
-                @if ($isAdmin) @method ('PUT')@endif
+                @if (auth()->user()?->is_admin) @method ('PUT')@endif
                 <button class="btn btn-primary px-8">修正</button>
             </form>
         @endif

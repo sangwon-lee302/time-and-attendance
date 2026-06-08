@@ -1,7 +1,4 @@
-@props ([
-    'displayData',
-    'isAdmin' => false,
-])
+@props (['displayData'])
 
 <table>
     <thead>
@@ -32,7 +29,7 @@
                 <td>
                     @if ($row['attendance'])
                         <a
-                            href="{{ $isAdmin
+                            href="{{ auth()->user()?->is_admin
                                 ? route('admin.attendances.show', $row['attendance'])
                                 : route('attendances.show', $row['attendance']) }}"
                             class="text-black hover:underline"

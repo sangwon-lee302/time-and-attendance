@@ -2,7 +2,9 @@
     <x-layouts.header />
     <x-layouts.main>
         <h1 class="bd-l-h1">
-            {{ $isAdmin ? $displayData['user']->name.'さんの勤怠' : '勤怠一覧' }}
+            {{ auth()->user()?->is_admin
+                ? $displayData['user']->name.'さんの勤怠'
+                : '勤怠一覧' }}
         </h1>
         <div
             class="my-12 flex justify-between rounded-lg bg-white px-4 py-2 font-semibold text-neutral-500"
@@ -34,11 +36,8 @@
                 </svg>
             </a>
         </div>
-        <x-attendance-index-table
-            :display-data="$displayData"
-            :is-admin="$isAdmin"
-        />
-        @if ($isAdmin)
+        <x-attendance-index-table :display-data="$displayData" />
+        @if (auth()->user()?->is_admin)
             <a
                 href="{{ route('admin.attendances.export', [
                     'user' => $displayData['user']->id,

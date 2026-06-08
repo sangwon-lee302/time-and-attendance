@@ -7,7 +7,6 @@ use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -137,39 +136,41 @@ class StoreTest extends TestCase
             ->get('attendance/detail/'.$attendance->id)
             ->assertOk();
 
-        $newClockedInAt  = '9:00';
-        $newClockedOutAt = '18:00';
+        $date = $attendance->date;
+
+        $newClockedInAt  = $date->setTime(9, 0);
+        $newClockedOutAt = $date->setTime(18, 0);
         $newBreakTimes   = [
-            ['started_at' => '12:00', 'ended_at' => '12:30'],
-            ['started_at' => '15:00', 'ended_at' => '15:30'],
+            [
+                'started_at' => $date->setTime(12, 0),
+                'ended_at'   => $date->setTime(12, 30),
+            ],
+            [
+                'started_at' => $date->setTime(15, 0),
+                'ended_at'   => $date->setTime(15, 30),
+            ],
         ];
 
         $response = $this->followingRedirects()
             ->actingAs($user)
             ->post(route('stamp-corrections.store', [
                 'attendance'               => $attendance,
-                'clocked_in_at'            => $newClockedInAt,
-                'clocked_out_at'           => $newClockedOutAt,
+                'clocked_in_at'            => $newClockedInAt->format('H:i'),
+                'clocked_out_at'           => $newClockedOutAt->format('H:i'),
                 'breaks[0][break_time_id]' => $breakTime->id,
-                'breaks[0][started_at]'    => $newBreakTimes[0]['started_at'],
-                'breaks[0][ended_at]'      => $newBreakTimes[0]['ended_at'],
-                'breaks[1][started_at]'    => $newBreakTimes[1]['started_at'],
-                'breaks[1][ended_at]'      => $newBreakTimes[1]['ended_at'],
-                'remarks'                  => '空白ではない備考',
+                'breaks[0][started_at]'    => $newBreakTimes[0]['started_at']->format('H:i'),
+                'breaks[0][ended_at]'      => $newBreakTimes[0]['ended_at']->format('H:i'),
+                'breaks[1][started_at]'    => $newBreakTimes[1]['started_at']->format('H:i'),
+                'breaks[1][ended_at]'      => $newBreakTimes[1]['ended_at']->format('H:i'),
+                'remarks'                  => '備考',
             ]));
 
         // check if attendance correction is stored successfully
         $this->assertDatabaseHas('attendance_corrections', [
-            'attendance_id' => $attendance->id,
-            'status'        => ApprovalStatus::Pending,
-            'clocked_in_at' => Carbon::createFromFormat(
-                'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newClockedInAt,
-            ),
-            'clocked_out_at' => Carbon::createFromFormat(
-                'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newClockedOutAt,
-            ),
+            'attendance_id'  => $attendance->id,
+            'status'         => ApprovalStatus::Pending,
+            'clocked_in_at'  => $newClockedInAt,
+            'clocked_out_at' => $newClockedOutAt,
         ]);
 
         // check if break time corrections are stored successfully
@@ -177,26 +178,14 @@ class StoreTest extends TestCase
         $this->assertDatabaseHas('break_time_corrections', [
             'attendance_correction_id' => $attendanceCorrection->id,
             'break_time_id'            => $breakTime->id,
-            'started_at'               => Carbon::createFromFormat(
-                'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['started_at'],
-            ),
-            'ended_at' => Carbon::createFromFormat(
-                'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[0]['ended_at'],
-            ),
+            'started_at'               => $newBreakTimes[0]['started_at'],
+            'ended_at'                 => $newBreakTimes[0]['ended_at'],
         ]);
         $this->assertDatabaseHas('break_time_corrections', [
             'attendance_correction_id' => $attendanceCorrection->id,
             'break_time_id'            => null,
-            'started_at'               => Carbon::createFromFormat(
-                'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['started_at'],
-            ),
-            'ended_at' => Carbon::createFromFormat(
-                'Y-m-d G:i',
-                $attendance->date->format('Y-m-d').' '.$newBreakTimes[1]['ended_at'],
-            ),
+            'started_at'               => $newBreakTimes[1]['started_at'],
+            'ended_at'                 => $newBreakTimes[1]['ended_at'],
         ]);
 
         $response->assertOk();
@@ -206,8 +195,7 @@ class StoreTest extends TestCase
         );
         $response->assertViewIs('attendances.show');
         $response->assertSee('*承認待ちのため修正はできません。');
-
         // check if stamp correction form is disabled
-        $response->assertDontSee('method="POST"');
+        $response->assertDontSee('id="stamp-correction"', false);
     }
 }
