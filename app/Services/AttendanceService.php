@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -34,7 +35,7 @@ class AttendanceService
             ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
 
         return [
-            ...($user->is_admin ? ['user' => $user] : []),
+            ...(Auth::user()?->is_admin ? ['user' => $user] : []),
             'month'                => $month,
             'linkForPreviousMonth' => route('attendances.index', [
                 'month' => $month->subMonth()->format('Y-m'),

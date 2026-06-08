@@ -47,9 +47,10 @@ class AttendanceIndexTest extends TestCase
             BreakTime::factory()->withinAttendance($attendance)->create();
         }
 
-        $this->actingAs($adminUser)->get(
-            'admin/attendance/staff/'.$user->id
-        )->assertOk();
+        $this
+            ->actingAs($adminUser)
+            ->get('admin/attendance/staff/'.$user->id)
+            ->assertOk();
 
         $response = $this->actingAs($adminUser)->get(route('admin.attendances.export', [
             'user'  => $user,
