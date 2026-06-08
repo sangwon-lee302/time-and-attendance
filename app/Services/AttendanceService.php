@@ -9,9 +9,7 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
 
 class AttendanceService
 {
@@ -100,48 +98,34 @@ class AttendanceService
      * Update the given attendance resource and its corresponding break time
      * resources.
      */
-    public function updateAttendance(
-        array $attributes,
-        Attendance $attendance
-    ): bool {
-        try {
-            return DB::transaction(function () use ($attributes, $attendance) {
-                // update the attendance resource
-                $attendance->update([
-                    'clocked_in_at'  => $attributes['clocked_in_at'],
-                    'clocked_out_at' => $attributes['clocked_out_at'],
-                ]);
+    public function updateAttendance(array $attributes, Attendance $attendance): void
+    {
+        DB::transaction(function () use ($attributes, $attendance) {
+            $attendance->update([
+                'clocked_in_at'  => $attributes['clocked_in_at'],
+                'clocked_out_at' => $attributes['clocked_out_at'],
+            ]);
 
-                // update or create corresponding break time resources
-                $breaks = $attendance->breakTimes()->get()->keyBy('id');
+            // update or create corresponding break time resources
+            $attendance->breakTimes()->upsert(collect($attributes['breaks'])
+                ->map(fn (array $break) => [
+                    'id'            => $break['break_time_id'] ?? null,
+                    'attendance_id' => $attendance->id,
+                    'started_at'    => $break['started_at'],
+                    'ended_at'      => $break['ended_at'],
+                    'updated_at'    => now(),
+                ])
+                ->toArray(),
+                ['id'],
+                ['started_at', 'ended_at', 'updated_at'],
+            );
 
-                foreach ($attributes['breaks'] as $breakData) {
-                    if ($breaks->has($breakData['break_time_id'])) {
-                        $breaks->get($breakData['break_time_id'])->update([
-                            'started_at' => $breakData['started_at'],
-                            'ended_at'   => $breakData['ended_at'],
-                        ]);
-
-                        continue;
-                    }
-
-                    $attendance->breakTimes()->create([
-                        'started_at' => $breakData['started_at'],
-                        'ended_at'   => $breakData['ended_at'],
-                    ]);
-                }
-
-                // set the status of the attendance correction to 'approved'
-                $attendance->attendanceCorrections()
-                    ->where('status', ApprovalStatus::Pending)
-                    ->update(['status' => ApprovalStatus::Approved]);
-
-                return true;
-            });
-        } catch (Throwable $e) {
-            Log::error('勤怠修正エラー: '.$e->getMessage(), ['exception' => $e]);
-
-            return false;
-        }
+            // set the status of the attendance correction to 'approved'
+            $attendance
+                ->attendanceCorrections()
+                ->where('status', ApprovalStatus::Pending)
+                ->firstOrFail()
+                ->update(['status' => ApprovalStatus::Approved]);
+        });
     }
 }

@@ -11,6 +11,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Log;
+use Throwable;
 
 class StampCorrectionController extends Controller
 {
@@ -26,7 +28,8 @@ class StampCorrectionController extends Controller
                 fn ($subQuery) => $subQuery->where('user_id', Auth::id()),
             ),
         )
-            ->when($request->query('status') === 'approved',
+            ->when(
+                $request->query('status') === 'approved',
                 fn ($query) => $query->where('status', ApprovalStatus::Approved),
                 fn ($query) => $query->where('status', ApprovalStatus::Pending),
             )
@@ -49,10 +52,22 @@ class StampCorrectionController extends Controller
         StoreStampCorrectionRequest $request,
         StampCorrectionService $stampCorrectionService
     ): RedirectResponse {
-        $stampCorrectionService->storeStampCorrection(
-            $request->validated(), $attendance
-        );
+        try {
+            $stampCorrectionService->storeStampCorrection(
+                $request->validated(),
+                $attendance
+            );
 
-        return redirect()->route('attendances.show', $attendance);
+            return redirect()->back();
+        } catch (Throwable $th) {
+            $message = '勤怠修正申請保存エラー: '.$th->getMessage();
+
+            Log::error($message, ['exception' => $th]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['custom_error' => $message]);
+        }
     }
 }

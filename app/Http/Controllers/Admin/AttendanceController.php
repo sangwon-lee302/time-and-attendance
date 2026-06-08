@@ -12,7 +12,9 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class AttendanceController extends Controller
 {
@@ -70,13 +72,22 @@ class AttendanceController extends Controller
     ): RedirectResponse {
         $validated = $request->validated();
 
-        $stampCorrectionService->storeStampCorrection(
-            $validated, $attendance
-        );
+        try {
+            $stampCorrectionService->storeStampCorrection($validated, $attendance);
 
-        $attendanceService->updateAttendance($validated, $attendance);
+            $attendanceService->updateAttendance($validated, $attendance);
 
-        return redirect()->route('admin.attendances.show', $attendance);
+            return redirect()->back();
+        } catch (Throwable $th) {
+            $message = '勤怠情報更新エラー: '.$th->getMessage();
+
+            Log::error($message, ['exception' => $th]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['custom_error' => $message]);
+        }
     }
 
     /**

@@ -5,7 +5,7 @@
         <nav class="mb-8 flex gap-12 border-b px-12 py-4 lg:gap-24 lg:px-24">
             <a
                 href="{{ route('stamp-corrections.index', ['status' => 'pending']) }}"
-                @class (['font-bold' => request()->query('status') != 'approved'])
+                @class (['font-bold' => request()->query('status') !== 'approved'])
                 >承認待ち</a
             >
             <a
@@ -41,7 +41,9 @@
                         </td>
                         <td>
                             <a
-                                href="{{ route('attendances.show', $stampCorrection->attendance) }}"
+                                href="{{ auth()->user()?->is_admin
+                                    ? route('admin.stamp-corrections.show', $stampCorrection)
+                                    : route('attendances.show', $stampCorrection->attendance) }}"
                                 class="text-black hover:underline"
                                 >詳細</a
                             >
