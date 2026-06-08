@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -55,6 +55,31 @@ class StoreStampCorrectionRequest extends FormRequest
                 redirect()->back()->withInput()->withErrors($errors)
             );
         }
+    }
+
+    /**
+     * Canonicalize the given time into datetime string.
+     */
+    private function canonicalizeTime(
+        ?string $time,
+        MessageBag $errors,
+        string $errorKey
+    ): string {
+        if (blank($time)) {
+            return '';
+        }
+
+        if (! preg_match('/^\d{1,2}:\d{2}$/', $time)) {
+            $errors->add($errorKey,
+                '時刻は「時:分」の形式（例: 9:05, 23:59）で入力してください'
+            );
+
+            return '';
+        }
+
+        return CarbonImmutable::createFromFormat('Y-m-d G:i',
+            $this->route('attendance')->date->format('Y-m-d').' '.$time
+        )->format('Y-m-d H:i:s');
     }
 
     /**
@@ -141,27 +166,35 @@ class StoreStampCorrectionRequest extends FormRequest
     }
 
     /**
-     * Canonicalize the given time into datetime string.
+     * Handle a passed validation attempt.
      */
-    private function canonicalizeTime(
-        ?string $time,
-        MessageBag $errors,
-        string $errorKey
-    ): ?string {
-        if (blank($time)) {
-            return null;
-        }
+    #[Override]
+    protected function passedValidation(): void
+    {
+        $this->merge([
+            'breaks' => $this->filterBreaks($this->input('breaks', [])),
+        ]);
+    }
 
-        if (! preg_match('/^\d{1,2}:\d{2}$/', $time)) {
-            $errors->add($errorKey,
-                '時刻は「時:分」の形式（例: 9:05, 23:59）で入力してください'
-            );
+    #[Override]
+    public function validated($key = null, $default = null)
+    {
+        $data = parent::validated($key, $default);
 
-            return null;
-        }
+        $data['breaks'] = $this->filterBreaks($data['breaks']);
 
-        return Carbon::createFromFormat('Y-m-d G:i',
-            $this->route('attendance')->date->format('Y-m-d').' '.$time
-        )->format('Y-m-d H:i:s');
+        return $data;
+    }
+
+    /**
+     * Filter breaks whose 'started_at' and 'ended_at' are both filled.
+     */
+    protected function filterBreaks(array $breaks): array
+    {
+        return collect($breaks)
+            ->filter(fn (array $breakData): bool => filled($breakData['started_at'])
+                && filled($breakData['ended_at'])
+            )
+            ->all();
     }
 }
