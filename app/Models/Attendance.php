@@ -157,7 +157,7 @@ class Attendance extends Model
     /**
      * Convert the given attendance into a display data for the stamp detail table.
      *
-     * @return array<string, mixed>
+     * @return array<string, int|string|bool|array<string, int|string>>
      */
     public function toDisplayData(): array
     {
