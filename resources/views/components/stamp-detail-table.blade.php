@@ -79,14 +79,11 @@
         @endunless
         <tr>
             <th class="text-left">備考</th>
-            <td
-                class="text-black"
-                @unless ($displayData['isPending']) colspan="3"@endunless
-            >
+            <td class="text-left text-black" colspan="3">
                 <x-conditional-field
                     :input-field-enabled="! $displayData['isPending']"
                     :place-holder="$displayData['remarks']"
-                    :enable-text-area="true"
+                    :text-area-enabled="true"
                     field="remarks"
                     class="text-black"
                 />
