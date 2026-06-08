@@ -14,7 +14,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($displayData as $row)
+        @foreach ($displayData['table'] as $row)
             <tr>
                 <td class="text-left">
                     {{ $row['date']->isoFormat('MM/DD(ddd)') }}

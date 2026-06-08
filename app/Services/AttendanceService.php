@@ -16,29 +16,41 @@ use Throwable;
 class AttendanceService
 {
     /**
-     * Prepare a set of data necessary for rendering attendance index page.
+     * Prepare a set of data necessary for rendering monthly attendance index page.
      *
      * @return array<int, array<string, CarbonImmutable|Attendance|null>>
      */
-    public function prepareIndexView(
+    public function prepareMonthlyIndexView(
         User $user,
-        CarbonImmutable $start,
-        CarbonImmutable $end
+        CarbonImmutable $month,
     ): array {
+        $startOfMonth = $month->startOfMonth();
+        $endOfMonth   = $month->endOfMonth();
+
         $attendances = $user->attendances()
-            ->whereBetween('date', [$start, $end])
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->with(['breakTimes' => fn ($query) => $query->whereNotNull('ended_at')
                 ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])
             ->get()
             ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
 
-        return collect(CarbonPeriodImmutable::create($start, $end))
-            ->map(fn (CarbonImmutable $date) => [
-                'date'       => $date,
-                'attendance' => $attendances->get($date->day),
-            ])
-            ->all();
+        return [
+            ...($user->is_admin ? ['user' => $user] : []),
+            'month'                => $month,
+            'linkForPreviousMonth' => route('attendances.index', [
+                'month' => $month->subMonth()->format('Y-m'),
+            ]),
+            'linkForNextMonth' => route('attendances.index', [
+                'month' => $month->addMonth()->format('Y-m'),
+            ]),
+            'table' => collect(CarbonPeriodImmutable::create($startOfMonth, $endOfMonth))
+                ->map(fn (CarbonImmutable $date) => [
+                    'date'       => $date,
+                    'attendance' => $attendances->get($date->day),
+                ])
+                ->all(),
+        ];
     }
 
     /**

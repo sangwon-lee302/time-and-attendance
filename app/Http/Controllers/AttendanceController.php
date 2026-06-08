@@ -23,31 +23,9 @@ class AttendanceController extends Controller
             $request->query('month', now()->format('Y-m'))
         );
 
-        $linkForPreviousMonth = $this->getMonthlyIndexUrl($month->subMonth());
-        $linkForNextMonth     = $this->getMonthlyIndexUrl($month->addMonth());
+        $displayData = $attendanceService->prepareMonthlyIndexView(Auth::user(), $month);
 
-        $displayData = $attendanceService->prepareIndexView(
-            Auth::user(),
-            $month->startOfMonth(),
-            $month->endOfMonth()
-        );
-
-        return view('attendances.index', [
-            'month'                => $month,
-            'linkForPreviousMonth' => $linkForPreviousMonth,
-            'linkForNextMonth'     => $linkForNextMonth,
-            'displayData'          => $displayData,
-        ]);
-    }
-
-    /**
-     * Get a link for an attendance index page for the given month.
-     */
-    private function getMonthlyIndexUrl(CarbonImmutable $month): string
-    {
-        return route('attendances.index', [
-            'month' => $month->format('Y-m'),
-        ]);
+        return view('attendances.index', ['displayData' => $displayData]);
     }
 
     /**
