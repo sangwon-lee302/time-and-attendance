@@ -27,7 +27,7 @@ class ClockOutTest extends TestCase
 
         $response = $this->followingRedirects()
             ->actingAs($user)
-            ->patch(route('time-logs.clock-out'));
+            ->put(route('time-logs.clock-out'));
 
         $this->assertDatabaseHas('attendances', [
             'user_id'        => $user->id,

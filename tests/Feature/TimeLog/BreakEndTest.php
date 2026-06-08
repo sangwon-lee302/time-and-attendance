@@ -32,7 +32,7 @@ class BreakEndTest extends TestCase
 
         $response = $this->followingRedirects()
             ->actingAs($user)
-            ->patch(route('time-logs.break-end'));
+            ->put(route('time-logs.break-end'));
 
         $this->assertDatabaseHas('break_times', [
             'attendance_id' => $attendance->id,

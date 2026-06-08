@@ -51,7 +51,7 @@ class AttendanceShowTest extends TestCase
             ->assertOk();
 
         $response = $this->actingAs($adminUser)
-            ->patch(route('admin.attendances.update', [
+            ->put(route('admin.attendances.update', [
                 'attendance'    => $attendance,
                 'clocked_in_at' => $attendanceCorrection->clocked_in_at
                     ->format('H:i'),

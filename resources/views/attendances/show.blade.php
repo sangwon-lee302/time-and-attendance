@@ -28,7 +28,7 @@
                 class="mt-8 mr-0 ml-auto w-max"
             >
                 @csrf
-                @if ($isAdmin) @method ('PATCH')@endif
+                @if ($isAdmin) @method ('PUT')@endif
                 <button class="btn btn-primary px-8">修正</button>
             </form>
         @endif
