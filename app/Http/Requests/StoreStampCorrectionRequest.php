@@ -87,9 +87,8 @@ class StoreStampCorrectionRequest extends FormRequest
             'breaks.*.break_time_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('break_times', 'id')->where('attendance_id',
-                    $this->route('attendance')->id
-                ),
+                Rule::exists('break_times', 'id')
+                    ->where('attendance_id', $this->route('attendance')->id),
             ],
             'breaks.*.started_at' => [
                 'required_with:breaks.*.ended_at',
