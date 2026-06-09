@@ -20,7 +20,7 @@ class IndexTest extends TestCase
         $response = $this->actingAs($user)->get('stamp_correction_request/list');
 
         $response->assertOk();
-        // check if links in nav includes appropriate query parameters
+        // check if links in navigation include appropriate query parameters
         $response->assertSee('status=pending');
         $response->assertSee('status=approved');
     }

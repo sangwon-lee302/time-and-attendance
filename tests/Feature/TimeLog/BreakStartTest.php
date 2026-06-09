@@ -41,6 +41,6 @@ class BreakStartTest extends TestCase
         // check if attendance status is shown correctly
         $response->assertSeeText('休憩中');
         // check if break-end button is shown
-        $response->assertSee(url(route('time-logs.break-end')));
+        $response->assertSee(route('time-logs.break-end'));
     }
 }

@@ -17,7 +17,7 @@ class LoginTest extends TestCase
         $response->assertOk();
         $response->assertSee('管理者ログイン');
         $response->assertSee('管理者ログインする');
-        $response->assertSee(url(route('admin.login')));
+        $response->assertSee(route('admin.login'));
     }
 
     public function test_admin_user_cannot_login_with_empty_email(): void

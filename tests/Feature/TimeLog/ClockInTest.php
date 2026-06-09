@@ -36,10 +36,10 @@ class ClockInTest extends TestCase
         // check if attendance status is shown correctly
         $response->assertSeeText('出勤中');
         // check if clock-in button is not shown
-        $response->assertDontSee(url(route('time-logs.clock-in')));
+        $response->assertDontSee(route('time-logs.clock-in'));
         // check if clock-out button is shown
-        $response->assertSee(url(route('time-logs.clock-out')));
+        $response->assertSee(route('time-logs.clock-out'));
         // check if break-start button is shown
-        $response->assertSee(url(route('time-logs.break-start')));
+        $response->assertSee(route('time-logs.break-start'));
     }
 }

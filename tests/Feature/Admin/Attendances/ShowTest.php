@@ -6,7 +6,6 @@ use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\User;
-use DateTime;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -34,45 +33,50 @@ class AttendanceShowTest extends TestCase
     {
         $this->freezeTime();
 
-        $adminUser = User::factory()->admin()->create();
+        $admin = User::factory()->admin()->create();
 
         $user = User::factory()->create();
 
         $attendance = Attendance::factory()->recycle($user)->today()->create();
 
+        $newClockedInAt       = $attendance->date->setTime(9, 0);
+        $newClockedOutAt      = $attendance->date->setTime(18, 0);
         $attendanceCorrection = AttendanceCorrection::factory()
-            ->recycle($user)
+            ->recycle([$user, $attendance])
             ->create([
-                'clocked_in_at'  => new DateTime('09:00'),
-                'clocked_out_at' => new DateTime('18:00'),
+                'clocked_in_at'  => $newClockedInAt,
+                'clocked_out_at' => $newClockedOutAt,
             ]);
 
-        $this->actingAs($adminUser)->get('admin/attendance/'.$attendance->id)
+        $this
+            ->actingAs($admin)
+            ->get('admin/attendance/'.$attendance->id)
             ->assertOk();
 
-        $response = $this->actingAs($adminUser)
+        $response = $this
+            ->actingAs($admin)
             ->put(route('admin.attendances.update', [
-                'attendance'    => $attendance,
-                'clocked_in_at' => $attendanceCorrection->clocked_in_at
-                    ->format('H:i'),
-                'clocked_out_at' => $attendanceCorrection->clocked_out_at
-                    ->format('H:i'),
-                'remarks' => $attendanceCorrection->remarks,
+                'attendance'     => $attendance,
+                'clocked_in_at'  => $newClockedInAt->format('H:i'),
+                'clocked_out_at' => $newClockedOutAt->format('H:i'),
+                'remarks'        => $attendanceCorrection->remarks,
             ]));
+
+        $response->assertSessionHasNoErrors();
 
         $response->assertRedirect('admin/attendance/'.$attendance->id);
 
         $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id'  => $attendance->id,
             'status'         => ApprovalStatus::Approved,
-            'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
-            'clocked_out_at' => $attendanceCorrection->clocked_out_at,
+            'clocked_in_at'  => $newClockedInAt->format('Y-m-d H:i:s'),
+            'clocked_out_at' => $newClockedOutAt->format('Y-m-d H:i:s'),
         ]);
 
         $this->assertDatabaseHas('attendances', [
             'user_id'        => $user->id,
-            'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
-            'clocked_out_at' => $attendanceCorrection->clocked_out_at,
+            'clocked_in_at'  => $newClockedInAt->format('Y-m-d H:i:s'),
+            'clocked_out_at' => $newClockedOutAt->format('Y-m-d H:i:s'),
         ]);
     }
 }

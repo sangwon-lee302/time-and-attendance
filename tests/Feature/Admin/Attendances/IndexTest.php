@@ -16,12 +16,12 @@ class AttendanceIndexTest extends TestCase
     {
         $this->freezeTime();
 
-        $adminUser  = User::factory()->admin()->create();
+        $admin      = User::factory()->admin()->create();
         $user       = User::factory()->create();
         $attendance = Attendance::factory()->recycle($user)->today()->create();
         BreakTime::factory()->withinAttendance($attendance)->create();
 
-        $request = $this->actingAs($adminUser)->get('admin/attendance/list');
+        $request = $this->actingAs($admin)->get('admin/attendance/list');
 
         $request->assertOk();
         $request->assertSee(now()->isoFormat('LL').'の勤怠');
@@ -41,18 +41,18 @@ class AttendanceIndexTest extends TestCase
     {
         $this->freezeTime();
 
-        $adminUser = User::factory()->admin()->create();
-        $user      = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+        $user  = User::factory()->create();
         foreach (Attendance::factory(5)->recycle($user)->create() as $attendance) {
             BreakTime::factory()->withinAttendance($attendance)->create();
         }
 
         $this
-            ->actingAs($adminUser)
+            ->actingAs($admin)
             ->get('admin/attendance/staff/'.$user->id)
             ->assertOk();
 
-        $response = $this->actingAs($adminUser)->get(route('admin.attendances.export', [
+        $response = $this->actingAs($admin)->get(route('admin.attendances.export', [
             'user'  => $user,
             'month' => now()->format('Y-m'),
         ]));

@@ -31,6 +31,6 @@ class CreateTest extends TestCase
         $response->assertSeeText($randomDate->isoFormat('ll(ddd)'));
         $response->assertSeeText($randomDate->format('H:i'));
         // check if clock-in button is shown
-        $response->assertSee(url(route('time-logs.clock-in')));
+        $response->assertSee(route('time-logs.clock-in'));
     }
 }

@@ -14,9 +14,9 @@ class UserIndexTest extends TestCase
     {
         $users = User::factory(5)->create();
 
-        $adminUser = User::factory()->admin()->create();
+        $admin = User::factory()->admin()->create();
 
-        $response = $this->actingAs($adminUser)->get('admin/staff/list');
+        $response = $this->actingAs($admin)->get('admin/staff/list');
 
         $response->assertOk();
         foreach ($users as $user) {
