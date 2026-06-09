@@ -31,7 +31,7 @@ class BreakTimeFactory extends Factory
     }
 
     /**
-     * Indicate that the model's started at and ended at should be in between
+     * Indicate that the model's start time and end time should be in between the given
      * attendance's clocked in time and clocked out time.
      */
     public function withinAttendance(Attendance $attendance): static

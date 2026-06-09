@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Override;
 
@@ -25,6 +26,8 @@ use Override;
 #[Fillable(['break_time_id', 'started_at', 'ended_at'])]
 class BreakTimeCorrection extends Model
 {
+    use HasFactory;
+
     #[Override]
     protected function casts()
     {

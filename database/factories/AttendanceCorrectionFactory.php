@@ -19,12 +19,12 @@ class AttendanceCorrectionFactory extends Factory
      */
     public function definition(): array
     {
-        $newClockedInAt = fake()->dateTime();
+        $clockedInAt = fake()->dateTimeBetween(today()->startOfDay());
 
         return [
             'attendance_id'  => Attendance::factory(),
-            'clocked_in_at'  => $newClockedInAt,
-            'clocked_out_at' => fake()->dateTime($newClockedInAt),
+            'clocked_in_at'  => $clockedInAt,
+            'clocked_out_at' => fake()->dateTimeBetween($clockedInAt),
             'remarks'        => fake()->realText(),
         ];
     }
