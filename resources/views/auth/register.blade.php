@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-layouts.header />
-    <x-layouts.main>
+    <x-layouts.auth>
         <x-form title="会員登録" method="POST" :action="route('register')">
             <x-form.input field="name" type="text" />
             <x-form.input field="email" type="email" />
@@ -13,5 +13,5 @@
                 >ログインはこちら</a
             >
         </x-form>
-    </x-layouts.main>
+    </x-layouts.auth>
 </x-layouts.app>

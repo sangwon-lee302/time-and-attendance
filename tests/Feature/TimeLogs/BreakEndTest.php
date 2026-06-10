@@ -3,44 +3,55 @@
 namespace Tests\Feature\TimeLog;
 
 use App\Models\Attendance;
+use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BreakStartTest extends TestCase
+class BreakEndTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_start_break(): void
+    public function test_user_can_end_break(): void
     {
         // freeze time to ensure consistent test results
         $this->freezeTime();
 
         $user = User::factory()->create();
 
-        $attendance = Attendance::factory()->recycle($user)
+        $attendance = Attendance::factory()
+            ->recycle($user)
             ->today()
             ->notClockedOut()
             ->create();
 
-        $this->actingAs($user)->get('attendance')->assertOk();
+        BreakTime::factory()
+            ->withinAttendance($attendance)
+            ->notEnded()
+            ->create();
+
+        $response = $this->actingAs($user)->get('attendance');
+
+        $response->assertOk();
+        $response->assertSee('休憩中');
 
         $response = $this->followingRedirects()
             ->actingAs($user)
-            ->post(route('time-logs.break-start'));
+            ->put(route('time-logs.break-end'));
 
         $this->assertDatabaseHas('break_times', [
             'attendance_id' => $attendance->id,
-            'started_at'    => now(),
-            'ended_at'      => null,
+            'ended_at'      => now(),
         ]);
 
         $response->assertOk();
         $this->assertEquals(url('attendance'), request()->url());
         $response->assertViewIs('time-logs.create');
         // check if attendance status is shown correctly
-        $response->assertSeeText('休憩中');
-        // check if break-end button is shown
-        $response->assertSee(route('time-logs.break-end'));
+        $response->assertSeeText('出勤中');
+        // check if clock-out button is shown
+        $response->assertSee(route('time-logs.clock-out'));
+        // check if break-start button is shown
+        $response->assertSee(route('time-logs.break-start'));
     }
 }

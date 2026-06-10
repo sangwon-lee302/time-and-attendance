@@ -18,14 +18,19 @@ class ClockOutTest extends TestCase
 
         $user = User::factory()->create();
 
-        Attendance::factory()->recycle($user)
+        Attendance::factory()
+            ->recycle($user)
             ->today()
             ->notClockedOut()
             ->create();
 
-        $this->actingAs($user)->get('attendance')->assertOk();
+        $response = $this->actingAs($user)->get('attendance');
 
-        $response = $this->followingRedirects()
+        $response->assertOk();
+        $response->assertSee('出勤中');
+
+        $response = $this
+            ->followingRedirects()
             ->actingAs($user)
             ->put(route('time-logs.clock-out'));
 

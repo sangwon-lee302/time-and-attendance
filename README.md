@@ -2,7 +2,10 @@
 
 ## 概要
 
-プログラミング学習のための勤怠管理システム。一般ユーザー（スタッフ）は勤怠登録（打刻）、勤怠一覧確認、勤怠修正申請などの機能を使用でき、管理者ユーザーは一般ユーザーの勤怠情報の閲覧や修正、修正申請の確認などができる。
+プログラミング学習のための勤怠管理システム。
+一般ユーザー（スタッフ）は勤怠登録（打刻）、勤怠一覧確認、勤怠修正申請などの
+機能を使用でき、管理者ユーザーは一般ユーザーの勤怠情報の閲覧や修正、修正申請
+の承認などができる。
 
 ## 使用技術
 
@@ -10,28 +13,34 @@
 - PHP 8.5
 - Mysql 8.4.9
 - Mailpit v1.29.7
-- Node 24
+- Node 24.15.0
+
+## 環境構築の手順
+
+- `Docker`を起動
+- `make init`
+
+## URL
+
+- 開発環境: `http://localhost/`
+- `Mailpit`: `http://localhost:8025`
 
 ## ER図
 
 ```mermaid
----
-config:
-    layout: elk
----
 erDiagram
     users ||..o{ attendances: "have"
     attendances ||..o{ break_times: "contain"
-    attendances ||..o{ attnd-crr: "have"
-    attnd-corrections ||..o{ break-corrections: "contain"
-    break_times |o..o{ break-crr: "have"
+    attendances ||..o{ attendance_corrections: "have"
+    attendance_corrections ||..o{ break_time_corrections: "contain"
+    break_times |o..o{ break_time_corrections: "have"
 
     users {
         unsignedBigInt id PK
         varchar(255) name
         varchar(255) email UK
         datetime email_verified_at "nullable"
-        tinyint(1) is_admin "default false"
+        tinyint(1) is_admin "default 0"
         varchar(255) password
         datetime created_at "nullable"
         datetime updated_at "nullable"
@@ -56,7 +65,7 @@ erDiagram
         datetime updated_at "nullable"
     }
 
-    attnd-crr["attendance_corrections"] {
+    attendance_corrections {
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK
         unsignedTinyInt status "0:pending 1:approved / default 0"
@@ -66,7 +75,7 @@ erDiagram
         datetime updated_at "nullable"
     }
 
-    break-crr["break_time_corrections"] {
+    break_time_corrections {
         unsignedBigInt id PK
         unsignedBigInt attendance_correction_id FK
         unsignedBigInt break_time_id FK "nullable"
@@ -76,3 +85,16 @@ erDiagram
         datetime updated_at "nullable"
     }
 ```
+
+## ログイン情報
+
+|      項目      |   一般ユーザー    |      管理者       |
+| :------------: | :---------------: | :---------------: |
+| メールアドレス | staff@example.com | admin@example.com |
+|   パスワード   |     password      |     password      |
+
+## その他
+
+### 仕様書からの変更点
+
+- `Mailhog`や`Mailtrap`の代わりに`Mailpit`を使用
