@@ -60,14 +60,9 @@ class StampCorrectionController extends Controller
 
             return redirect()->back();
         } catch (Throwable $th) {
-            $message = '勤怠修正申請保存エラー: '.$th->getMessage();
+            Log::error('勤怠修正申請保存エラー: '.$th->getMessage(), ['exception' => $th]);
 
-            Log::error($message, ['exception' => $th]);
-
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['custom_error' => $message]);
+            return redirect()->back()->withInput();
         }
     }
 }

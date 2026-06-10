@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Admin;
+namespace Tests\Feature\Admin\Attendances;
 
 use App\ApprovalStatus;
 use App\Models\Attendance;
@@ -9,11 +9,11 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AttendanceShowTest extends TestCase
+class ShowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_attendance_show_page_is_rendered_correctly(): void
+    public function test_admin_attendance_show_page_can_be_rendered(): void
     {
         $this->freezeTime();
 
@@ -29,7 +29,7 @@ class AttendanceShowTest extends TestCase
         $response->assertViewIs('attendances.show');
     }
 
-    public function test_correction_is_made_successfully_by_admin_user(): void
+    public function test_stamp_correction_can_be_made_by_admin_user(): void
     {
         $this->freezeTime();
 

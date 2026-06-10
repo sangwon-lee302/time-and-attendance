@@ -4,8 +4,9 @@ namespace Database\Factories;
 
 use App\Models\Attendance;
 use App\Models\User;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 /**
  * @extends Factory<Attendance>
@@ -24,7 +25,7 @@ class AttendanceFactory extends Factory
 
         return [
             'user_id'        => User::factory(),
-            'date'           => Carbon::instance($clockedInAt)->format('Y-m-d'),
+            'date'           => CarbonImmutable::instance($clockedInAt)->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,
@@ -46,6 +47,22 @@ class AttendanceFactory extends Factory
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,
             'updated_at'     => $clockedOutAt,
+        ]);
+    }
+
+    /**
+     * Indicate that the model's date should be of the given month and are
+     * different with each other when creating multiple models.
+     */
+    public function uniqueDateInMonth(string $yearAndMonth): static
+    {
+        $date = CarbonImmutable::parse($yearAndMonth);
+
+        $shuffledDays = range(1, $date->daysInMonth());
+        shuffle($shuffledDays);
+
+        return $this->sequence(fn (Sequence $sequence) => [
+            'date' => $date->day($shuffledDays[$sequence->index]),
         ]);
     }
 

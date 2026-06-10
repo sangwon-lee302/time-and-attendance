@@ -12,7 +12,7 @@ class IndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_stamp_correction_page_is_rendered_successfully(): void
+    public function test_stamp_correction_page_can_be_rendered(): void
     {
         $user = User::factory()->create();
         Attendance::factory()->recycle($user)->create();
@@ -25,7 +25,7 @@ class IndexTest extends TestCase
         $response->assertSee('status=approved');
     }
 
-    public function test_pending_stamp_correction_is_shown_successfully(): void
+    public function test_pending_stamp_corrections_can_be_shown(): void
     {
         $user                 = User::factory()->create();
         $attendance           = Attendance::factory()->recycle($user)->create();
@@ -45,7 +45,7 @@ class IndexTest extends TestCase
         $response->assertSee(url('attendance/detail/'.$attendance->id));
     }
 
-    public function test_approved_stamp_correction_is_shown_successfully(): void
+    public function test_approved_stamp_corrections_can_be_shown(): void
     {
         $user                 = User::factory()->create();
         $attendance           = Attendance::factory()->recycle($user)->create();

@@ -78,13 +78,15 @@ Route::middleware(['auth', 'admin'])
         // for users
         Route::get('staff/list', [UserController::class, 'index'])
             ->name('users.index');
+    });
 
-        // for stamp corrections
-        Route::controller(AdminStampCorrectionController::class)
-            ->prefix('stamp_correction_request/approve/{attendance_correction}')
-            ->name('stamp-corrections.')
-            ->group(function () {
-                Route::get('/', 'show')->name('show');
-                Route::put('/', 'approve')->name('approve');
-            });
+// for admin stamp corrections
+// URIs aren't prefixed by 'admin/' to comply with the specs
+Route::middleware(['auth', 'admin'])
+    ->controller(AdminStampCorrectionController::class)
+    ->prefix('stamp_correction_request/approve/{attendance_correction}')
+    ->name('admin.stamp-corrections.')
+    ->group(function () {
+        Route::get('/', 'show')->name('show');
+        Route::put('/', 'approve')->name('approve');
     });

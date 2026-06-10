@@ -11,7 +11,7 @@ class ClockOutTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_clock_out_successfully(): void
+    public function test_user_can_clock_out(): void
     {
         // freeze time to ensure consistent test results
         $this->freezeTime();

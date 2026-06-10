@@ -10,7 +10,7 @@ class ClockInTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_clock_in_successfully(): void
+    public function test_user_can_clock_in(): void
     {
         // freeze time to ensure consistent test results
         $this->freezeTime();

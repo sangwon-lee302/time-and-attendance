@@ -10,7 +10,7 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_login_view_is_rendered_successfully(): void
+    public function test_admin_login_view_can_be_rendered(): void
     {
         $response = $this->get('admin/login');
 

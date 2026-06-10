@@ -17,6 +17,7 @@ use Override;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  *
+ * @method static \Database\Factories\BreakTimeCorrectionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection query()

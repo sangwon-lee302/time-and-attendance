@@ -56,6 +56,11 @@ class AttendanceCorrection extends Model
     }
 
     /**
+     * The model's default values for attributes.
+     */
+    protected $attributes = ['status' => ApprovalStatus::Pending];
+
+    /**
      * Get the attendance that owns the attendance correction.
      *
      * @return BelongsTo<Attendance, $this>

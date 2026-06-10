@@ -68,25 +68,20 @@ class AttendanceController extends Controller
         Attendance $attendance,
         StoreStampCorrectionRequest $request,
         StampCorrectionService $stampCorrectionService,
-        AttendanceService $attendanceService
     ): RedirectResponse {
-        $validated = $request->validated();
-
         try {
-            $stampCorrectionService->storeStampCorrection($validated, $attendance);
-
-            $attendanceService->updateAttendance($validated, $attendance);
+            $stampCorrectionService->approveStampCorrection(
+                $stampCorrectionService->storeStampCorrection(
+                    $request->validated(),
+                    $attendance,
+                ),
+            );
 
             return redirect()->back();
         } catch (Throwable $th) {
-            $message = '勤怠情報更新エラー: '.$th->getMessage();
+            Log::error('勤怠情報更新エラー: '.$th->getMessage(), ['exception' => $th]);
 
-            Log::error($message, ['exception' => $th]);
-
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['custom_error' => $message]);
+            return redirect()->back()->withInput();
         }
     }
 

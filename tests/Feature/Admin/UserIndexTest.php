@@ -10,7 +10,7 @@ class UserIndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_index_page_is_rendered_successfully(): void
+    public function test_user_index_page_can_be_rendered(): void
     {
         $users = User::factory(5)->create();
 

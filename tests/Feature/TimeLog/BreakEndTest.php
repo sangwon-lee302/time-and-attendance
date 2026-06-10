@@ -12,7 +12,7 @@ class BreakEndTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_end_break_successfully(): void
+    public function test_user_can_end_break(): void
     {
         // freeze time to ensure consistent test results
         $this->freezeTime();

@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceService
@@ -93,40 +91,5 @@ class AttendanceService
         );
 
         return $response;
-    }
-
-    /**
-     * Update the given attendance resource and its corresponding break time
-     * resources.
-     */
-    public function updateAttendance(array $attributes, Attendance $attendance): void
-    {
-        DB::transaction(function () use ($attributes, $attendance) {
-            $attendance->update([
-                'clocked_in_at'  => $attributes['clocked_in_at'],
-                'clocked_out_at' => $attributes['clocked_out_at'],
-            ]);
-
-            // update or create corresponding break time resources
-            $attendance->breakTimes()->upsert(collect($attributes['breaks'])
-                ->map(fn (array $break) => [
-                    'id'            => $break['break_time_id'] ?? null,
-                    'attendance_id' => $attendance->id,
-                    'started_at'    => $break['started_at'],
-                    'ended_at'      => $break['ended_at'],
-                    'updated_at'    => now(),
-                ])
-                ->toArray(),
-                ['id'],
-                ['started_at', 'ended_at', 'updated_at'],
-            );
-
-            // set the status of the attendance correction to 'approved'
-            $attendance
-                ->attendanceCorrections()
-                ->where('status', ApprovalStatus::Pending)
-                ->firstOrFail()
-                ->update(['status' => ApprovalStatus::Approved]);
-        });
     }
 }

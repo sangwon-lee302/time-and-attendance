@@ -11,7 +11,7 @@ class CreateTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_time_log_creation_view_is_shown_successfully(): void
+    public function test_time_log_create_view_can_be_rendered(): void
     {
         $randomDate = Carbon::create(
             rand(1000, 9999),
@@ -28,7 +28,7 @@ class CreateTest extends TestCase
 
         $response->assertOk();
         $response->assertSeeText('勤務外');
-        $response->assertSeeText($randomDate->isoFormat('ll(ddd)'));
+        $response->assertSeeText($randomDate->isoFormat('YYYY年M月D日(ddd)'));
         $response->assertSeeText($randomDate->format('H:i'));
         // check if clock-in button is shown
         $response->assertSee(route('time-logs.clock-in'));

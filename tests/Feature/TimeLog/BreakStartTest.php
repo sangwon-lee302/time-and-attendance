@@ -11,7 +11,7 @@ class BreakStartTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_start_break_successfully(): void
+    public function test_user_can_start_break(): void
     {
         // freeze time to ensure consistent test results
         $this->freezeTime();

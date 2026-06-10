@@ -30,18 +30,23 @@ class BreakTimeCorrectionFactory extends Factory
     }
 
     /**
-     * Indicate the the model's start time and end time should be in between the given
-     * attendance correction's clocked in time and clocked out time.
+     * Indicate the the model's started_at and ended_at should be in between the given
+     * attendance correction's clocked_in_at and clocked_out_at. Also guarantee all the
+     * created models not to have overlapping break time when creating multiple models
+     * at once.
      */
     public function withinAttendanceCorrection(
         AttendanceCorrection $attendanceCorrection,
     ): static {
-        return $this->state(function () use ($attendanceCorrection) {
-            $clockedInAt  = $attendanceCorrection->clocked_in_at;
+        $cursor = $attendanceCorrection->clocked_in_at;
+
+        return $this->state(function () use ($attendanceCorrection, &$cursor) {
             $clockedOutAt = $attendanceCorrection->clocked_out_at;
 
-            $startedAt = fake()->dateTimeBetween($clockedInAt, $clockedOutAt);
+            $startedAt = fake()->dateTimeBetween($cursor, $clockedOutAt);
             $endedAt   = fake()->dateTimeBetween($startedAt, $clockedOutAt);
+
+            $cursor = $endedAt;
 
             return [
                 'attendance_correction_id' => $attendanceCorrection->id,
