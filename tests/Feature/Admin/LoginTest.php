@@ -10,14 +10,14 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_login_view_is_rendered_successfully(): void
+    public function test_admin_login_view_can_be_rendered(): void
     {
         $response = $this->get('admin/login');
 
         $response->assertOk();
         $response->assertSee('管理者ログイン');
         $response->assertSee('管理者ログインする');
-        $response->assertSee(url(route('admin.login')));
+        $response->assertSee(route('admin.login'));
     }
 
     public function test_admin_user_cannot_login_with_empty_email(): void

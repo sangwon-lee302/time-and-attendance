@@ -2,7 +2,7 @@
 
 namespace App;
 
-enum ApplicationStatus: int
+enum ApprovalStatus: int
 {
     case Pending  = 0;
     case Approved = 1;

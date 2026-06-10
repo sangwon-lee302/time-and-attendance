@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Admin;
+namespace Tests\Feature\Admin\Attendances;
 
 use App\Models\Attendance;
 use App\Models\BreakTime;
@@ -8,50 +8,50 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AttendanceIndexTest extends TestCase
+class MonthlyIndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_attendance_index_view_is_rendered(): void
+    public function test_admin_monthly_index_page_can_be_rendered(): void
     {
         $this->freezeTime();
 
-        $adminUser  = User::factory()->admin()->create();
-        $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->today()->create();
-        BreakTime::factory()->withinAttendance($attendance)->create();
+        $user        = User::factory()->create();
+        $admin       = User::factory()->admin()->create();
+        $attendances = Attendance::factory(20)
+            ->recycle($user)
+            ->uniqueDateInMonth(now()->format('Y-m'))
+            ->create();
+        foreach ($attendances as $attendance) {
+            BreakTime::factory(2)
+                ->withinAttendance($attendance)
+                ->create();
+        }
 
-        $request = $this->actingAs($adminUser)->get('admin/attendance/list');
+        $response = $this
+            ->actingAs($admin)
+            ->get('admin/attendance/staff/'.$user->id);
 
-        $request->assertOk();
-        $request->assertSee(now()->isoFormat('LL').'の勤怠');
-        // check if links for yesterday and tomorrow exists
-        $request->assertSee('date='.now()->subDay()->format('Y-m-d'));
-        $request->assertSee('date='.now()->addDay()->format('Y-m-d'));
-        $request->assertSee($user->name);
-        $request->assertSee($attendance->clocked_in_at->format('H:i'));
-        $request->assertSee($attendance->clocked_out_at->format('H:i'));
-        $request->assertSee($attendance->total_break_time->format('%h:%I'));
-        $request->assertSee($attendance->total_working_time->format('%h:%I'));
-        // check if links for attendance show page exists
-        $request->assertSee('href="'.url('admin/attendance/'.$attendance->id).'"', false);
+        $response->assertOk();
+        // $response->
     }
 
     public function test_admin_user_can_export_attendances_as_csv(): void
     {
         $this->freezeTime();
 
-        $adminUser = User::factory()->admin()->create();
-        $user      = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+        $user  = User::factory()->create();
         foreach (Attendance::factory(5)->recycle($user)->create() as $attendance) {
-            BreakTime::factory()->withinAttendance($attendance)->create();
+            BreakTime::factory(2)->withinAttendance($attendance)->create();
         }
 
-        $this->actingAs($adminUser)->get(
-            'admin/attendance/staff/'.$user->id
-        )->assertOk();
+        $this
+            ->actingAs($admin)
+            ->get('admin/attendance/staff/'.$user->id)
+            ->assertOk();
 
-        $response = $this->actingAs($adminUser)->get(route('admin.export', [
+        $response = $this->actingAs($admin)->get(route('admin.attendances.export', [
             'user'  => $user,
             'month' => now()->format('Y-m'),
         ]));

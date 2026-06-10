@@ -12,7 +12,8 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::where('is_admin', false)->select('id', 'name', 'email')
+        $users = User::where('is_admin', false)
+            ->select('id', 'name', 'email')
             ->get();
 
         return view('admin.users-index', ['users' => $users]);

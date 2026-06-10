@@ -30,8 +30,8 @@ use Override;
  * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
- * @property-read Collection<int, AttendanceCorrectionApplication> $attendanceCorrectionApplications
- * @property-read int|null $attendance_correction_applications_count
+ * @property-read Collection<int, AttendanceCorrection> $attendanceCorrections
+ * @property-read int|null $attendance_corrections_count
  * @property-read CarbonInterval $total_break_time
  * @property-read CarbonInterval $total_working_time
  *
@@ -70,13 +70,13 @@ class Attendance extends Model
     }
 
     /**
-     * Get the correction applications for the attendance.
+     * Get the attendance corrections for the attendance.
      *
-     * @return HasMany<AttendanceCorrectionApplication, $this>
+     * @return HasMany<AttendanceCorrection, $this>
      */
-    public function attendanceCorrectionApplications(): HasMany
+    public function attendanceCorrections(): HasMany
     {
-        return $this->hasMany(AttendanceCorrectionApplication::class);
+        return $this->hasMany(AttendanceCorrection::class);
     }
 
     /**
@@ -107,11 +107,11 @@ class Attendance extends Model
             return '退勤済';
         }
 
-        $isBreakOngoing = $attendance->breakTimes()
+        return $attendance->breakTimes()
             ->whereNull('ended_at')
-            ->exists();
-
-        return $isBreakOngoing ? '休憩中' : '出勤中';
+            ->exists()
+                ? '休憩中'
+                : '出勤中';
     }
 
     /**
@@ -123,18 +123,19 @@ class Attendance extends Model
     {
         return Attribute::make(
             get: fn () => CarbonInterval::seconds($this->breakTimes
-                ->filter(fn (BreakTime $break) => $break->ended_at !== null)
-                ->sum(fn (BreakTime $break) => $break->started_at
-                    ->diffInSeconds($break->ended_at)
+                ->filter(fn (BreakTime $breakTime) => $breakTime->ended_at !== null)
+                ->sum(fn (BreakTime $breakTime) => $breakTime->started_at
+                    ->diffInSeconds($breakTime->ended_at)
                 )
-            )->cascade()
+            )
+                ->cascade(),
         );
     }
 
     /**
      * Get the total working time for the attendance.
      *
-     * @return Attribute<CarbonInterval, never>
+     * @return Attribute<CarbonInterval|null, never>
      */
     protected function totalWorkingTime(): Attribute
     {
@@ -147,8 +148,36 @@ class Attendance extends Model
                 return CarbonInterval::seconds(
                     $this->clocked_in_at->diffInSeconds($this->clocked_out_at)
                     - $this->total_break_time->totalSeconds
-                )->cascade();
-            }
+                )
+                    ->cascade();
+            },
         );
+    }
+
+    /**
+     * Convert the given attendance into a display data for the stamp detail table.
+     *
+     * @return array<string, int|string|bool|array<string, int|string>>
+     */
+    public function toDisplayData(): array
+    {
+        $pendingStampCorrection = $this->attendanceCorrections->first();
+
+        return [
+            'id'           => $this->id,
+            'name'         => $this->user->name,
+            'year'         => $this->date->format('Y年'),
+            'date'         => $this->date->format('n月j日'),
+            'clockedInAt'  => $this->clocked_in_at->format('H:i'),
+            'clockedOutAt' => $this->clocked_out_at?->format('H:i') ?? '',
+            'breakTimes'   => $this->breakTimes->map(fn (BreakTime $breakTime) => [
+                'id'        => $breakTime->id,
+                'startedAt' => $breakTime->started_at->format('H:i'),
+                'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
+            ]),
+            'remarks'     => $pendingStampCorrection?->remarks ?? '',
+            'isPending'   => $pendingStampCorrection !== null,
+            'breaksCount' => $this->breakTimes->count(),
+        ];
     }
 }

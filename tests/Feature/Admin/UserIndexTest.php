@@ -10,13 +10,13 @@ class UserIndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_index_page_is_rendered_successfully(): void
+    public function test_user_index_page_can_be_rendered(): void
     {
         $users = User::factory(5)->create();
 
-        $adminUser = User::factory()->admin()->create();
+        $admin = User::factory()->admin()->create();
 
-        $response = $this->actingAs($adminUser)->get('admin/staff/list');
+        $response = $this->actingAs($admin)->get('admin/staff/list');
 
         $response->assertOk();
         foreach ($users as $user) {

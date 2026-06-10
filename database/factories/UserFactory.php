@@ -42,7 +42,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model should be an admin.
+     * Indicate that the model should be admin.
      */
     public function admin(): static
     {

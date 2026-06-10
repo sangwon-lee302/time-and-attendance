@@ -8,21 +8,19 @@
     />
     @auth
         <nav class="flex gap-4 font-bold xl:gap-8">
-            @if ($isAdmin)
+            @if (auth()->user()?->is_admin)
                 <a href="{{ route('admin.attendances.daily-index') }}"
                     >勤怠一覧</a
                 >
                 <a href="{{ route('admin.users.index') }}">スタッフ一覧</a>
+                <a href="{{ route('stamp-corrections.index') }}">申請一覧</a>
                 <x-form :action="route('admin.logout')" method="POST">
                     <button class="cursor-pointer">ログアウト</button>
                 </x-form>
             @else
                 <a href="{{ route('time-logs.create') }}">勤怠</a>
                 <a href="{{ route('attendances.index') }}">勤怠一覧</a>
-                <a
-                    href="{{ route('attendance-correction-applications.index') }}"
-                    >申請</a
-                >
+                <a href="{{ route('stamp-corrections.index') }}">申請</a>
                 <x-form :action="route('logout')" method="POST">
                     <button class="cursor-pointer">ログアウト</button>
                 </x-form>

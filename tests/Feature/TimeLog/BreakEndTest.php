@@ -12,7 +12,7 @@ class BreakEndTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_end_break_successfully(): void
+    public function test_user_can_end_break(): void
     {
         // freeze time to ensure consistent test results
         $this->freezeTime();
@@ -32,7 +32,7 @@ class BreakEndTest extends TestCase
 
         $response = $this->followingRedirects()
             ->actingAs($user)
-            ->patch(route('time-logs.break-end'));
+            ->put(route('time-logs.break-end'));
 
         $this->assertDatabaseHas('break_times', [
             'attendance_id' => $attendance->id,
@@ -45,8 +45,8 @@ class BreakEndTest extends TestCase
         // check if attendance status is shown correctly
         $response->assertSeeText('出勤中');
         // check if clock-out button is shown
-        $response->assertSee(url(route('time-logs.clock-out')));
+        $response->assertSee(route('time-logs.clock-out'));
         // check if break-start button is shown
-        $response->assertSee(url(route('time-logs.break-start')));
+        $response->assertSee(route('time-logs.break-start'));
     }
 }

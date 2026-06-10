@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CorrectionApplicationRequest;
+use App\Http\Requests\StoreStampCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\User;
 use App\Services\AttendanceService;
-use App\Services\CorrectionApplicationService;
+use App\Services\StampCorrectionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class AttendanceController extends Controller
 {
@@ -54,57 +56,33 @@ class AttendanceController extends Controller
             $request->query('month', now()->format('Y-m'))
         );
 
-        [$linkForPreviousMonth, $linkForNextMonth] = [
-            $this->getMonthlyIndexUrl($user, $month->subMonth()),
-            $this->getMonthlyIndexUrl($user, $month->addMonth()),
-        ];
+        $displayData = $attendanceService->prepareMonthlyIndexView($user, $month);
 
-        $displayData = $attendanceService->prepareIndexView(
-            $user,
-            $month->startOfMonth(),
-            $month->endOfMonth()
-        );
-
-        return view('attendances.index', [
-            'user'                 => $user,
-            'month'                => $month,
-            'linkForPreviousMonth' => $linkForPreviousMonth,
-            'linkForNextMonth'     => $linkForNextMonth,
-            'displayData'          => $displayData,
-        ]);
-    }
-
-    /**
-     * Get a link of an attendance index page for the given month.
-     */
-    private function getMonthlyIndexUrl(
-        User $user,
-        CarbonImmutable $month
-    ): string {
-        return route('admin.attendances.monthly-index', [
-            'user'  => $user,
-            'month' => $month->format('Y-m'),
-        ]);
+        return view('attendances.index', ['displayData' => $displayData]);
     }
 
     /**
      * Update the specified attendance and its corresponding breaks.
      */
     public function update(
-        CorrectionApplicationRequest $request,
         Attendance $attendance,
-        CorrectionApplicationService $correctionApplicationService,
-        AttendanceService $attendanceService
+        StoreStampCorrectionRequest $request,
+        StampCorrectionService $stampCorrectionService,
     ): RedirectResponse {
-        $validated = $request->validated();
+        try {
+            $stampCorrectionService->approveStampCorrection(
+                $stampCorrectionService->storeStampCorrection(
+                    $request->validated(),
+                    $attendance,
+                ),
+            );
 
-        $correctionApplicationService->storeCorrectionApplication(
-            $validated, $attendance
-        );
+            return redirect()->back();
+        } catch (Throwable $th) {
+            Log::error('勤怠情報更新エラー: '.$th->getMessage(), ['exception' => $th]);
 
-        $attendanceService->updateAttendance($validated, $attendance);
-
-        return redirect()->route('admin.attendances.show', $attendance);
+            return redirect()->back()->withInput();
+        }
     }
 
     /**
