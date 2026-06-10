@@ -12,14 +12,14 @@ class ResolveAttendanceStatusTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_correctly_resolves_the_attendance_status_when_the_user_has_not_attended_today(): void
+    public function test_attendance_status_can_be_resolved_when_user_has_not_clocked_in_yet(): void
     {
         $this->assertEquals('勤務外',
             Attendance::resolveStatusForToday(User::factory()->create())
         );
     }
 
-    public function test_correctly_resolves_the_attendance_status_when_the_user_has_clocked_out(): void
+    public function test_attendance_status_can_be_resolved_when_user_has_clocked_out(): void
     {
         $user = User::factory()->create();
 
@@ -30,7 +30,7 @@ class ResolveAttendanceStatusTest extends TestCase
         );
     }
 
-    public function test_correctly_resolves_the_attendance_status_when_a_user_is_taking_a_break(): void
+    public function test_attendance_status_can_be_resolved_when_user_is_taking_a_break(): void
     {
         $user = User::factory()->create();
 
@@ -46,7 +46,7 @@ class ResolveAttendanceStatusTest extends TestCase
         );
     }
 
-    public function test_correctly_resolves_the_attendance_status_when_a_user_is_working(): void
+    public function test_attendance_status_can_be_resolved_when_user_is_working(): void
     {
         $user = User::factory()->create();
 

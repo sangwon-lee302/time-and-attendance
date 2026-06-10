@@ -38,7 +38,7 @@ class AttendanceController extends Controller
             ])
             ->get();
 
-        return view('admin.attendances-index', [
+        return view('admin.attendances.index', [
             'date'        => $date,
             'attendances' => $attendances,
         ]);

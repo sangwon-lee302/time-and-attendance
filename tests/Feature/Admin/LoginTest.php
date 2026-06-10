@@ -17,20 +17,18 @@ class LoginTest extends TestCase
         $response->assertOk();
         $response->assertSee('管理者ログイン');
         $response->assertSee('管理者ログインする');
-        $response->assertSee(route('admin.login'));
+        $response->assertSee('action="'.route('admin.login.store').'"', false);
     }
 
     public function test_admin_user_cannot_login_with_empty_email(): void
     {
-        $password = 'password123';
-
-        User::factory()->admin()->create(['password' => $password]);
+        User::factory()->admin()->create();
 
         $this->get('admin/login')->assertOk();
 
-        $response = $this->post(route('admin.login'), [
+        $response = $this->post(route('admin.login.store'), [
             'email'    => '',
-            'password' => $password,
+            'password' => 'password',
         ]);
 
         $this->assertGuest();
@@ -45,7 +43,7 @@ class LoginTest extends TestCase
 
         $this->get('admin/login')->assertOk();
 
-        $response = $this->post(route('admin.login'), [
+        $response = $this->post(route('admin.login.store'), [
             'email'    => $user->email,
             'password' => '',
         ]);
@@ -62,7 +60,7 @@ class LoginTest extends TestCase
 
         $this->get('admin/login')->assertOk();
 
-        $response = $this->post(route('admin.login'), [
+        $response = $this->post(route('admin.login.store'), [
             'email'    => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -75,15 +73,13 @@ class LoginTest extends TestCase
 
     public function test_admin_user_can_login_with_valid_credentials(): void
     {
-        $password = 'password123';
-
-        $user = User::factory()->admin()->create(['password' => $password]);
+        $user = User::factory()->admin()->create();
 
         $this->get('admin/login')->assertOk();
 
-        $response = $this->post(route('admin.login'), [
+        $response = $this->post(route('admin.login.store'), [
             'email'    => $user->email,
-            'password' => $password,
+            'password' => 'password',
         ]);
 
         $this->assertAuthenticatedAs($user);

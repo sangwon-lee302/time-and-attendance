@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 
@@ -16,6 +17,6 @@ class UserController extends Controller
             ->select('id', 'name', 'email')
             ->get();
 
-        return view('admin.users-index', ['users' => $users]);
+        return view('admin.users.index', ['users' => $users]);
     }
 }

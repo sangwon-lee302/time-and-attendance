@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-layouts.header />
-    <x-layouts.main class="flex flex-col items-center pt-30 text-xl font-bold">
+    <x-layouts.auth class="flex flex-col items-center pt-30 text-xl font-bold">
         <p>登録していただいたメールアドレスに認証メールを送付しました。</p>
         <p>メール認証を完了してください。</p>
         <a
@@ -17,5 +17,5 @@
                 認証メールを再送する
             </button>
         </x-form>
-    </x-layouts.main>
+    </x-layouts.auth>
 </x-layouts.app>

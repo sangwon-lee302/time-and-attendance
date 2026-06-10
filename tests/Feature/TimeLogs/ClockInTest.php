@@ -17,9 +17,15 @@ class ClockInTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->actingAs($user)->get('attendance')->assertOk();
+        $response = $this->actingAs($user)->get('attendance');
 
-        $response = $this->followingRedirects()
+        $response->assertOk();
+        $response->assertSee('勤務外');
+        // check if clock-in button exists
+        $response->assertSee('action="'.route('time-logs.clock-in').'"', false);
+
+        $response = $this
+            ->followingRedirects()
             ->actingAs($user)
             ->post(route('time-logs.clock-in'));
 
@@ -33,13 +39,13 @@ class ClockInTest extends TestCase
         $response->assertOk();
         $this->assertEquals(url('attendance'), request()->url());
         $response->assertViewIs('time-logs.create');
-        // check if attendance status is shown correctly
+        // check if attendance status is shown
         $response->assertSeeText('出勤中');
         // check if clock-in button is not shown
-        $response->assertDontSee(route('time-logs.clock-in'));
+        $response->assertDontSee('action="'.route('time-logs.clock-in').'"', false);
         // check if clock-out button is shown
-        $response->assertSee(route('time-logs.clock-out'));
+        $response->assertSee('action="'.route('time-logs.clock-out').'"', false);
         // check if break-start button is shown
-        $response->assertSee(route('time-logs.break-start'));
+        $response->assertSee('action="'.route('time-logs.break-start').'"', false);
     }
 }

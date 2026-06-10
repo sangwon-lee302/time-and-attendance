@@ -10,22 +10,20 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_view_is_shown_correctly(): void
+    public function test_login_view_can_be_rendered(): void
     {
         $this->get('login')->assertOk();
     }
 
     public function test_staff_cannot_login_with_empty_email(): void
     {
-        $password = 'password123';
-
-        User::factory()->create(['password' => $password]);
+        User::factory()->create();
 
         $this->get('login')->assertOk();
 
         $response = $this->post('login', [
             'email'    => '',
-            'password' => $password,
+            'password' => 'password',
         ]);
 
         $this->assertGuest();

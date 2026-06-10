@@ -1,10 +1,10 @@
 <x-layouts.app>
     <x-layouts.header />
-    <x-layouts.main>
+    <x-layouts.auth>
         <x-form
             :title="$isAdminLogin ? '管理者ログイン' : 'ログイン'"
             method="POST"
-            :action="$isAdminLogin ? route('admin.login') : route('login')"
+            :action="$isAdminLogin ? route('admin.login.store') : route('login.store')"
         >
             <x-form.input field="email" type="email" />
             <x-form.input field="password" type="password" />
@@ -19,5 +19,5 @@
                 >
             @endunless
         </x-form>
-    </x-layouts.main>
+    </x-layouts.auth>
 </x-layouts.app>

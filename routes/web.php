@@ -3,10 +3,10 @@
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\StampCorrectionController as AdminStampCorrectionController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\StampCorrectionController;
 use App\Http\Controllers\TimeLogController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -49,7 +49,7 @@ Route::middleware(['guest'])
     ->name('admin.login')
     ->group(function () {
         Route::get('/', 'create');
-        Route::post('/', 'store');
+        Route::post('/', 'store')->name('.store');
     });
 
 Route::middleware(['auth', 'admin'])
