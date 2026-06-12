@@ -14,7 +14,6 @@ class BreakEndTest extends TestCase
 
     public function test_user_can_end_break(): void
     {
-        // freeze time to ensure consistent test results
         $this->freezeTime();
 
         $user = User::factory()->create();
@@ -35,9 +34,10 @@ class BreakEndTest extends TestCase
         $response->assertOk();
         $response->assertSee('休憩中');
 
-        $response = $this->followingRedirects()
+        $response = $this
+            ->followingRedirects()
             ->actingAs($user)
-            ->put(route('time-logs.break-end'));
+            ->patch(route('time-logs.break-end'));
 
         $this->assertDatabaseHas('break_times', [
             'attendance_id' => $attendance->id,
