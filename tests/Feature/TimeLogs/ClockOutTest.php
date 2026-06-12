@@ -13,7 +13,6 @@ class ClockOutTest extends TestCase
 
     public function test_user_can_clock_out(): void
     {
-        // freeze time to ensure consistent test results
         $this->freezeTime();
 
         $user = User::factory()->create();

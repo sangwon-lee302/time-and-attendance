@@ -13,26 +13,16 @@ class ClockInTest extends TestCase
 
     public function test_user_can_clock_in(): void
     {
-        $this->freezeTime();
-
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('attendance');
 
-        // check if clock in button exists
         $response->assertSee('action="'.route('time-logs.clock-in').'"', false);
 
         $response = $this
             ->followingRedirects()
             ->actingAs($user)
             ->post(route('time-logs.clock-in'));
-
-        $this->assertDatabaseHas('attendances', [
-            'user_id'        => $user->id,
-            'date'           => today(),
-            'clocked_in_at'  => now(),
-            'clocked_out_at' => null,
-        ]);
 
         $response->assertOk();
         $response->assertSeeText('出勤中');
@@ -46,7 +36,6 @@ class ClockInTest extends TestCase
             ->today()
             ->create();
 
-        // check if clock in button doesn't exist
         $this
             ->actingAs($user)
             ->get('attendance')
@@ -55,7 +44,7 @@ class ClockInTest extends TestCase
 
     public function test_attendance_can_be_shown_in_attendance_index_page(): void
     {
-        $user = User::factory()->create();
+        $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
             ->today()

@@ -6,7 +6,6 @@ use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
-use App\Models\BreakTimeCorrection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -181,13 +180,13 @@ class StoreTest extends TestCase
                 'breaks[0][break_time_id]' => $breakTime->id,
                 'breaks[0][started_at]'    => $newBreakTimes[0]['started_at']
                     ->format('H:i'),
-                'breaks[0][ended_at]'      => $newBreakTimes[0]['ended_at']
+                'breaks[0][ended_at]' => $newBreakTimes[0]['ended_at']
                     ->format('H:i'),
-                'breaks[1][started_at]'    => $newBreakTimes[1]['started_at']
+                'breaks[1][started_at]' => $newBreakTimes[1]['started_at']
                     ->format('H:i'),
-                'breaks[1][ended_at]'      => $newBreakTimes[1]['ended_at']
+                'breaks[1][ended_at]' => $newBreakTimes[1]['ended_at']
                     ->format('H:i'),
-                'remarks'                  => '備考',
+                'remarks' => '備考',
             ]));
 
         // check if attendance correction is stored successfully
