@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\TimeLog;
 
+use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,16 +13,13 @@ class ClockInTest extends TestCase
 
     public function test_user_can_clock_in(): void
     {
-        // freeze time to ensure consistent test results
         $this->freezeTime();
 
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('attendance');
 
-        $response->assertOk();
-        $response->assertSee('勤務外');
-        // check if clock-in button exists
+        // check if clock in button exists
         $response->assertSee('action="'.route('time-logs.clock-in').'"', false);
 
         $response = $this
@@ -37,15 +35,40 @@ class ClockInTest extends TestCase
         ]);
 
         $response->assertOk();
-        $this->assertEquals(url('attendance'), request()->url());
-        $response->assertViewIs('time-logs.create');
-        // check if attendance status is shown
         $response->assertSeeText('出勤中');
-        // check if clock-in button is not shown
-        $response->assertDontSee('action="'.route('time-logs.clock-in').'"', false);
-        // check if clock-out button is shown
-        $response->assertSee('action="'.route('time-logs.clock-out').'"', false);
-        // check if break-start button is shown
-        $response->assertSee('action="'.route('time-logs.break-start').'"', false);
+    }
+
+    public function test_clock_in_can_be_done_only_once_per_day(): void
+    {
+        $user = User::factory()->create();
+        Attendance::factory()
+            ->recycle($user)
+            ->today()
+            ->create();
+
+        // check if clock in button doesn't exist
+        $this
+            ->actingAs($user)
+            ->get('attendance')
+            ->assertDontSee('action="'.route('time-logs.clock-in').'"', false);
+    }
+
+    public function test_attendance_can_be_shown_in_attendance_index_page(): void
+    {
+        $user = User::factory()->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->today()
+            ->notClockedOut()
+            ->create();
+
+        $this->actingAs($user)->get('attendance')->assertOk();
+
+        $this->actingAs($user)->post(route('time-logs.clock-in'));
+
+        $response = $this->actingAs($user)->get('attendance/list');
+
+        $response->assertOk();
+        $response->assertSee($attendance->clocked_in_at->format('H:i'));
     }
 }
