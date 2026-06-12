@@ -35,7 +35,7 @@ class ResolveAttendanceStatusTest extends TestCase
         Attendance::factory()->recycle($user)
             ->today()
             ->notClockedOut()
-            ->hasNonOverlappingBreakTimes(leaveLastBreakTimeOpen: true)
+            ->hasNonOverlappingBreakTimes(shouldEndLastBreakTime: false)
             ->create();
 
         $this->assertEquals('休憩中', Attendance::resolveStatusForToday($user));

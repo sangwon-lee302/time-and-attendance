@@ -131,7 +131,7 @@ class StoreTest extends TestCase
         $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
-            ->hasNonOverlappingBreakTimes(count: 1)
+            ->hasNonOverlappingBreakTimes(1)
             ->create();
         $breakTime = BreakTime::first();
 

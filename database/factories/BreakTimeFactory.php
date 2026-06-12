@@ -18,8 +18,8 @@ class BreakTimeFactory extends Factory
      */
     public function definition(): array
     {
-        $startedAt = fake()->dateTimeBetween('-1 years', 'now');
-        $endedAt   = fake()->dateTimeBetween($startedAt, 'now');
+        $startedAt = fake()->dateTimeBetween('-1 years');
+        $endedAt   = fake()->dateTimeBetween($startedAt);
 
         return [
             'attendance_id' => Attendance::factory(),

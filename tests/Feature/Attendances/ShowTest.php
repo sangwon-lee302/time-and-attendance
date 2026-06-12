@@ -16,7 +16,7 @@ class ShowTest extends TestCase
         $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
-            ->hasNonOverlappingBreakTimes(count: 3)
+            ->hasNonOverlappingBreakTimes(3)
             ->create();
 
         $response = $this->actingAs($user)->get('attendance/detail/'.$attendance->id);

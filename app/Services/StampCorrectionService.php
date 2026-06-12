@@ -43,7 +43,7 @@ class StampCorrectionService
     }
 
     /**
-     * Approve the given stamp correction and reflect the correction.
+     * Approve the given stamp correction and reflect it to storage.
      */
     public function approveStampCorrection(
         AttendanceCorrection $attendanceCorrection
@@ -69,20 +69,17 @@ class StampCorrectionService
             $attendanceCorrection
                 ->breakTimeCorrections
                 ->each(function (BreakTimeCorrection $breakTimeCorrection) use ($attendance) {
-                    if ($breakTimeCorrection->break_time_id) {
-                        $attendance
+                    $breakTime = $breakTimeCorrection->break_time_id
+                        ? $attendance
                             ->breakTimes()
                             ->findOrFail($breakTimeCorrection->break_time_id)
-                            ->update([
-                                'started_at' => $breakTimeCorrection->started_at,
-                                'ended_at'   => $breakTimeCorrection->ended_at,
-                            ]);
-                    } else {
-                        $attendance->breakTimes()->create([
-                            'started_at' => $breakTimeCorrection->started_at,
-                            'ended_at'   => $breakTimeCorrection->ended_at,
-                        ]);
-                    }
+                        : $attendance->breakTimes()->make();
+
+                    $breakTime->fill([
+                        'started_at' => $breakTimeCorrection->started_at,
+                        'ended_at'   => $breakTimeCorrection->ended_at,
+                    ]);
+                    $breakTime->save();
                 });
 
             $attendanceCorrection->update(['status' => ApprovalStatus::Approved]);

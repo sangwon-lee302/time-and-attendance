@@ -51,8 +51,10 @@ class StoreStampCorrectionRequest extends FormRequest
         ]);
 
         if ($errors->any()) {
-            throw new HttpResponseException(
-                redirect()->back()->withInput()->withErrors($errors)
+            throw new HttpResponseException(redirect()
+                ->back()
+                ->withInput()
+                ->withErrors($errors),
             );
         }
     }

@@ -20,7 +20,7 @@ class BreakEndTest extends TestCase
             ->recycle($user)
             ->today()
             ->notClockedOut()
-            ->hasNonOverlappingBreakTimes(leaveLastBreakTimeOpen: true)
+            ->hasNonOverlappingBreakTimes(shouldEndLastBreakTime: false)
             ->create();
 
         $response = $this->actingAs($user)->get('attendance');

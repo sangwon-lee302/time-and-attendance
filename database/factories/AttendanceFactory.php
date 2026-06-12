@@ -21,8 +21,8 @@ class AttendanceFactory extends Factory
      */
     public function definition(): array
     {
-        $clockedInAt  = fake()->dateTimeBetween('-1 year', 'now');
-        $clockedOutAt = fake()->dateTimeBetween($clockedInAt, 'now');
+        $clockedInAt  = fake()->dateTimeBetween('-1 year');
+        $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
 
         return [
             'user_id'        => User::factory(),
@@ -39,8 +39,8 @@ class AttendanceFactory extends Factory
      */
     public function today(): static
     {
-        $clockedInAt  = fake()->dateTimeBetween(today()->startOfDay(), 'now');
-        $clockedOutAt = fake()->dateTimeBetween($clockedInAt, 'now');
+        $clockedInAt  = fake()->dateTimeBetween(today()->startOfDay());
+        $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
 
         return $this->state(fn () => [
             'date'           => today()->format('Y-m-d'),
@@ -68,15 +68,15 @@ class AttendanceFactory extends Factory
     }
 
     /**
-     * Indicate that the model has non-overlapping associated break time resources.
+     * Indicate that the model has associated non-overlapping break time resources.
      */
     public function hasNonOverlappingBreakTimes(
         int $count = 2,
-        bool $leaveLastBreakTimeOpen = false
+        bool $shouldEndLastBreakTime = true
     ): static {
         return $this->afterCreating(function (Attendance $attendance) use (
             $count,
-            $leaveLastBreakTimeOpen,
+            $shouldEndLastBreakTime,
         ): void {
             if ($count <= 0) {
                 return;
@@ -86,7 +86,7 @@ class AttendanceFactory extends Factory
             $clockedOutAt = $attendance->clocked_out_at ?? now();
 
             $segmentSize = intdiv(
-                $clockedOutAt->diffInSeconds($clockedInAt, absolute: true),
+                $clockedInAt->diffInSeconds($clockedOutAt),
                 $count,
             );
 
@@ -97,14 +97,13 @@ class AttendanceFactory extends Factory
                 $startedAt = fake()->dateTimeBetween($segmentStart, $segmentEnd);
                 $endedAt   = fake()->dateTimeBetween($startedAt, $segmentEnd);
 
-                $shouldLeaveOpen = $i === $count - 1 && $leaveLastBreakTimeOpen;
+                $shouldLeaveOpen = $i === $count - 1 && ! $shouldEndLastBreakTime;
 
-                BreakTime::factory()->create([
-                    'attendance_id' => $attendance->id,
-                    'started_at'    => $startedAt,
-                    'ended_at'      => $shouldLeaveOpen ? null : $endedAt,
-                    'created_at'    => $startedAt,
-                    'updated_at'    => $shouldLeaveOpen ? $startedAt : $endedAt,
+                BreakTime::factory()->recycle($attendance)->create([
+                    'started_at' => $startedAt,
+                    'ended_at'   => $shouldLeaveOpen ? null : $endedAt,
+                    'created_at' => $startedAt,
+                    'updated_at' => $shouldLeaveOpen ? $startedAt : $endedAt,
                 ]);
             }
         });

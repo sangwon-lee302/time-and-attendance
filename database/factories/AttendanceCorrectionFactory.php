@@ -5,7 +5,10 @@ namespace Database\Factories;
 use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
+use App\Models\BreakTime;
+use App\Models\BreakTimeCorrection;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use LengthException;
 
 /**
  * @extends Factory<AttendanceCorrection>
@@ -37,5 +40,63 @@ class AttendanceCorrectionFactory extends Factory
         return $this->state(fn () => [
             'status' => ApprovalStatus::Approved,
         ]);
+    }
+
+    /**
+     * Indicate that the model has associated non-overlapping break time correction
+     * resources.
+     */
+    public function hasNonOverlappingBreakTimeCorrections(
+        int $count = 2,
+        bool $shouldCreateNewBreakTime = false
+    ): static {
+        return $this->afterCreating(function (AttendanceCorrection $attendanceCorrection) use (
+            $count,
+            $shouldCreateNewBreakTime,
+        ): void {
+            if ($count <= 0) {
+                return;
+            }
+
+            $breakTimeIds = BreakTime::where(
+                'attendance_id',
+                $attendanceCorrection->attendance_id,
+            )
+                ->pluck('id')
+                ->shuffle();
+
+            $maxForCreation = $breakTimeIds->count() + 1;
+            if ($count > $maxForCreation) {
+                throw new LengthException(
+                    "Cannot create {$count} break time corrections; at most {$maxForCreation}."
+                );
+            }
+
+            $clockedInAt  = $attendanceCorrection->clocked_in_at;
+            $clockedOutAt = $attendanceCorrection->clocked_out_at;
+            $segmentSize  = intdiv(
+                $clockedInAt->diffInSeconds($clockedOutAt),
+                $count,
+            );
+            $hasBreakTimes = $breakTimeIds->isNotEmpty();
+            for ($i = 0; $i < $count; $i++) {
+                $segmentStart = $clockedInAt->addSeconds($segmentSize * $i);
+                $segmentEnd   = $segmentStart->addSeconds($segmentSize);
+
+                $startedAt = fake()->dateTimeBetween($segmentStart, $segmentEnd);
+                $endedAt   = fake()->dateTimeBetween($startedAt, $segmentEnd);
+
+                BreakTimeCorrection::factory()->recycle($attendanceCorrection)->create([
+                    'break_time_id' => ! $hasBreakTimes
+                        || ($i === $count - 1 && $shouldCreateNewBreakTime)
+                            ? null
+                            : $breakTimeIds[$i],
+                    'started_at' => $startedAt,
+                    'ended_at'   => $endedAt,
+                    'created_at' => $attendanceCorrection->created_at,
+                    'updated_at' => $attendanceCorrection->updated_at,
+                ]);
+            }
+        });
     }
 }

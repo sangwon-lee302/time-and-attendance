@@ -5,7 +5,6 @@ namespace Tests\Feature\Admin\StampCorrections;
 use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use App\Models\BreakTime;
 use App\Models\BreakTimeCorrection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,17 +16,14 @@ class ShowTest extends TestCase
 
     public function test_admin_stamp_correction_show_page_can_be_rendered(): void
     {
-        $attendance = Attendance::factory()->create();
-        $breakTime  = BreakTime::factory()
-            ->recycle($attendance)
+        $attendance = Attendance::factory()
+            ->hasNonOverlappingBreakTimes(1)
             ->create();
         $attendanceCorrection = AttendanceCorrection::factory()
             ->recycle($attendance)
+            ->hasNonOverlappingBreakTimeCorrections(1)
             ->create();
-        $breakTimeCorrection = BreakTimeCorrection::factory()
-            ->withinAttendanceCorrection($attendanceCorrection)
-            ->recycle($breakTime)
-            ->create();
+        $breakTimeCorrection = BreakTimeCorrection::first();
 
         $response = $this
             ->actingAs(User::factory()->admin()->create())
@@ -52,16 +48,13 @@ class ShowTest extends TestCase
     {
         $admin      = User::factory()->admin()->create();
         $attendance = Attendance::factory()
-            ->hasNonOverlappingBreakTimes(count: 1)
+            ->hasNonOverlappingBreakTimes(1)
             ->create();
-        $breakTime            = BreakTime::first();
         $attendanceCorrection = AttendanceCorrection::factory()
             ->recycle($attendance)
+            ->hasNonOverlappingBreakTimeCorrections(1)
             ->create();
-        $breakTimeCorrection = BreakTimeCorrection::factory()
-            ->withinAttendanceCorrection($attendanceCorrection)
-            ->recycle($breakTime)
-            ->create();
+        $breakTimeCorrection = BreakTimeCorrection::first();
 
         $this
             ->actingAs($admin)
@@ -73,6 +66,7 @@ class ShowTest extends TestCase
             ->put('stamp_correction_request/approve/'.$attendanceCorrection->id);
 
         $response->assertRedirectBack();
+
         $this->assertDatabaseHas('attendances', [
             'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
             'clocked_out_at' => $attendanceCorrection->clocked_out_at,
@@ -81,6 +75,7 @@ class ShowTest extends TestCase
             'id'     => $attendanceCorrection->id,
             'status' => ApprovalStatus::Approved,
         ]);
+
         $this->assertDatabaseHas('break_times', [
             'started_at' => $breakTimeCorrection->started_at,
             'ended_at'   => $breakTimeCorrection->ended_at,
