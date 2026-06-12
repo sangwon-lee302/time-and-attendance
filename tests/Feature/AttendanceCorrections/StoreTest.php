@@ -17,12 +17,12 @@ class StoreTest extends TestCase
     public function test_user_cannot_make_stamp_correction_with_invalid_clock_in_and_out_time(): void
     {
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->create();
-        BreakTime::factory()->withinAttendance($attendance)->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
-        $this->actingAs($user)
-            ->get('attendance/detail/'.$attendance->id)
-            ->assertOk();
+        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'     => $attendance,
@@ -39,12 +39,12 @@ class StoreTest extends TestCase
     public function test_user_cannot_make_stamp_correction_with_too_early_break_start_time(): void
     {
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->create();
-        BreakTime::factory()->withinAttendance($attendance)->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
-        $this->actingAs($user)
-            ->get('attendance/detail/'.$attendance->id)
-            ->assertOk();
+        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'            => $attendance,
@@ -62,12 +62,12 @@ class StoreTest extends TestCase
     public function test_user_cannot_make_stamp_correction_with_too_late_break_start_time(): void
     {
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->create();
-        BreakTime::factory()->withinAttendance($attendance)->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
-        $this->actingAs($user)
-            ->get('attendance/detail/'.$attendance->id)
-            ->assertOk();
+        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'            => $attendance,
@@ -85,8 +85,10 @@ class StoreTest extends TestCase
     public function test_user_cannot_make_stamp_correction_with_too_late_break_end_time(): void
     {
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->create();
-        BreakTime::factory()->withinAttendance($attendance)->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
         $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
@@ -106,12 +108,12 @@ class StoreTest extends TestCase
     public function test_user_cannot_make_stamp_correction_with_empty_remarks(): void
     {
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->create();
-        BreakTime::factory()->withinAttendance($attendance)->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
-        $this->actingAs($user)
-            ->get('attendance/detail/'.$attendance->id)
-            ->assertOk();
+        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance' => $attendance,
@@ -127,14 +129,13 @@ class StoreTest extends TestCase
     public function test_user_can_make_stamp_correction_with_valid_input(): void
     {
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->create();
-        $breakTime  = BreakTime::factory()
-            ->withinAttendance($attendance)
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->hasNonOverlappingBreakTimes(count: 1)
             ->create();
+        $breakTime = BreakTime::first();
 
-        $this->actingAs($user)
-            ->get('attendance/detail/'.$attendance->id)
-            ->assertOk();
+        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
 
         $date = $attendance->date;
 

@@ -3,7 +3,6 @@
 namespace Tests\Feature\TimeLog;
 
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,20 +13,14 @@ class BreakEndTest extends TestCase
 
     public function test_user_can_end_break(): void
     {
-        // freeze time to ensure consistent test results
         $this->freezeTime();
 
-        $user = User::factory()->create();
-
+        $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
             ->today()
             ->notClockedOut()
-            ->create();
-
-        BreakTime::factory()
-            ->withinAttendance($attendance)
-            ->notEnded()
+            ->hasNonOverlappingBreakTimes(leaveLastBreakTimeOpen: true)
             ->create();
 
         $response = $this->actingAs($user)->get('attendance');
@@ -35,9 +28,10 @@ class BreakEndTest extends TestCase
         $response->assertOk();
         $response->assertSee('休憩中');
 
-        $response = $this->followingRedirects()
+        $response = $this
+            ->followingRedirects()
             ->actingAs($user)
-            ->put(route('time-logs.break-end'));
+            ->patch(route('time-logs.break-end'));
 
         $this->assertDatabaseHas('break_times', [
             'attendance_id' => $attendance->id,

@@ -3,7 +3,6 @@
 namespace Tests\Feature\Attendances;
 
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,8 +16,11 @@ class IndexTest extends TestCase
         $this->freezeTime();
 
         $user       = User::factory()->create();
-        $attendance = Attendance::factory()->recycle($user)->today()->create();
-        BreakTime::factory(2)->withinAttendance($attendance)->create();
+        $attendance = Attendance::factory()
+            ->recycle($user)
+            ->today()
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
         $response = $this->actingAs($user)->get('attendance/list');
 

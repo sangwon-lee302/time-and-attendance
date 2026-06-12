@@ -14,7 +14,10 @@
                 @break
             @case ('出勤中')
                 <div class="flex gap-8">
-                    <x-form :action="route('time-logs.clock-out')" method="PUT">
+                    <x-form
+                        :action="route('time-logs.clock-out')"
+                        method="PATCH"
+                    >
                         <button class="btn btn-primary rounded-xl px-12">
                             退勤
                         </button>
@@ -30,7 +33,7 @@
                 </div>
                 @break
             @case ('休憩中')
-                <x-form :action="route('time-logs.break-end')" method="PUT">
+                <x-form :action="route('time-logs.break-end')" method="PATCH">
                     <button class="btn btn-secondary rounded-xl px-12">
                         休憩戻
                     </button>

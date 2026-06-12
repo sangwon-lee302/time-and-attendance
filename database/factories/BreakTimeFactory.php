@@ -31,33 +31,6 @@ class BreakTimeFactory extends Factory
     }
 
     /**
-     * Indicate that the model's started_at and ended_at should be in between the given
-     * attendance's clocked_in_at and clocked_out_at. Also guarantee all the created
-     * models not to have overlapping break time when creating multiple models at once.
-     */
-    public function withinAttendance(Attendance $attendance): static
-    {
-        $cursor = $attendance->clocked_in_at;
-
-        return $this->state(function () use ($attendance, &$cursor) {
-            $clockedOutAt = $attendance->clocked_out_at;
-
-            $startedAt = fake()->dateTimeBetween($cursor, $clockedOutAt);
-            $endedAt   = fake()->dateTimeBetween($startedAt, $clockedOutAt);
-
-            $cursor = $endedAt;
-
-            return [
-                'attendance_id' => $attendance->id,
-                'started_at'    => $startedAt,
-                'ended_at'      => $endedAt,
-                'created_at'    => $startedAt,
-                'updated_at'    => $endedAt,
-            ];
-        });
-    }
-
-    /**
      * Indicate that the model's ended_at should be null.
      */
     public function notEnded(): static
