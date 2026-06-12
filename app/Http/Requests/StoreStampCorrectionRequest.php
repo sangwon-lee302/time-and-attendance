@@ -79,9 +79,11 @@ class StoreStampCorrectionRequest extends FormRequest
             return '';
         }
 
-        return CarbonImmutable::createFromFormat('Y-m-d G:i',
-            $this->route('attendance')->date->format('Y-m-d').' '.$time
-        )->format('Y-m-d H:i:s');
+        return CarbonImmutable::createFromFormat(
+            'Y-m-d G:i',
+            $this->route('attendance')->date->format('Y-m-d').' '.$time,
+        )
+            ->format('Y-m-d H:i:s');
     }
 
     /**
@@ -89,7 +91,8 @@ class StoreStampCorrectionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()
+        return $this
+            ->user()
             ->can('createStampCorrection', $this->route('attendance'));
     }
 

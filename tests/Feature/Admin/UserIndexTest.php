@@ -22,7 +22,10 @@ class UserIndexTest extends TestCase
         foreach ($users as $user) {
             $response->assertSee($user->name);
             $response->assertSee($user->email);
-            $response->assertSee('href="'.url('admin/attendance/staff/'.$user->id).'"', false);
+            $response->assertSee(
+                'href="'.url('admin/attendance/staff/'.$user->id).'"',
+                false,
+            );
         }
     }
 }

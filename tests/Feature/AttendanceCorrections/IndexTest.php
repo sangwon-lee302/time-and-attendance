@@ -55,7 +55,9 @@ class IndexTest extends TestCase
             ->approved()
             ->create(['remarks' => $remark]);
 
-        $response = $this->actingAs($user)->get('stamp_correction_request/list?status=approved');
+        $response = $this
+            ->actingAs($user)
+            ->get('stamp_correction_request/list?status=approved');
 
         $response->assertOk();
         $response->assertSee($user->name);

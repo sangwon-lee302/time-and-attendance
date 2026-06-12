@@ -10,6 +10,7 @@ use App\Services\AttendanceService;
 use App\Services\StampCorrectionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Log;
@@ -23,8 +24,9 @@ class AttendanceController extends Controller
      */
     public function dailyIndex(Request $request): View
     {
-        $date = CarbonImmutable::createFromFormat('Y-m-d',
-            $request->query('date', now()->format('Y-m-d'))
+        $date = CarbonImmutable::createFromFormat(
+            'Y-m-d',
+            $request->query('date', now()->format('Y-m-d')),
         );
 
         $attendances = Attendance::whereBetween('date', [
@@ -33,7 +35,8 @@ class AttendanceController extends Controller
         ])
             ->with([
                 'user:id,name',
-                'breakTimes' => fn ($query) => $query->whereNotNull('ended_at')
+                'breakTimes' => fn (Builder $query) => $query
+                    ->whereNotNull('ended_at')
                     ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])
             ->get();

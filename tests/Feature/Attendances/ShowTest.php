@@ -19,7 +19,9 @@ class ShowTest extends TestCase
             ->hasNonOverlappingBreakTimes(3)
             ->create();
 
-        $response = $this->actingAs($user)->get('attendance/detail/'.$attendance->id);
+        $response = $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id);
 
         $response->assertOk();
         $response->assertViewIs('attendances.show');

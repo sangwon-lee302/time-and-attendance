@@ -57,7 +57,8 @@ class TimeLogController extends Controller
      */
     public function breakEnd(): RedirectResponse
     {
-        $this->getAttendanceOfToday()
+        $this
+            ->getAttendanceOfToday()
             ->breakTimes()
             ->whereNull('ended_at')
             ->firstOrFail()

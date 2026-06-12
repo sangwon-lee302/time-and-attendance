@@ -25,8 +25,9 @@ class AttendanceFactory extends Factory
         $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
 
         return [
-            'user_id'        => User::factory(),
-            'date'           => CarbonImmutable::instance($clockedInAt)->format('Y-m-d'),
+            'user_id' => User::factory(),
+            'date'    => CarbonImmutable::instance($clockedInAt)
+                ->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,

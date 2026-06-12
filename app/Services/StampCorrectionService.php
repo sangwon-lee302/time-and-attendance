@@ -68,7 +68,9 @@ class StampCorrectionService
             // update or create corresponding break time resources
             $attendanceCorrection
                 ->breakTimeCorrections
-                ->each(function (BreakTimeCorrection $breakTimeCorrection) use ($attendance) {
+                ->each(function (BreakTimeCorrection $breakTimeCorrection) use (
+                    $attendance,
+                ) {
                     $breakTime = $breakTimeCorrection->break_time_id
                         ? $attendance
                             ->breakTimes()

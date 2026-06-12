@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Services\AttendanceService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +24,10 @@ class AttendanceController extends Controller
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $attendanceService->prepareMonthlyIndexView(Auth::user(), $month);
+        $displayData = $attendanceService->prepareMonthlyIndexView(
+            Auth::user(),
+            $month,
+        );
 
         return view('attendances.index', ['displayData' => $displayData]);
     }
@@ -36,10 +40,9 @@ class AttendanceController extends Controller
         $attendance->load([
             'user:id,name',
             'breakTimes:id,attendance_id,started_at,ended_at',
-            'attendanceCorrections' => function ($query) {
-                $query->where('status', ApprovalStatus::Pending)
-                    ->select('id', 'attendance_id', 'remarks');
-            },
+            'attendanceCorrections' => fn (Builder $query) => $query
+                ->where('status', ApprovalStatus::Pending)
+                ->select('id', 'attendance_id', 'remarks'),
         ]);
 
         $displayData = $attendance->toDisplayData();

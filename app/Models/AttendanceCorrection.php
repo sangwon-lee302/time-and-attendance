@@ -100,7 +100,9 @@ class AttendanceCorrection extends Model
                 ->map(fn (BreakTimeCorrection $breakTimeCorrection) => [
                     'id'        => $breakTimeCorrection->id,
                     'startedAt' => $breakTimeCorrection->started_at->format('H:i'),
-                    'endedAt'   => $breakTimeCorrection->ended_at?->format('H:i') ?? '',
+                    'endedAt'   => $breakTimeCorrection
+                        ->ended_at
+                        ?->format('H:i') ?? '',
                 ]),
             'remarks'     => $this->remarks,
             'isPending'   => true,

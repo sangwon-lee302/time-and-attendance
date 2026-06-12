@@ -6,6 +6,7 @@ use App\ApprovalStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
+use App\Models\BreakTimeCorrection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,7 +23,10 @@ class StoreTest extends TestCase
             ->hasNonOverlappingBreakTimes()
             ->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'     => $attendance,
@@ -44,7 +48,10 @@ class StoreTest extends TestCase
             ->hasNonOverlappingBreakTimes()
             ->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'            => $attendance,
@@ -67,7 +74,10 @@ class StoreTest extends TestCase
             ->hasNonOverlappingBreakTimes()
             ->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'            => $attendance,
@@ -90,7 +100,10 @@ class StoreTest extends TestCase
             ->hasNonOverlappingBreakTimes()
             ->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance'          => $attendance,
@@ -113,7 +126,10 @@ class StoreTest extends TestCase
             ->hasNonOverlappingBreakTimes()
             ->create();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $response = $this->post(route('stamp-corrections.store', [
             'attendance' => $attendance,
@@ -135,7 +151,10 @@ class StoreTest extends TestCase
             ->create();
         $breakTime = BreakTime::first();
 
-        $this->actingAs($user)->get('attendance/detail/'.$attendance->id)->assertOk();
+        $this
+            ->actingAs($user)
+            ->get('attendance/detail/'.$attendance->id)
+            ->assertOk();
 
         $date = $attendance->date;
 
@@ -152,17 +171,22 @@ class StoreTest extends TestCase
             ],
         ];
 
-        $response = $this->followingRedirects()
+        $response = $this
+            ->followingRedirects()
             ->actingAs($user)
             ->post(route('stamp-corrections.store', [
                 'attendance'               => $attendance,
                 'clocked_in_at'            => $newClockedInAt->format('H:i'),
                 'clocked_out_at'           => $newClockedOutAt->format('H:i'),
                 'breaks[0][break_time_id]' => $breakTime->id,
-                'breaks[0][started_at]'    => $newBreakTimes[0]['started_at']->format('H:i'),
-                'breaks[0][ended_at]'      => $newBreakTimes[0]['ended_at']->format('H:i'),
-                'breaks[1][started_at]'    => $newBreakTimes[1]['started_at']->format('H:i'),
-                'breaks[1][ended_at]'      => $newBreakTimes[1]['ended_at']->format('H:i'),
+                'breaks[0][started_at]'    => $newBreakTimes[0]['started_at']
+                    ->format('H:i'),
+                'breaks[0][ended_at]'      => $newBreakTimes[0]['ended_at']
+                    ->format('H:i'),
+                'breaks[1][started_at]'    => $newBreakTimes[1]['started_at']
+                    ->format('H:i'),
+                'breaks[1][ended_at]'      => $newBreakTimes[1]['ended_at']
+                    ->format('H:i'),
                 'remarks'                  => '備考',
             ]));
 

@@ -41,7 +41,10 @@ class AttendanceService
             'linkForNextMonth' => route('attendances.index', [
                 'month' => $month->addMonth()->format('Y-m'),
             ]),
-            'table' => collect(CarbonPeriodImmutable::create($startOfMonth, $endOfMonth))
+            'table' => collect(CarbonPeriodImmutable::create(
+                $startOfMonth,
+                $endOfMonth,
+            ))
                 ->map(fn (CarbonImmutable $date) => [
                     'date'       => $date,
                     'attendance' => $attendances->get($date->day),
