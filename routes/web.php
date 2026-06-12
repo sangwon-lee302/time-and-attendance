@@ -18,8 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', 'create')->name('create');
             Route::post('clock-in', 'clockIn')->name('clock-in');
             Route::patch('clock-out', 'clockOut')->name('clock-out');
-            Route::post('break-start', 'breakStart')->name('break-start');
-            Route::patch('break-end', 'breakEnd')->name('break-end');
+            Route::post('start-break', 'startBreak')->name('start-break');
+            Route::patch('end-break', 'endBreak')->name('end-break');
         });
 
     // for attendances

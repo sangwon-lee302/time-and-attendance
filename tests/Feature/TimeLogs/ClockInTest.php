@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TimeLog;
+namespace Tests\Feature\TimeLogs;
 
 use App\Models\Attendance;
 use App\Models\User;

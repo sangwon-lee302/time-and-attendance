@@ -10,7 +10,6 @@ use App\Services\AttendanceService;
 use App\Services\StampCorrectionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Log;
@@ -35,7 +34,7 @@ class AttendanceController extends Controller
         ])
             ->with([
                 'user:id,name',
-                'breakTimes' => fn (Builder $query) => $query
+                'breakTimes' => fn ($query) => $query
                     ->whereNotNull('ended_at')
                     ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])

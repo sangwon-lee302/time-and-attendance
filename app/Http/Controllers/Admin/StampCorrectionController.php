@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AttendanceCorrection;
 use App\Services\StampCorrectionService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Log;
 use Throwable;
@@ -18,7 +17,7 @@ class StampCorrectionController extends Controller
         $attendanceCorrection->load([
             'attendance:id,date,user_id',
             'attendance.user:id,name',
-            'attendance.breakTimes' => fn (Builder $query) => $query
+            'attendance.breakTimes' => fn ($query) => $query
                 ->whereNotNull('ended_at')
                 ->select('id', 'attendance_id', 'started_at', 'ended_at'),
         ]);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TimeLog;
+namespace Tests\Feature\TimeLogs;
 
 use App\Models\Attendance;
 use App\Models\User;
@@ -23,20 +23,20 @@ class BreakTest extends TestCase
         $response = $this->actingAs($user)->get('attendance')->assertOk();
 
         $response->assertSee(
-            'action="'.route('time-logs.break-start').'"',
+            'action="'.route('time-logs.start-break').'"',
             false,
         );
 
         $response = $this
             ->followingRedirects()
             ->actingAs($user)
-            ->post(route('time-logs.break-start'));
+            ->post(route('time-logs.start-break'));
 
         $response->assertOk();
         $response->assertSeeText('休憩中');
     }
 
-    public function test_user_can_take_multiple_breaks_per_day(): void
+    public function test_user_can_start_multiple_breaks_per_day(): void
     {
         $user = User::factory()->create();
         Attendance::factory()
@@ -47,16 +47,19 @@ class BreakTest extends TestCase
 
         $this->actingAs($user)->get('attendance')->assertOk();
 
-        $this->actingAs($user)->post(route('time-logs.break-start'))->assertOk();
+        $this
+            ->actingAs($user)
+            ->post(route('time-logs.start-break'))
+            ->assertRedirect('attendance');
 
         $response = $this
             ->followingRedirects()
             ->actingAs($user)
-            ->patch(route('time-logs.break-end'));
+            ->patch(route('time-logs.end-break'));
 
         $response->assertOk();
         $response->assertSee(
-            'action="'.route('time-logs.break-start').'"',
+            'action="'.route('time-logs.start-break').'"',
             false,
         );
     }
@@ -75,18 +78,18 @@ class BreakTest extends TestCase
         $response = $this
             ->followingRedirects()
             ->actingAs($user)
-            ->post(route('time-logs.break-start'));
+            ->post(route('time-logs.start-break'));
 
         $response->assertOk();
         $response->assertSee(
-            'action="'.route('time-logs.break-end').'"',
+            'action="'.route('time-logs.end-break').'"',
             false,
         );
 
         $response = $this
             ->followingRedirects()
             ->actingAs($user)
-            ->patch(route('time-logs.break-end'));
+            ->patch(route('time-logs.end-break'));
 
         $response->assertOk();
         $response->assertSee('出勤中');
@@ -105,14 +108,20 @@ class BreakTest extends TestCase
 
         $this
             ->actingAs($user)
-            ->post(route('time-logs.break-start'))
-            ->assertOk();
+            ->post(route('time-logs.start-break'))
+            ->assertRedirect('attendance');
 
         $this
             ->actingAs($user)
-            ->post('time-logs.break-start')
+            ->patch(route('time-logs.end-break'))
+            ->assertRedirect('attendance');
+
+        $this
+            ->followingRedirects()
+            ->actingAs($user)
+            ->post(route('time-logs.start-break'))
             ->assertSee(
-                'action='.route('time-logs.break-end').'"',
+                'action="'.route('time-logs.end-break').'"',
                 false,
             );
     }
@@ -126,9 +135,15 @@ class BreakTest extends TestCase
             ->notClockedOut()
             ->create();
 
-        $this->actingAs($user)->post(route('time-logs.break-start'))->assertOk();
+        $this
+            ->actingAs($user)
+            ->post(route('time-logs.start-break'))
+            ->assertRedirect('attendance');
 
-        $this->actingAs($user)->patch(route('time-logs.break-end'))->assertOk();
+        $this
+            ->actingAs($user)
+            ->patch(route('time-logs.end-break'))
+            ->assertRedirect('attendance');
 
         $response = $this->actingAs($user)->get('attendance/list');
 

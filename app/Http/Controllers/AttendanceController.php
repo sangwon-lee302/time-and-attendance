@@ -7,7 +7,6 @@ use App\Models\Attendance;
 use App\Services\AttendanceService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,7 +39,7 @@ class AttendanceController extends Controller
         $attendance->load([
             'user:id,name',
             'breakTimes:id,attendance_id,started_at,ended_at',
-            'attendanceCorrections' => fn (Builder $query) => $query
+            'attendanceCorrections' => fn ($query) => $query
                 ->where('status', ApprovalStatus::Pending)
                 ->select('id', 'attendance_id', 'remarks'),
         ]);
