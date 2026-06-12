@@ -13,7 +13,7 @@ class BreakTest extends TestCase
 
     public function test_user_can_start_break(): void
     {
-        $user       = User::factory()->create();
+        $user = User::factory()->create();
         Attendance::factory()
             ->recycle($user)
             ->today()
@@ -72,7 +72,7 @@ class BreakTest extends TestCase
             ->today()
             ->notClockedOut()
             ->create();
-        
+
         $this->actingAs($user)->get('attendance')->assertOk();
 
         $response = $this
@@ -128,7 +128,7 @@ class BreakTest extends TestCase
 
     public function test_break_can_be_shown_in_attendance_index_page(): void
     {
-        $user = User::factory()->create();
+        $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
             ->today()
