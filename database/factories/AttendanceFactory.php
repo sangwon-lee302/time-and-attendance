@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Attendance;
+use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -54,7 +55,7 @@ class AttendanceFactory extends Factory
      * Indicate that the model's date should be of the given month and are
      * different with each other when creating multiple models.
      */
-    public function uniqueDateInMonth(string $yearAndMonth): static
+    public function uniqueInMonth(string $yearAndMonth): static
     {
         $date = CarbonImmutable::parse($yearAndMonth);
 
@@ -64,6 +65,49 @@ class AttendanceFactory extends Factory
         return $this->sequence(fn (Sequence $sequence) => [
             'date' => $date->day($shuffledDays[$sequence->index]),
         ]);
+    }
+
+    /**
+     * Indicate that the model has non-overlapping associated break time resources.
+     */
+    public function hasNonOverlappingBreakTimes(
+        int $count = 2,
+        bool $leaveLastBreakTimeOpen = false
+    ): static {
+        return $this->afterCreating(function (Attendance $attendance) use (
+            $count,
+            $leaveLastBreakTimeOpen,
+        ): void {
+            if ($count <= 0) {
+                return;
+            }
+
+            $clockedInAt  = $attendance->clocked_in_at;
+            $clockedOutAt = $attendance->clocked_out_at ?? now();
+
+            $segmentSize = intdiv(
+                $clockedOutAt->diffInSeconds($clockedInAt, absolute: true),
+                $count,
+            );
+
+            for ($i = 0; $i < $count; $i++) {
+                $segmentStart = $clockedInAt->addSeconds($segmentSize * $i);
+                $segmentEnd   = $segmentStart->addSeconds($segmentSize);
+
+                $startedAt = fake()->dateTimeBetween($segmentStart, $segmentEnd);
+                $endedAt   = fake()->dateTimeBetween($startedAt, $segmentEnd);
+
+                $shouldLeaveOpen = $i === $count - 1 && $leaveLastBreakTimeOpen;
+
+                BreakTime::factory()->create([
+                    'attendance_id' => $attendance->id,
+                    'started_at'    => $startedAt,
+                    'ended_at'      => $shouldLeaveOpen ? null : $endedAt,
+                    'created_at'    => $startedAt,
+                    'updated_at'    => $shouldLeaveOpen ? $startedAt : $endedAt,
+                ]);
+            }
+        });
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Tests\Feature\Admin\Attendances;
 
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -23,10 +22,7 @@ class DailyIndexTest extends TestCase
             $attendances[] = Attendance::factory()
                 ->recycle($user)
                 ->today()
-                ->create();
-
-            BreakTime::factory()
-                ->withinAttendance($attendances[count($attendances) - 1])
+                ->hasNonOverlappingBreakTimes()
                 ->create();
         }
 

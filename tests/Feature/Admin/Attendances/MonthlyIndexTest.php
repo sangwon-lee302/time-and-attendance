@@ -3,7 +3,6 @@
 namespace Tests\Feature\Admin\Attendances;
 
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,17 +15,14 @@ class MonthlyIndexTest extends TestCase
     {
         $this->freezeTime();
 
-        $user        = User::factory()->create();
-        $admin       = User::factory()->admin()->create();
-        $attendances = Attendance::factory(20)
+        $user  = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+
+        Attendance::factory(20)
             ->recycle($user)
-            ->uniqueDateInMonth(now()->format('Y-m'))
+            ->uniqueInMonth(now()->format('Y-m'))
+            ->hasNonOverlappingBreakTimes()
             ->create();
-        foreach ($attendances as $attendance) {
-            BreakTime::factory(2)
-                ->withinAttendance($attendance)
-                ->create();
-        }
 
         $response = $this
             ->actingAs($admin)
@@ -40,11 +36,13 @@ class MonthlyIndexTest extends TestCase
     {
         $this->freezeTime();
 
-        $admin = User::factory()->admin()->create();
-        $user  = User::factory()->create();
-        foreach (Attendance::factory(5)->recycle($user)->create() as $attendance) {
-            BreakTime::factory(2)->withinAttendance($attendance)->create();
-        }
+        $admin       = User::factory()->admin()->create();
+        $user        = User::factory()->create();
+        $attendances = Attendance::factory(5)
+            ->recycle($user)
+            ->uniqueInMonth(now()->format('Y-m'))
+            ->hasNonOverlappingBreakTimes()
+            ->create();
 
         $this
             ->actingAs($admin)

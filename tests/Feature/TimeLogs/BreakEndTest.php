@@ -3,7 +3,6 @@
 namespace Tests\Feature\TimeLog;
 
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,17 +15,12 @@ class BreakEndTest extends TestCase
     {
         $this->freezeTime();
 
-        $user = User::factory()->create();
-
+        $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
             ->today()
             ->notClockedOut()
-            ->create();
-
-        BreakTime::factory()
-            ->withinAttendance($attendance)
-            ->notEnded()
+            ->hasNonOverlappingBreakTimes(leaveLastBreakTimeOpen: true)
             ->create();
 
         $response = $this->actingAs($user)->get('attendance');

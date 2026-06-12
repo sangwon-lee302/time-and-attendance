@@ -51,10 +51,10 @@ class ShowTest extends TestCase
     public function test_admin_can_approve_stamp_correction(): void
     {
         $admin      = User::factory()->admin()->create();
-        $attendance = Attendance::factory()->create();
-        $breakTime  = BreakTime::factory()
-            ->withinAttendance($attendance)
+        $attendance = Attendance::factory()
+            ->hasNonOverlappingBreakTimes(count: 1)
             ->create();
+        $breakTime            = BreakTime::first();
         $attendanceCorrection = AttendanceCorrection::factory()
             ->recycle($attendance)
             ->create();
