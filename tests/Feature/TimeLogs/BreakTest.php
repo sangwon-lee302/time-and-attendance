@@ -3,12 +3,11 @@
 namespace Tests\Feature\TimeLog;
 
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BreakStartTest extends TestCase
+class BreakTest extends TestCase
 {
     use RefreshDatabase;
 
