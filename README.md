@@ -98,3 +98,4 @@ erDiagram
 ### 仕様書からの変更点
 
 - `Mailhog`や`Mailtrap`の代わりに`Mailpit`を使用
+- 日時取得機能およびステータス確認機能のテストコードはともに`tests/Feature/TimeLogs/CreateTest.php`にて実装

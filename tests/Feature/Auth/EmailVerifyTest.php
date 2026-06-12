@@ -21,7 +21,7 @@ class EmailVerifyTest extends TestCase
         $response->assertViewIs('auth.verify-email');
     }
 
-    public function test_users_can_jump_to_mailpit_dashboard(): void
+    public function test_users_can_jump_to_email_dashboard(): void
     {
         $response = $this->actingAs(User::factory()->unverified()->create())
             ->get(route('verification.notice'));

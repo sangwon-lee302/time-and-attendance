@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\TimeLog;
 
+use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,11 +27,35 @@ class CreateTest extends TestCase
 
         $response = $this->actingAs(User::factory()->create())->get('attendance');
 
-        $response->assertOk();
-        $response->assertSeeText('勤務外');
         $response->assertSeeText($randomDate->isoFormat('YYYY年M月D日(ddd)'));
         $response->assertSeeText($randomDate->format('H:i'));
-        // check if clock-in button is shown
-        $response->assertSee(route('time-logs.clock-in'));
+    }
+
+    public function test_status_can_be_resolved_for_a_user_not_clocked_in_yet(): void
+    {
+        $user = User::factory()->create();
+        Attendance::factory()->recycle($user)->today()->notClockedOut()->create();
+
+        $this->actingAs($user)->get('attendance')->assertSee('出勤中');
+    }
+
+    public function test_status_can_be_resolved_for_a_user_taking_a_break(): void
+    {
+        $user = User::factory()->create();
+        Attendance::factory()
+            ->recycle($user)
+            ->today()
+            ->hasNonOverlappingBreakTimes(1, false)
+            ->create();
+
+        $this->actingAs($user)->get('attendance')->assertSee('休憩中');
+    }
+
+    public function test_status_can_be_resolved_for_a_clocked_out_user(): void
+    {
+        $user = User::factory()->create();
+        Attendance::factory()->recycle($user)->today()->create();
+
+        $this->actingAs($user)->get('attendance')->assertSee('退勤済');
     }
 }

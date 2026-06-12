@@ -107,7 +107,11 @@ class AttendanceFactory extends Factory
                     'updated_at' => $shouldLeaveOpen ? $startedAt : $endedAt,
                 ]);
             }
-        });
+        })
+            ->when(
+                ! $shouldEndLastBreakTime,
+                fn (self $attendanceFactory) => $attendanceFactory->notClockedOut(),
+            );
     }
 
     /**
