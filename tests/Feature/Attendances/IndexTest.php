@@ -124,7 +124,7 @@ class IndexTest extends TestCase
     {
         $attendance = Attendance::factory()
             ->recycle($this->user)
-            ->today()
+            ->ofDate()
             ->create();
 
         $this

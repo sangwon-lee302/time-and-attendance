@@ -36,15 +36,20 @@ class AttendanceFactory extends Factory
     }
 
     /**
-     * Indicate that the model's date should be today.
+     * Indicate that the model's date should be of the given date.
+     * If date is null, use today instead.
      */
-    public function today(): static
+    public function ofDate(?CarbonImmutable $date = null): static
     {
-        $clockedInAt  = fake()->dateTimeBetween(today()->startOfDay());
+        if (! $date) {
+            $date = today();
+        }
+
+        $clockedInAt  = fake()->dateTimeBetween($date->startOfDay());
         $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
 
         return $this->state(fn () => [
-            'date'           => today()->format('Y-m-d'),
+            'date'           => $date->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,

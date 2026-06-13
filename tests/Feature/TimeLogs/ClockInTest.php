@@ -33,7 +33,7 @@ class ClockInTest extends TestCase
         $user = User::factory()->create();
         Attendance::factory()
             ->recycle($user)
-            ->today()
+            ->ofDate()
             ->create();
 
         $this
@@ -47,7 +47,7 @@ class ClockInTest extends TestCase
         $user       = User::factory()->create();
         $attendance = Attendance::factory()
             ->recycle($user)
-            ->today()
+            ->ofDate()
             ->notClockedOut()
             ->create();
 

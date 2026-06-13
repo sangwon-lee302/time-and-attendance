@@ -16,7 +16,7 @@ class ClockOutTest extends TestCase
         $user = User::factory()->create();
         Attendance::factory()
             ->recycle($user)
-            ->today()
+            ->ofDate()
             ->notClockedOut()
             ->create();
 

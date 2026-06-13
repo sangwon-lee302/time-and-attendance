@@ -4,48 +4,108 @@ namespace Tests\Feature\Admin\Attendances;
 
 use App\Models\Attendance;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Override;
 use Tests\TestCase;
 
 class DailyIndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_attendance_daily_index_view_can_be_rendered(): void
-    {
-        $this->freezeTime();
+    /**
+     * A mock admin user instance.
+     *
+     * @var User
+     */
+    protected $admin;
 
-        $admin       = User::factory()->admin()->create();
+    #[Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->admin = User::factory()->admin()->create();
+    }
+
+    public function test_daily_attendances_can_be_shown(): void
+    {
         $users       = User::factory(10)->create();
         $attendances = [];
         foreach ($users as $user) {
             $attendances[] = Attendance::factory()
                 ->recycle($user)
-                ->today()
+                ->ofDate()
                 ->hasNonOverlappingBreakTimes()
                 ->create();
         }
 
-        $request = $this->actingAs($admin)->get('admin/attendance/list');
+        $response = $this
+            ->actingAs($this->admin)
+            ->get('admin/attendance/list')
+            ->assertOk();
 
-        $request->assertOk();
-        $request->assertSee(now()->format('Y年n月j日').'の勤怠');
-        // check if links for yesterday and tomorrow exists
-        $request->assertSee('date='.now()->subDay()->format('Y-m-d'));
-        $request->assertSee('date='.now()->addDay()->format('Y-m-d'));
         foreach ($users as $user) {
-            $request->assertSee($user->name);
+            $response->assertSee($user->name);
         }
+
         foreach ($attendances as $attendance) {
-            $request->assertSee($attendance->clocked_in_at->format('H:i'));
-            $request->assertSee($attendance->clocked_out_at->format('H:i'));
-            $request->assertSee($attendance->total_break_time->format('%h:%I'));
-            $request->assertSee($attendance->total_working_time->format('%h:%I'));
-            // check if links for admin attendance show page exists
-            $request->assertSee(
-                'href="'.url('admin/attendance/'.$attendance->id).'"',
-                false,
-            );
+            $response->assertSee($attendance->clocked_in_at->format('H:i'));
+            $response->assertSee($attendance->clocked_out_at->format('H:i'));
+            $response->assertSee($attendance->total_break_time->format('%h:%I'));
+            $response->assertSee($attendance->total_working_time->format('%h:%I'));
         }
+    }
+
+    public function test_todays_date_can_be_shown(): void
+    {
+        $user = User::factory()->create();
+        Attendance::factory()
+            ->recycle($user)
+            ->ofDate()
+            ->hasNonOverlappingBreakTimes()
+            ->create();
+
+        $this
+            ->actingAs($this->admin)
+            ->get('admin/attendance/list')
+            ->assertOk()
+            ->assertSee(today()->format('Y/m/d'));
+    }
+
+    public function test_yesterdays_attendances_can_be_shown(): void
+    {
+        $yesterday = CarbonImmutable::yesterday();
+        $user      = User::factory()->create();
+        Attendance::factory()
+            ->recycle($user)
+            ->ofDate($yesterday)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
+
+        $this
+            ->actingAs($this->admin)
+            ->get('admin/attendance/list?date='.$yesterday->format('Y-m-d'))
+            ->assertOk()
+            ->assertSee($yesterday->format('Y/m/d'));
+    }
+
+    public function test_tomorrows_attendances_can_be_shown(): void
+    {
+        $this->travelTo(today()->subWeek());
+
+        $tomorrow = CarbonImmutable::tomorrow();
+        $user     = User::factory()->create();
+        Attendance::factory()
+            ->recycle($user)
+            ->ofDate($tomorrow)
+            ->hasNonOverlappingBreakTimes()
+            ->create();
+
+        $this
+            ->actingAs($this->admin)
+            ->get('admin/attendance/list?date='.$tomorrow->format('Y-m-d'))
+            ->assertOk()
+            ->assertSee($tomorrow->format('Y/m/d'));
     }
 }

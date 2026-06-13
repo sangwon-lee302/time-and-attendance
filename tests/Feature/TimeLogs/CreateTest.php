@@ -34,7 +34,7 @@ class CreateTest extends TestCase
     public function test_status_can_be_resolved_for_a_user_not_clocked_in_yet(): void
     {
         $user = User::factory()->create();
-        Attendance::factory()->recycle($user)->today()->notClockedOut()->create();
+        Attendance::factory()->recycle($user)->ofDate()->notClockedOut()->create();
 
         $this->actingAs($user)->get('attendance')->assertSee('出勤中');
     }
@@ -44,7 +44,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
         Attendance::factory()
             ->recycle($user)
-            ->today()
+            ->ofDate()
             ->hasNonOverlappingBreakTimes(1, false)
             ->create();
 
@@ -54,7 +54,7 @@ class CreateTest extends TestCase
     public function test_status_can_be_resolved_for_a_clocked_out_user(): void
     {
         $user = User::factory()->create();
-        Attendance::factory()->recycle($user)->today()->create();
+        Attendance::factory()->recycle($user)->ofDate()->create();
 
         $this->actingAs($user)->get('attendance')->assertSee('退勤済');
     }

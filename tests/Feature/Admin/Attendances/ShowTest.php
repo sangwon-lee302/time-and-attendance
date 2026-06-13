@@ -20,7 +20,7 @@ class ShowTest extends TestCase
         $response = $this->actingAs(User::factory()->admin()->create())
             ->get('admin/attendance/'.Attendance::factory()
                 ->recycle(User::factory()->create())
-                ->today()
+                ->ofDate()
                 ->create()
                 ->id
             );
@@ -37,7 +37,7 @@ class ShowTest extends TestCase
 
         $user = User::factory()->create();
 
-        $attendance = Attendance::factory()->recycle($user)->today()->create();
+        $attendance = Attendance::factory()->recycle($user)->ofDate()->create();
 
         $newClockedInAt       = $attendance->date->setTime(9, 0);
         $newClockedOutAt      = $attendance->date->setTime(18, 0);
