@@ -58,27 +58,24 @@ class AttendanceCorrectionFactory extends Factory
                 return;
             }
 
-            $breakTimeIds = BreakTime::where(
+            $shuffledBreakTimeIds = BreakTime::where(
                 'attendance_id',
                 $attendanceCorrection->attendance_id,
             )
                 ->pluck('id')
                 ->shuffle();
 
-            $maxForCreation = $breakTimeIds->count() + 1;
-            if ($count > $maxForCreation) {
+            $maxOfCreation = $shuffledBreakTimeIds->count() + 1;
+            if ($count > $maxOfCreation) {
                 throw new LengthException(
-                    "Cannot create {$count} break time corrections; at most {$maxForCreation}."
+                    "Cannot create {$count} break time corrections; at most {$maxOfCreation}."
                 );
             }
 
             $clockedInAt  = $attendanceCorrection->clocked_in_at;
             $clockedOutAt = $attendanceCorrection->clocked_out_at;
-            $segmentSize  = intdiv(
-                $clockedInAt->diffInSeconds($clockedOutAt),
-                $count,
-            );
-            $hasBreakTimes = $breakTimeIds->isNotEmpty();
+            $segmentSize  = $clockedInAt->diffInSeconds($clockedOutAt) / $count;
+            $hasBreakTimes = $shuffledBreakTimeIds->isNotEmpty();
             for ($i = 0; $i < $count; $i++) {
                 $segmentStart = $clockedInAt->addSeconds($segmentSize * $i);
                 $segmentEnd   = $segmentStart->addSeconds($segmentSize);
@@ -86,16 +83,18 @@ class AttendanceCorrectionFactory extends Factory
                 $startedAt = fake()->dateTimeBetween($segmentStart, $segmentEnd);
                 $endedAt   = fake()->dateTimeBetween($startedAt, $segmentEnd);
 
-                BreakTimeCorrection::factory()->recycle($attendanceCorrection)->create([
-                    'break_time_id' => ! $hasBreakTimes
-                        || ($i === $count - 1 && $shouldCreateNewBreakTime)
-                            ? null
-                            : $breakTimeIds[$i],
-                    'started_at' => $startedAt,
-                    'ended_at'   => $endedAt,
-                    'created_at' => $attendanceCorrection->created_at,
-                    'updated_at' => $attendanceCorrection->updated_at,
-                ]);
+                BreakTimeCorrection::factory()
+                    ->recycle($attendanceCorrection)
+                    ->create([
+                        'break_time_id' => ! $hasBreakTimes
+                            || ($i === $count - 1 && $shouldCreateNewBreakTime)
+                                ? null
+                                : $shuffledBreakTimeIds[$i],
+                        'started_at' => $startedAt,
+                        'ended_at'   => $endedAt,
+                        'created_at' => $attendanceCorrection->created_at,
+                        'updated_at' => $attendanceCorrection->updated_at,
+                    ]);
             }
         });
     }

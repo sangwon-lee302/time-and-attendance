@@ -15,7 +15,7 @@ class AttendanceService
     /**
      * Prepare a set of data necessary for rendering monthly attendance index page.
      *
-     * @return array<int, array<string, CarbonImmutable|Attendance|null>>
+     * @return array<string, User|CarbonImmutable|string|array<array<string, CarbonImmutable|Attendance|null>>>
      */
     public function prepareMonthlyIndexView(
         User $user,

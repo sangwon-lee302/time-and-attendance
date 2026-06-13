@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('break_times', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attendance_id')
+            $table
+                ->foreignId('attendance_id')
                 ->index()
                 ->constrained()
                 ->cascadeOnDelete();
