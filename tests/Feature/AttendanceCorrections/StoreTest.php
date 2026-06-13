@@ -17,14 +17,14 @@ class StoreTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A mock user instance.
+     * A mock user.
      *
      * @var User
      */
     protected $user;
 
     /**
-     * A mock attendance instance associated with the mock user.
+     * A mock attendance associated with the mock user.
      *
      * @var Attendance
      */
