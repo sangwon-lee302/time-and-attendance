@@ -60,8 +60,7 @@ class AttendanceFactory extends Factory
     {
         $date = CarbonImmutable::parse($yearAndMonth);
 
-        $shuffledDays = range(1, $date->daysInMonth());
-        shuffle($shuffledDays);
+        $shuffledDays = collect(range(1, $date->daysInMonth()))->shuffle();
 
         return $this->sequence(fn (Sequence $sequence) => [
             'date' => $date->day($shuffledDays[$sequence->index]),
