@@ -14,13 +14,13 @@ class IndexTest extends TestCase
 
     /**
      * A mock user instance.
-     * 
+     *
      * @var User
      */
     protected $user;
 
     #[Override]
-    function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -60,7 +60,7 @@ class IndexTest extends TestCase
 
     public function test_previous_months_attendances_can_be_shown(): void
     {
-        $this->user = User::factory()->create();
+        $this->user    = User::factory()->create();
         $previousMonth = now()->subMonth()->format('Y-m');
         Attendance::factory(20)
             ->recycle($this->user)
@@ -92,7 +92,7 @@ class IndexTest extends TestCase
     public function test_next_months_attendances_can_be_shown(): void
     {
         $this->user = User::factory()->create();
-        $nextMonth = now()->addMonth()->format('Y-m');
+        $nextMonth  = now()->addMonth()->format('Y-m');
         Attendance::factory(20)
             ->recycle($this->user)
             ->uniqueInMonth($nextMonth)

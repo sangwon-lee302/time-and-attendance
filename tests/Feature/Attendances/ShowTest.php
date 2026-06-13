@@ -14,24 +14,24 @@ class ShowTest extends TestCase
 
     /**
      * A mock user instance.
-     * 
+     *
      * @var User
      */
     protected $user;
 
     /**
      * A mock attendance instance associated with the mock user.
-     * 
+     *
      * @var Attendance
      */
     protected $attendance;
 
     #[Override]
-    function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->user       = User::factory()->create();
         $this->attendance = Attendance::factory()
             ->recycle($this->user)
             ->hasNonOverlappingBreakTimes()
@@ -45,7 +45,7 @@ class ShowTest extends TestCase
             ->get('attendance/detail/'.$this->attendance->id)
             ->assertSeeInOrder([
                 '名前',
-                $this->user->name,    
+                $this->user->name,
             ]);
     }
 
@@ -56,8 +56,8 @@ class ShowTest extends TestCase
             ->get('attendance/detail/'.$this->attendance->id)
             ->assertSeeInOrder([
                 '日付',
-                $this->attendance->date->format('Y年'),    
-                $this->attendance->date->format('n月j日'),    
+                $this->attendance->date->format('Y年'),
+                $this->attendance->date->format('n月j日'),
             ]);
     }
 
@@ -68,8 +68,8 @@ class ShowTest extends TestCase
             ->get('attendance/detail/'.$this->attendance->id)
             ->assertSeeInOrder([
                 '出勤・退勤',
-                $this->attendance->clocked_in_at->format('H:i'),    
-                $this->attendance->clocked_out_at->format('H:i'),    
+                $this->attendance->clocked_in_at->format('H:i'),
+                $this->attendance->clocked_out_at->format('H:i'),
             ]);
     }
 
