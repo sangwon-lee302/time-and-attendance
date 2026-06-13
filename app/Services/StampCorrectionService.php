@@ -18,6 +18,12 @@ class StampCorrectionService
         array $attributes,
         Attendance $attendance
     ): AttendanceCorrection {
+        $attributes['breaks'] = collect($attributes['breaks'] ?? [])
+            ->filter(fn (array $break) => ! empty($break['break_time_id'])
+                || ! empty($break['started_at']),
+            )
+            ->all();
+
         return DB::transaction(function () use ($attributes, $attendance) {
             $attendanceCorrection = $attendance
                 ->attendanceCorrections()

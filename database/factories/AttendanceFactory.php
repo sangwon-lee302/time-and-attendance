@@ -85,7 +85,7 @@ class AttendanceFactory extends Factory
 
             $clockedInAt  = $attendance->clocked_in_at;
             $clockedOutAt = $attendance->clocked_out_at ?? now();
-            $segmentSize = $clockedInAt->diffInSeconds($clockedOutAt) / $count;
+            $segmentSize  = $clockedInAt->diffInSeconds($clockedOutAt) / $count;
             for ($i = 0; $i < $count; $i++) {
                 $segmentStart = $clockedInAt->addSeconds($segmentSize * $i);
                 $segmentEnd   = $segmentStart->addSeconds($segmentSize);

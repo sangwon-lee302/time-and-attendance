@@ -169,37 +169,4 @@ class StoreStampCorrectionRequest extends FormRequest
             'remarks.required'                    => ':attributeを記入してください',
         ];
     }
-
-    /**
-     * Handle a passed validation attempt.
-     */
-    #[Override]
-    protected function passedValidation(): void
-    {
-        $this->merge([
-            'breaks' => $this->filterBreaks($this->input('breaks', [])),
-        ]);
-    }
-
-    #[Override]
-    public function validated($key = null, $default = null)
-    {
-        $data = parent::validated($key, $default);
-
-        $data['breaks'] = $this->filterBreaks($data['breaks']);
-
-        return $data;
-    }
-
-    /**
-     * Filter breaks whose 'started_at' and 'ended_at' are both filled.
-     */
-    protected function filterBreaks(array $breaks): array
-    {
-        return collect($breaks)
-            ->filter(fn (array $breakData): bool => filled($breakData['started_at'])
-                && filled($breakData['ended_at'])
-            )
-            ->all();
-    }
 }

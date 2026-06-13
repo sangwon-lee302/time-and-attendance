@@ -72,9 +72,9 @@ class AttendanceCorrectionFactory extends Factory
                 );
             }
 
-            $clockedInAt  = $attendanceCorrection->clocked_in_at;
-            $clockedOutAt = $attendanceCorrection->clocked_out_at;
-            $segmentSize  = $clockedInAt->diffInSeconds($clockedOutAt) / $count;
+            $clockedInAt   = $attendanceCorrection->clocked_in_at;
+            $clockedOutAt  = $attendanceCorrection->clocked_out_at;
+            $segmentSize   = $clockedInAt->diffInSeconds($clockedOutAt) / $count;
             $hasBreakTimes = $shuffledBreakTimeIds->isNotEmpty();
             for ($i = 0; $i < $count; $i++) {
                 $segmentStart = $clockedInAt->addSeconds($segmentSize * $i);
