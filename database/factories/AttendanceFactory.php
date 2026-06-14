@@ -41,9 +41,7 @@ class AttendanceFactory extends Factory
      */
     public function ofDate(?CarbonImmutable $date = null): static
     {
-        if (! $date) {
-            $date = today();
-        }
+        $date = $date ?? today();
 
         $clockedInAt  = fake()->dateTimeBetween($date->startOfDay());
         $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
@@ -60,10 +58,14 @@ class AttendanceFactory extends Factory
     /**
      * Indicate that the model's date should be of the given month and are
      * different with each other when creating multiple models.
+     * Use current month if year and month is null.
      */
-    public function uniqueInMonth(string $yearAndMonth): static
+    public function uniqueInMonth(?string $month = null, ?string $year = null): static
     {
-        $date = CarbonImmutable::parse($yearAndMonth);
+        $month = $month ?? now()->format('m');
+        $year  = $year ?? now()->format('Y');
+
+        $date = CarbonImmutable::parse($year.'-'.$month);
 
         $shuffledDays = collect(range(1, $date->daysInMonth()))->shuffle();
 

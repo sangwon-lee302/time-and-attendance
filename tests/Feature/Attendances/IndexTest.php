@@ -31,7 +31,7 @@ class IndexTest extends TestCase
     {
         Attendance::factory(20)
             ->recycle($this->user)
-            ->uniqueInMonth(now()->format('Y-m'))
+            ->uniqueInMonth()
             ->hasNonOverlappingBreakTimes()
             ->create();
 
@@ -61,21 +61,21 @@ class IndexTest extends TestCase
     public function test_previous_months_attendances_can_be_shown(): void
     {
         $this->user    = User::factory()->create();
-        $previousMonth = now()->subMonth()->format('Y-m');
+        $previousMonth = now()->subMonth();
         Attendance::factory(20)
             ->recycle($this->user)
-            ->uniqueInMonth($previousMonth)
+            ->uniqueInMonth($previousMonth->format('m'))
             ->hasNonOverlappingBreakTimes()
             ->create();
 
         $this->actingAs($this->user)->get('attendance/list')->assertSee(
-            'href="'.url('attendance/list?month='.$previousMonth).'"',
+            'href="'.url('attendance/list?month='.$previousMonth->format('Y-m')).'"',
             false,
         );
 
         $response = $this
             ->actingAs($this->user)
-            ->get('attendance/list?month='.$previousMonth);
+            ->get('attendance/list?month='.$previousMonth->format('Y-m'));
 
         foreach (Attendance::whereBetween('date', [
             now()->subMonth()->startOfMonth(),
@@ -92,21 +92,21 @@ class IndexTest extends TestCase
     public function test_next_months_attendances_can_be_shown(): void
     {
         $this->user = User::factory()->create();
-        $nextMonth  = now()->addMonth()->format('Y-m');
+        $nextMonth  = now()->addMonth();
         Attendance::factory(20)
             ->recycle($this->user)
-            ->uniqueInMonth($nextMonth)
+            ->uniqueInMonth($nextMonth->format('m'))
             ->hasNonOverlappingBreakTimes()
             ->create();
 
         $this->actingAs($this->user)->get('attendance/list')->assertSee(
-            'href="'.url('attendance/list?month='.$nextMonth).'"',
+            'href="'.url('attendance/list?month='.$nextMonth->format('Y-m')).'"',
             false,
         );
 
         $response = $this
             ->actingAs($this->user)
-            ->get('attendance/list?month='.$nextMonth);
+            ->get('attendance/list?month='.$nextMonth->format('Y-m'));
 
         foreach (Attendance::whereBetween('date', [
             now()->addMonth()->startOfMonth(),

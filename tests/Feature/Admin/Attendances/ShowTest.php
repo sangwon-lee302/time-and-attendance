@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Admin\Attendances;
 
-use App\ApprovalStatus;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
@@ -17,14 +15,14 @@ class ShowTest extends TestCase
 
     /**
      * A mock admin user.
-     * 
+     *
      * @var User
      */
     protected $admin;
 
     /**
      * A mock attendance.
-     * 
+     *
      * @var Attendance
      */
     protected $attendance;
@@ -34,7 +32,7 @@ class ShowTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->admin()->create();
+        $this->admin      = User::factory()->admin()->create();
         $this->attendance = Attendance::factory()
             ->hasNonOverlappingBreakTimes()
             ->create();
@@ -56,12 +54,12 @@ class ShowTest extends TestCase
 
         $this
             ->requestCorrections([
-                'clocked_in_at' => '9:01',
+                'clocked_in_at'  => '9:01',
                 'clocked_out_at' => '9:00',
             ])
             ->assertRedirect('admin/attendance/'.$this->attendance->id)
             ->assertSessionHasErrors([
-                'clocked_in_at' => '出勤時間もしくは退勤時間が不適切な値です'
+                'clocked_in_at' => '出勤時間もしくは退勤時間が不適切な値です',
             ]);
     }
 
@@ -106,7 +104,7 @@ class ShowTest extends TestCase
                 'remarks' => '備考を記入してください',
             ]);
     }
-    
+
     protected function accessToAttendanceShowPage(): TestResponse
     {
         return $this
@@ -122,5 +120,5 @@ class ShowTest extends TestCase
                 ['attendance' => $this->attendance],
                 $data,
             )));
-    }    
+    }
 }
