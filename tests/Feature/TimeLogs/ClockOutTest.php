@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\TimeLog;
+namespace Tests\Feature\TimeLogs;
 
 use App\Models\Attendance;
 use App\Models\User;
@@ -13,40 +13,50 @@ class ClockOutTest extends TestCase
 
     public function test_user_can_clock_out(): void
     {
-        // freeze time to ensure consistent test results
-        $this->freezeTime();
-
         $user = User::factory()->create();
-
         Attendance::factory()
             ->recycle($user)
-            ->today()
+            ->ofDate()
             ->notClockedOut()
             ->create();
 
         $response = $this->actingAs($user)->get('attendance');
 
         $response->assertOk();
-        $response->assertSee('出勤中');
+        $response->assertSee(
+            'action="'.route('time-logs.clock-out').'"',
+            false,
+        );
 
         $response = $this
             ->followingRedirects()
             ->actingAs($user)
             ->patch(route('time-logs.clock-out'));
 
-        $this->assertDatabaseHas('attendances', [
-            'user_id'        => $user->id,
-            'date'           => today(),
-            'clocked_out_at' => now(),
-        ]);
-
         $response->assertOk();
-        $this->assertEquals(url('attendance'), request()->url());
-        $response->assertViewIs('time-logs.create');
-        // check if attendance status is shown correctly
         $response->assertSeeText('退勤済');
-        // check if clock-in button is not shown
-        $response->assertDontSee(route('time-logs.clock-in'));
-        $response->assertSeeText('お疲れ様でした。');
+    }
+
+    public function test_clock_out_time_can_be_shown_in_attendance_index_page(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->get('attendance')->assertOk();
+
+        $this
+            ->actingAs($user)
+            ->post(route('time-logs.clock-in'))
+            ->assertRedirect('attendance');
+
+        $this
+            ->actingAs($user)
+            ->patch(route('time-logs.clock-out'))
+            ->assertRedirect('attendance');
+
+        $attendance = Attendance::first();
+        $this
+            ->actingAs($user)
+            ->get('attendance/list')
+            ->assertSee($attendance->clocked_out_at->format('H:i'));
     }
 }

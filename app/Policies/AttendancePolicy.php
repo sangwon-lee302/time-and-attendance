@@ -25,7 +25,8 @@ class AttendancePolicy
     }
 
     /**
-     * Determine if the stamp correction for the given attendance can be created by the user.
+     * Determine if the stamp correction for the given attendance can be created by
+     * the user.
      */
     public function createStampCorrection(User $user, Attendance $attendance): bool
     {

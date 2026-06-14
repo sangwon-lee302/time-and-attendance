@@ -45,7 +45,7 @@ class TimeLogController extends Controller
     /**
      * Store a newly created break time resource in storage.
      */
-    public function breakStart(): RedirectResponse
+    public function startBreak(): RedirectResponse
     {
         $this->getAttendanceOfToday()->breakTimes()->create(['started_at' => now()]);
 
@@ -55,9 +55,10 @@ class TimeLogController extends Controller
     /**
      * Update break end time for the attendance resource in storage.
      */
-    public function breakEnd(): RedirectResponse
+    public function endBreak(): RedirectResponse
     {
-        $this->getAttendanceOfToday()
+        $this
+            ->getAttendanceOfToday()
             ->breakTimes()
             ->whereNull('ended_at')
             ->firstOrFail()

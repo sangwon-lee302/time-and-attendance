@@ -51,8 +51,10 @@ class StoreStampCorrectionRequest extends FormRequest
         ]);
 
         if ($errors->any()) {
-            throw new HttpResponseException(
-                redirect()->back()->withInput()->withErrors($errors)
+            throw new HttpResponseException(redirect()
+                ->back()
+                ->withInput()
+                ->withErrors($errors),
             );
         }
     }
@@ -77,9 +79,11 @@ class StoreStampCorrectionRequest extends FormRequest
             return '';
         }
 
-        return CarbonImmutable::createFromFormat('Y-m-d G:i',
-            $this->route('attendance')->date->format('Y-m-d').' '.$time
-        )->format('Y-m-d H:i:s');
+        return CarbonImmutable::createFromFormat(
+            'Y-m-d G:i',
+            $this->route('attendance')->date->format('Y-m-d').' '.$time,
+        )
+            ->format('Y-m-d H:i:s');
     }
 
     /**
@@ -87,7 +91,8 @@ class StoreStampCorrectionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()
+        return $this
+            ->user()
             ->can('createStampCorrection', $this->route('attendance'));
     }
 
@@ -163,38 +168,5 @@ class StoreStampCorrectionRequest extends FormRequest
             'breaks.*.ended_at.before_or_equal'   => '休憩時間もしくは退勤時間が不適切な値です',
             'remarks.required'                    => ':attributeを記入してください',
         ];
-    }
-
-    /**
-     * Handle a passed validation attempt.
-     */
-    #[Override]
-    protected function passedValidation(): void
-    {
-        $this->merge([
-            'breaks' => $this->filterBreaks($this->input('breaks', [])),
-        ]);
-    }
-
-    #[Override]
-    public function validated($key = null, $default = null)
-    {
-        $data = parent::validated($key, $default);
-
-        $data['breaks'] = $this->filterBreaks($data['breaks']);
-
-        return $data;
-    }
-
-    /**
-     * Filter breaks whose 'started_at' and 'ended_at' are both filled.
-     */
-    protected function filterBreaks(array $breaks): array
-    {
-        return collect($breaks)
-            ->filter(fn (array $breakData): bool => filled($breakData['started_at'])
-                && filled($breakData['ended_at'])
-            )
-            ->all();
     }
 }

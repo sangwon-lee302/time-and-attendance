@@ -17,13 +17,16 @@ class StampCorrectionController extends Controller
         $attendanceCorrection->load([
             'attendance:id,date,user_id',
             'attendance.user:id,name',
-            'attendance.breakTimes' => fn ($query) => $query->whereNotNull('ended_at')
+            'attendance.breakTimes' => fn ($query) => $query
+                ->whereNotNull('ended_at')
                 ->select('id', 'attendance_id', 'started_at', 'ended_at'),
         ]);
 
         $displayData = $attendanceCorrection->toDisplayData();
 
-        return view('admin.stamp-corrections.show', ['displayData' => $displayData]);
+        return view('admin.stamp-corrections.show', [
+            'displayData' => $displayData,
+        ]);
     }
 
     public function approve(

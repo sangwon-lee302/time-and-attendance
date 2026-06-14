@@ -14,10 +14,12 @@ return new class extends Migration
     {
         Schema::create('attendance_corrections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attendance_id')
+            $table
+                ->foreignId('attendance_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->unsignedTinyInteger('status')
+            $table
+                ->unsignedTinyInteger('status')
                 ->default(ApprovalStatus::Pending->value);
             $table->dateTime('clocked_in_at');
             $table->dateTime('clocked_out_at');

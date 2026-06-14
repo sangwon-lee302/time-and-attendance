@@ -2,81 +2,123 @@
 
 namespace Tests\Feature\Admin\Attendances;
 
-use App\ApprovalStatus;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
+use Override;
 use Tests\TestCase;
 
 class ShowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_attendance_show_page_can_be_rendered(): void
+    /**
+     * A mock admin user.
+     *
+     * @var User
+     */
+    protected $admin;
+
+    /**
+     * A mock attendance.
+     *
+     * @var Attendance
+     */
+    protected $attendance;
+
+    #[Override]
+    protected function setUp(): void
     {
-        $this->freezeTime();
+        parent::setUp();
 
-        $response = $this->actingAs(User::factory()->admin()->create())
-            ->get('admin/attendance/'.Attendance::factory()
-                ->recycle(User::factory()->create())
-                ->today()
-                ->create()
-                ->id
-            );
-
-        $response->assertOk();
-        $response->assertViewIs('attendances.show');
+        $this->admin      = User::factory()->admin()->create();
+        $this->attendance = Attendance::factory()
+            ->hasNonOverlappingBreakTimes()
+            ->create();
     }
 
-    public function test_stamp_correction_can_be_made_by_admin_user(): void
+    public function test_attendance_details_are_shown(): void
     {
-        $this->freezeTime();
+        $this
+            ->accessToAttendanceShowPage()
+            ->assertOk()
+            ->assertSee($this->attendance->user->name)
+            ->assertSee($this->attendance->date->format('Y年'))
+            ->assertSee($this->attendance->date->format('n月j日'));
+    }
 
-        $admin = User::factory()->admin()->create();
-
-        $user = User::factory()->create();
-
-        $attendance = Attendance::factory()->recycle($user)->today()->create();
-
-        $newClockedInAt       = $attendance->date->setTime(9, 0);
-        $newClockedOutAt      = $attendance->date->setTime(18, 0);
-        $attendanceCorrection = AttendanceCorrection::factory()
-            ->recycle([$user, $attendance])
-            ->create([
-                'clocked_in_at'  => $newClockedInAt,
-                'clocked_out_at' => $newClockedOutAt,
-            ]);
+    public function test_admin_cannot_make_correction_with_invalid_clock_in_and_out_time(): void
+    {
+        $this->accessToAttendanceShowPage()->assertOk();
 
         $this
-            ->actingAs($admin)
-            ->get('admin/attendance/'.$attendance->id)
-            ->assertOk();
+            ->requestCorrections([
+                'clocked_in_at'  => '9:01',
+                'clocked_out_at' => '9:00',
+            ])
+            ->assertRedirect('admin/attendance/'.$this->attendance->id)
+            ->assertSessionHasErrors([
+                'clocked_in_at' => '出勤時間もしくは退勤時間が不適切な値です',
+            ]);
+    }
 
-        $response = $this
-            ->actingAs($admin)
-            ->put(route('admin.attendances.update', [
-                'attendance'     => $attendance,
-                'clocked_in_at'  => $newClockedInAt->format('H:i'),
-                'clocked_out_at' => $newClockedOutAt->format('H:i'),
-                'remarks'        => $attendanceCorrection->remarks,
-            ]));
+    public function test_admin_cannot_make_stamp_correction_with_too_late_break_start_time(): void
+    {
+        $this->accessToAttendanceShowPage()->assertOk();
 
-        $response->assertSessionHasNoErrors();
+        $this
+            ->requestCorrections([
+                'clocked_out_at'        => '10:00',
+                'breaks[0][started_at]' => '10:01',
+            ])
+            ->assertRedirect('admin/attendance/'.$this->attendance->id)
+            ->assertSessionHasErrors([
+                'breaks.0.started_at' => '休憩時間が不適切な値です',
+            ]);
+    }
 
-        $response->assertRedirect('admin/attendance/'.$attendance->id);
+    public function test_admin_cannot_make_stamp_correction_with_too_late_break_end_time(): void
+    {
+        $this->accessToAttendanceShowPage()->assertOk();
 
-        $this->assertDatabaseHas('attendance_corrections', [
-            'attendance_id'  => $attendance->id,
-            'status'         => ApprovalStatus::Approved,
-            'clocked_in_at'  => $newClockedInAt->format('Y-m-d H:i:s'),
-            'clocked_out_at' => $newClockedOutAt->format('Y-m-d H:i:s'),
-        ]);
+        $this
+            ->requestCorrections([
+                'clocked_out_at'      => '10:00',
+                'breaks[0][ended_at]' => '10:01',
+            ])
+            ->assertRedirect('admin/attendance/'.$this->attendance->id)
+            ->assertSessionHasErrors([
+                'breaks.0.ended_at' => '休憩時間もしくは退勤時間が不適切な値です',
+            ]);
+    }
 
-        $this->assertDatabaseHas('attendances', [
-            'user_id'        => $user->id,
-            'clocked_in_at'  => $newClockedInAt->format('Y-m-d H:i:s'),
-            'clocked_out_at' => $newClockedOutAt->format('Y-m-d H:i:s'),
-        ]);
+    public function test_admin_cannot_make_stamp_correction_with_empty_remarks(): void
+    {
+        $this->accessToAttendanceShowPage()->assertOk();
+
+        $this
+            ->requestCorrections(['remarks' => ''])
+            ->assertRedirect('admin/attendance/'.$this->attendance->id)
+            ->assertSessionHasErrors([
+                'remarks' => '備考を記入してください',
+            ]);
+    }
+
+    protected function accessToAttendanceShowPage(): TestResponse
+    {
+        return $this
+            ->actingAs($this->admin)
+            ->get('admin/attendance/'.$this->attendance->id);
+    }
+
+    protected function requestCorrections(array $data): TestResponse
+    {
+        return $this
+            ->actingAs($this->admin)
+            ->put(route('admin.attendances.update', array_merge(
+                ['attendance' => $this->attendance],
+                $data,
+            )));
     }
 }

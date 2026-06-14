@@ -23,7 +23,7 @@
                         </button>
                     </x-form>
                     <x-form
-                        :action="route('time-logs.break-start')"
+                        :action="route('time-logs.start-break')"
                         method="POST"
                     >
                         <button class="btn btn-secondary rounded-xl px-12">
@@ -33,7 +33,7 @@
                 </div>
                 @break
             @case ('休憩中')
-                <x-form :action="route('time-logs.break-end')" method="PATCH">
+                <x-form :action="route('time-logs.end-break')" method="PATCH">
                     <button class="btn btn-secondary rounded-xl px-12">
                         休憩戻
                     </button>

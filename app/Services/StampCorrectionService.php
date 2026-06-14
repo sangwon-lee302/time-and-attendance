@@ -18,6 +18,12 @@ class StampCorrectionService
         array $attributes,
         Attendance $attendance
     ): AttendanceCorrection {
+        $attributes['breaks'] = collect($attributes['breaks'] ?? [])
+            ->filter(fn (array $break) => ! empty($break['break_time_id'])
+                || ! empty($break['started_at']),
+            )
+            ->all();
+
         return DB::transaction(function () use ($attributes, $attendance) {
             $attendanceCorrection = $attendance
                 ->attendanceCorrections()
@@ -43,7 +49,7 @@ class StampCorrectionService
     }
 
     /**
-     * Approve the given stamp correction and reflect the correction.
+     * Approve the given stamp correction and reflect it to storage.
      */
     public function approveStampCorrection(
         AttendanceCorrection $attendanceCorrection
@@ -68,21 +74,20 @@ class StampCorrectionService
             // update or create corresponding break time resources
             $attendanceCorrection
                 ->breakTimeCorrections
-                ->each(function (BreakTimeCorrection $breakTimeCorrection) use ($attendance) {
-                    if ($breakTimeCorrection->break_time_id) {
-                        $attendance
+                ->each(function (BreakTimeCorrection $breakTimeCorrection) use (
+                    $attendance,
+                ) {
+                    $breakTime = $breakTimeCorrection->break_time_id
+                        ? $attendance
                             ->breakTimes()
                             ->findOrFail($breakTimeCorrection->break_time_id)
-                            ->update([
-                                'started_at' => $breakTimeCorrection->started_at,
-                                'ended_at'   => $breakTimeCorrection->ended_at,
-                            ]);
-                    } else {
-                        $attendance->breakTimes()->create([
-                            'started_at' => $breakTimeCorrection->started_at,
-                            'ended_at'   => $breakTimeCorrection->ended_at,
-                        ]);
-                    }
+                        : $attendance->breakTimes()->make();
+
+                    $breakTime->fill([
+                        'started_at' => $breakTimeCorrection->started_at,
+                        'ended_at'   => $breakTimeCorrection->ended_at,
+                    ]);
+                    $breakTime->save();
                 });
 
             $attendanceCorrection->update(['status' => ApprovalStatus::Approved]);

@@ -63,6 +63,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * The model's default values for attributes.
+     */
+    protected $attributes = ['is_admin' => false];
+
+    /**
      * Get the attendances for the user.
      *
      * @return HasMany<Attendance, $this>

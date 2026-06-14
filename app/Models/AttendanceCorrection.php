@@ -95,12 +95,12 @@ class AttendanceCorrection extends Model
             'year'         => $attendance->date->format('Y年'),
             'date'         => $attendance->date->format('n月j日'),
             'clockedInAt'  => $this->clocked_in_at->format('H:i'),
-            'clockedOutAt' => $this->clocked_out_at?->format('H:i') ?? '',
+            'clockedOutAt' => $this->clocked_out_at->format('H:i'),
             'breakTimes'   => $this->breakTimeCorrections
                 ->map(fn (BreakTimeCorrection $breakTimeCorrection) => [
                     'id'        => $breakTimeCorrection->id,
                     'startedAt' => $breakTimeCorrection->started_at->format('H:i'),
-                    'endedAt'   => $breakTimeCorrection->ended_at?->format('H:i') ?? '',
+                    'endedAt'   => $breakTimeCorrection->ended_at->format('H:i'),
                 ]),
             'remarks'     => $this->remarks,
             'isPending'   => true,

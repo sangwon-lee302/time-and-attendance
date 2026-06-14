@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\AttendanceCorrections;
+namespace Tests\Feature\StampCorrections;
 
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
@@ -55,7 +55,9 @@ class IndexTest extends TestCase
             ->approved()
             ->create(['remarks' => $remark]);
 
-        $response = $this->actingAs($user)->get('stamp_correction_request/list?status=approved');
+        $response = $this
+            ->actingAs($user)
+            ->get('stamp_correction_request/list?status=approved');
 
         $response->assertOk();
         $response->assertSee($user->name);

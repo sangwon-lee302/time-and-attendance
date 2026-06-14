@@ -21,12 +21,13 @@ class AttendanceFactory extends Factory
      */
     public function definition(): array
     {
-        $clockedInAt  = fake()->dateTimeBetween('-1 year', 'now');
-        $clockedOutAt = fake()->dateTimeBetween($clockedInAt, 'now');
+        $clockedInAt  = fake()->dateTimeBetween('-1 year');
+        $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
 
         return [
-            'user_id'        => User::factory(),
-            'date'           => CarbonImmutable::instance($clockedInAt)->format('Y-m-d'),
+            'user_id' => User::factory(),
+            'date'    => CarbonImmutable::instance($clockedInAt)
+                ->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,
@@ -35,15 +36,18 @@ class AttendanceFactory extends Factory
     }
 
     /**
-     * Indicate that the model's date should be today.
+     * Indicate that the model's date should be of the given date.
+     * If date is null, use today instead.
      */
-    public function today(): static
+    public function ofDate(?CarbonImmutable $date = null): static
     {
-        $clockedInAt  = fake()->dateTimeBetween(today()->startOfDay(), 'now');
-        $clockedOutAt = fake()->dateTimeBetween($clockedInAt, 'now');
+        $date = $date ?? today();
+
+        $clockedInAt  = fake()->dateTimeBetween($date->startOfDay());
+        $clockedOutAt = fake()->dateTimeBetween($clockedInAt);
 
         return $this->state(fn () => [
-            'date'           => today()->format('Y-m-d'),
+            'date'           => $date->format('Y-m-d'),
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => $clockedOutAt,
             'created_at'     => $clockedInAt,
@@ -54,13 +58,16 @@ class AttendanceFactory extends Factory
     /**
      * Indicate that the model's date should be of the given month and are
      * different with each other when creating multiple models.
+     * Use current month if year and month is null.
      */
-    public function uniqueInMonth(string $yearAndMonth): static
+    public function uniqueInMonth(?string $month = null, ?string $year = null): static
     {
-        $date = CarbonImmutable::parse($yearAndMonth);
+        $month = $month ?? now()->format('m');
+        $year  = $year ?? now()->format('Y');
 
-        $shuffledDays = range(1, $date->daysInMonth());
-        shuffle($shuffledDays);
+        $date = CarbonImmutable::parse($year.'-'.$month);
+
+        $shuffledDays = collect(range(1, $date->daysInMonth()))->shuffle();
 
         return $this->sequence(fn (Sequence $sequence) => [
             'date' => $date->day($shuffledDays[$sequence->index]),
@@ -68,15 +75,15 @@ class AttendanceFactory extends Factory
     }
 
     /**
-     * Indicate that the model has non-overlapping associated break time resources.
+     * Indicate that the model has associated non-overlapping break time resources.
      */
     public function hasNonOverlappingBreakTimes(
         int $count = 2,
-        bool $leaveLastBreakTimeOpen = false
+        bool $shouldEndLastBreakTime = true
     ): static {
         return $this->afterCreating(function (Attendance $attendance) use (
             $count,
-            $leaveLastBreakTimeOpen,
+            $shouldEndLastBreakTime,
         ): void {
             if ($count <= 0) {
                 return;
@@ -84,12 +91,7 @@ class AttendanceFactory extends Factory
 
             $clockedInAt  = $attendance->clocked_in_at;
             $clockedOutAt = $attendance->clocked_out_at ?? now();
-
-            $segmentSize = intdiv(
-                $clockedOutAt->diffInSeconds($clockedInAt, absolute: true),
-                $count,
-            );
-
+            $segmentSize  = $clockedInAt->diffInSeconds($clockedOutAt) / $count;
             for ($i = 0; $i < $count; $i++) {
                 $segmentStart = $clockedInAt->addSeconds($segmentSize * $i);
                 $segmentEnd   = $segmentStart->addSeconds($segmentSize);
@@ -97,17 +99,20 @@ class AttendanceFactory extends Factory
                 $startedAt = fake()->dateTimeBetween($segmentStart, $segmentEnd);
                 $endedAt   = fake()->dateTimeBetween($startedAt, $segmentEnd);
 
-                $shouldLeaveOpen = $i === $count - 1 && $leaveLastBreakTimeOpen;
+                $shouldLeaveOpen = $i === $count - 1 && ! $shouldEndLastBreakTime;
 
-                BreakTime::factory()->create([
-                    'attendance_id' => $attendance->id,
-                    'started_at'    => $startedAt,
-                    'ended_at'      => $shouldLeaveOpen ? null : $endedAt,
-                    'created_at'    => $startedAt,
-                    'updated_at'    => $shouldLeaveOpen ? $startedAt : $endedAt,
+                BreakTime::factory()->recycle($attendance)->create([
+                    'started_at' => $startedAt,
+                    'ended_at'   => $shouldLeaveOpen ? null : $endedAt,
+                    'created_at' => $startedAt,
+                    'updated_at' => $shouldLeaveOpen ? $startedAt : $endedAt,
                 ]);
             }
-        });
+        })
+            ->when(
+                ! $shouldEndLastBreakTime,
+                fn (self $attendanceFactory) => $attendanceFactory->notClockedOut(),
+            );
     }
 
     /**

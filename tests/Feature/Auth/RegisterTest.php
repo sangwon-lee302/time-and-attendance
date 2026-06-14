@@ -88,7 +88,9 @@ class RegisterTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => $user->email]);
 
         $response->assertRedirect('register');
-        $response->assertSessionHasErrors(['password' => 'パスワードは8文字以上で入力してください']);
+        $response->assertSessionHasErrors([
+            'password' => 'パスワードは8文字以上で入力してください',
+        ]);
     }
 
     public function test_staff_cannot_register_with_unconfirmed_password(): void
@@ -107,7 +109,9 @@ class RegisterTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => $user->email]);
 
         $response->assertRedirect('register');
-        $response->assertSessionHasErrors(['password_confirmation' => 'パスワードと一致しません']);
+        $response->assertSessionHasErrors([
+            'password_confirmation' => 'パスワードと一致しません',
+        ]);
     }
 
     public function test_staff_can_register_with_valid_credentials(): void
