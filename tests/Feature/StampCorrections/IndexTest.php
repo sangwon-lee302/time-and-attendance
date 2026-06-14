@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\AttendanceCorrections;
+namespace Tests\Feature\StampCorrections;
 
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
