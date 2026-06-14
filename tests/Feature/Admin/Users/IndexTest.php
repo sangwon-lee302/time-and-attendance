@@ -32,8 +32,8 @@ class IndexTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin      = User::factory()->admin()->create();
-        $this->user       = User::factory()->create();
+        $this->admin = User::factory()->admin()->create();
+        $this->user  = User::factory()->create();
     }
 
     public function test_users_information_can_be_shown(): void
@@ -117,7 +117,7 @@ class IndexTest extends TestCase
         $this
             ->accessToMonthlyIndexPage()
             ->assertOk();
-        
+
         $this
             ->actingAs($this->admin)
             ->get('admin/attendance/'.$attendance->id)
@@ -129,7 +129,7 @@ class IndexTest extends TestCase
         ?string $year = null
     ): TestResponse {
         $month = $month ?? now()->format('m');
-        $year = $year ?? now()->format('Y');
+        $year  = $year ?? now()->format('Y');
 
         return $this
             ->actingAs($this->admin)

@@ -15,7 +15,7 @@ class IndexTest extends TestCase
 
     /**
      * A mock admin user.
-     * 
+     *
      * @var User
      */
     protected $admin;
@@ -89,18 +89,18 @@ class IndexTest extends TestCase
             ->actingAs($this->admin)
             ->get('stamp_correction_request/approve/'.$attendanceCorrection->id)
             ->assertOk();
-        
+
         $this
             ->actingAs($this->admin)
             ->put(route('admin.stamp-corrections.approve', $attendanceCorrection));
 
         $this->assertDatabaseHas('attendances', [
-            'clocked_in_at' => $attendanceCorrection->clocked_in_at,
+            'clocked_in_at'  => $attendanceCorrection->clocked_in_at,
             'clocked_out_at' => $attendanceCorrection->clocked_out_at,
         ]);
         $this->assertDatabaseHas('break_times', [
             'started_at' => $breakTimeCorrection->started_at,
-            'ended_at' => $breakTimeCorrection->ended_at,
+            'ended_at'   => $breakTimeCorrection->ended_at,
         ]);
     }
 }
