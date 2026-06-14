@@ -5,12 +5,12 @@ init:
 	cp .env.example .env
 	./vendor/bin/sail up -d --build
 	./vendor/bin/sail artisan key:generate
-    @echo "Waiting for database to be ready..."
-    @until nc -z -v -w3 127.0.0.1 3306; do \
-        @echo "Database is still booting, retrying in 2 seconds"; \
+	@echo "Waiting for database to be ready..."
+	@until nc -z -v -w3 127.0.0.1 3306; do \
+		@echo "Database is still booting, retrying in 2 seconds"; \
         sleep 2; \
     done
-    @echo "Database is up. Running migrations"
+	@echo "Database is up. Running migrations"
 	./vendor/bin/sail artisan migrate:fresh --seed
 	./vendor/bin/sail npm install
 	./vendor/bin/sail npm run build
