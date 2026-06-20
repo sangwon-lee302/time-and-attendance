@@ -58,20 +58,41 @@ class AttendanceFactory extends Factory
     /**
      * Indicate that the model's date should be of the given month and are
      * different with each other when creating multiple models.
-     * Use current month if year and month is null.
+     * Use current month if year and month are null.
      */
-    public function uniqueInMonth(?string $month = null, ?string $year = null): static
-    {
-        $month = $month ?? now()->format('m');
-        $year  = $year ?? now()->format('Y');
+    public function uniqueInMonth(
+        string|int|null $month = null,
+        string|int|null $year = null,
+    ): static {
+        $month = $month ?? now()->month;
+        $year  = $year ?? now()->year;
 
-        $date = CarbonImmutable::parse($year.'-'.$month);
+        $date = CarbonImmutable::parse("$year-$month");
 
         $shuffledDays = collect(range(1, $date->daysInMonth()))->shuffle();
 
-        return $this->sequence(fn (Sequence $sequence) => [
-            'date' => $date->day($shuffledDays[$sequence->index]),
-        ]);
+        return $this->sequence(function (Sequence $sequence) use (
+            $date,
+            $shuffledDays,
+        ) {
+            $randomDate  = $date->day($shuffledDays[$sequence->index]);
+            $clockedInAt = fake()->dateTimeBetween(
+                $randomDate->startOfDay(),
+                $randomDate->endOfDay(),
+            );
+            $clockedOutAt = fake()->dateTimeBetween(
+                $clockedInAt,
+                $randomDate->endOfDay(),
+            );
+
+            return [
+                'date'           => $date->day($shuffledDays[$sequence->index]),
+                'clocked_in_at'  => $clockedInAt,
+                'clocked_out_at' => $clockedOutAt,
+                'created_at'     => $clockedInAt,
+                'updated_at'     => $clockedOutAt,
+            ];
+        });
     }
 
     /**

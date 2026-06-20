@@ -22,7 +22,10 @@
             @csrf
             @method ('PUT')
             <button
-                class="btn btn-primary mt-12 px-8"
+                @class ([
+                    'btn btn-primary mt-12 px-8',
+                    'cursor-default' => $displayData['isApproved'],
+                ])
                 @disabled ($displayData['isApproved'])
             >
                 {{ $displayData['isApproved'] ? '承認済み' : '承認' }}

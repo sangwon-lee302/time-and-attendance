@@ -10,15 +10,16 @@
 ## 使用技術
 
 - Laravel 13.7.0
-- PHP 8.5
+- PHP 8.5.7
 - Mysql 8.4.9
 - Mailpit v1.29.7
-- Node 24.15.0
+- Node 24.17.0
 
 ## 環境構築の手順
 
 - `Docker`を起動
 - `make init`
+- (テストを実行する場合)`sail test`
 
 ## URL
 
@@ -71,6 +72,7 @@ erDiagram
         unsignedTinyInt status "0:pending 1:approved / default 0"
         datetime clocked_in_at
         datetime clocked_out_at
+        text remarks
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
@@ -88,10 +90,10 @@ erDiagram
 
 ## ログイン情報
 
-|      項目      |   一般ユーザー    |      管理者       |
-| :------------: | :---------------: | :---------------: |
-| メールアドレス | staff@example.com | admin@example.com |
-|   パスワード   |     password      |     password      |
+|      項目      |   一般ユーザー   |      管理者       |
+| :------------: | :--------------: | :---------------: |
+| メールアドレス | user@example.com | admin@example.com |
+|   パスワード   |     password     |     password      |
 
 ## その他
 

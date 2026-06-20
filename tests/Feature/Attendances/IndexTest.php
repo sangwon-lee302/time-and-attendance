@@ -64,7 +64,7 @@ class IndexTest extends TestCase
         $previousMonth = now()->subMonth();
         Attendance::factory(20)
             ->recycle($this->user)
-            ->uniqueInMonth($previousMonth->format('m'))
+            ->uniqueInMonth($previousMonth->month)
             ->hasNonOverlappingBreakTimes()
             ->create();
 
@@ -95,7 +95,7 @@ class IndexTest extends TestCase
         $nextMonth  = now()->addMonth();
         Attendance::factory(20)
             ->recycle($this->user)
-            ->uniqueInMonth($nextMonth->format('m'))
+            ->uniqueInMonth($nextMonth->month)
             ->hasNonOverlappingBreakTimes()
             ->create();
 
