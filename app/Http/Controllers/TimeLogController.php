@@ -70,7 +70,7 @@ class TimeLogController extends Controller
     /**
      * Get an attendance of today for an authenticated user.
      */
-    private function getAttendanceOfToday(): Attendance
+    protected function getAttendanceOfToday(): Attendance
     {
         return Auth::user()
             ->attendances()

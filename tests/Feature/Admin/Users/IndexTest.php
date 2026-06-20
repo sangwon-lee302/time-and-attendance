@@ -70,7 +70,7 @@ class IndexTest extends TestCase
 
     public function test_last_months_attendance_information_can_be_shown(): void
     {
-        $lastMonth = now()->subMonth()->format('m');
+        $lastMonth = now()->subMonth()->month;
         Attendance::factory()
             ->recycle($this->user)
             ->uniqueInMonth($lastMonth)
@@ -90,7 +90,7 @@ class IndexTest extends TestCase
     {
         $this->travelTo(now()->subWeek());
 
-        $nextMonth = now()->addMonth()->format('m');
+        $nextMonth = now()->addMonth()->month;
         Attendance::factory()
             ->recycle($this->user)
             ->uniqueInMonth($nextMonth)
@@ -125,16 +125,16 @@ class IndexTest extends TestCase
     }
 
     protected function accessToMonthlyIndexPage(
-        ?string $month = null,
-        ?string $year = null
+        string|int|null $month = null,
+        string|int|null $year = null
     ): TestResponse {
-        $month = $month ?? now()->format('m');
-        $year  = $year ?? now()->format('Y');
+        $month = $month ?? now()->month;
+        $year  = $year ?? now()->year;
 
         return $this
             ->actingAs($this->admin)
             ->get(
-                'admin/attendance/staff/'.$this->user->id.'?month='.$year.'-'.$month,
+                "admin/attendance/staff/{$this->user->id}?month=$year-$month",
             );
     }
 }
