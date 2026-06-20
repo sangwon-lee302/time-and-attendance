@@ -79,7 +79,10 @@
         @endunless
         <tr>
             <th class="text-left">備考</th>
-            <td class="text-left text-black" colspan="3">
+            <td
+                class="text-black"
+                @if (! $displayData['isPending']) colspan="3"@endif
+            >
                 <x-conditional-field
                     :input-field-enabled="! $displayData['isPending']"
                     :place-holder="$displayData['remarks']"
@@ -88,6 +91,10 @@
                     class="text-black"
                 />
             </td>
+            @if ($displayData['isPending'])
+                <td></td>
+                <td></td>
+            @endif
         </tr>
     </tbody>
 </table>
