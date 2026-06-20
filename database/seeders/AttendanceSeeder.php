@@ -13,19 +13,18 @@ class AttendanceSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::where('is_admin', false)->get();
+        $user       = User::where('email', 'user@example.com')->first();
+        $otherUsers = User::where('is_admin', false)
+            ->whereNot('id', $user->id)
+            ->get();
 
-        Attendance::factory(20)
-            ->recycle($users)
-            ->uniqueInMonth(now()->subMonth()->month)
-            ->create();
-        Attendance::factory(20)
-            ->recycle($users)
-            ->uniqueInMonth(now()->month)
-            ->create();
-        Attendance::factory(20)
-            ->recycle($users)
-            ->uniqueInMonth(now()->addMonth()->month)
-            ->create();
+        foreach ([$user, $otherUsers] as $usersToRecycle) {
+            foreach ([-1, 0, 1] as $monthOffset) {
+                Attendance::factory(20)
+                    ->recycle($usersToRecycle)
+                    ->uniqueInMonth(now()->addMonths($monthOffset)->month)
+                    ->create();
+            }
+        }
     }
 }

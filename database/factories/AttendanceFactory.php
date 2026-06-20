@@ -58,7 +58,7 @@ class AttendanceFactory extends Factory
     /**
      * Indicate that the model's date should be of the given month and are
      * different with each other when creating multiple models.
-     * Use current month if year and month is null.
+     * Use current month if year and month are null.
      */
     public function uniqueInMonth(
         string|int|null $month = null,
