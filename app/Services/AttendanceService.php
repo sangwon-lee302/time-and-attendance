@@ -88,9 +88,10 @@ class AttendanceService
         });
 
         $response->headers->set('Content-Type', 'text/csv');
+        $fileName = "attendance_{$month->format('Ym')}_{$user->name}.csv";
         $response->headers->set(
             'Content-Disposition',
-            'attachment; filename="attendances.csv"'
+            'attachment; filename="'.$fileName.'"',
         );
 
         return $response;
