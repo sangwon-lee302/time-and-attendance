@@ -35,7 +35,7 @@ class StampCorrectionService
 
             $attendanceCorrection
                 ->breakTimeCorrections()
-                ->createMany(collect($attributes['breaks'] ?? [])
+                ->createMany(collect($attributes['breaks'])
                     ->map(fn (array $break) => [
                         'break_time_id' => $break['break_time_id'] ?? null,
                         'started_at'    => $break['started_at'],

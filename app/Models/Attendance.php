@@ -163,7 +163,7 @@ class Attendance extends Model
      */
     public function toDisplayData(): array
     {
-        $pendingStampCorrection = $this->attendanceCorrections->first();
+        $pendingStampCorrection = $this->attendanceCorrections()->first();
 
         return [
             'id'           => $this->id,
@@ -177,7 +177,7 @@ class Attendance extends Model
                 'startedAt' => $breakTime->started_at->format('H:i'),
                 'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
             ]),
-            'remarks'     => $pendingStampCorrection?->remarks ?? '',
+            'remarks'     => $pendingStampCorrection->remarks ?? '',
             'isPending'   => $pendingStampCorrection !== null,
             'breaksCount' => $this->breakTimes->count(),
         ];
