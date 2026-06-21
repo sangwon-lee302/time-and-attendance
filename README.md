@@ -31,6 +31,8 @@
 ```mermaid
 erDiagram
     users ||..o{ attendances: "have"
+    users ||..o{ attendance_corrections: "request"
+    users ||..o{ attendance_corrections: "decide"
     attendances ||..o{ break_times: "contain"
     attendances ||..o{ attendance_corrections: "have"
     attendance_corrections ||..o{ break_time_corrections: "contain"
@@ -61,7 +63,7 @@ erDiagram
 
     break_times {
         unsignedBigInt id PK
-        unsignedBigInt attendance_id FK "index"
+        unsignedBigInt attendance_id FK "attendances(id) index"
         datetime started_at
         datetime ended_at "nullable"
         datetime deleted_at "nullable"
@@ -71,9 +73,9 @@ erDiagram
 
     attendance_corrections {
         unsignedBigInt id PK
-        unsignedBigInt attendance_id FK attendances(id)
-        unsignedBigInt requested_by FK users(id)
-        unsignedBigInt decided_by FK users(id)
+        unsignedBigInt attendance_id FK "attendances(id)"
+        unsignedBigInt requested_by FK "users(id)"
+        unsignedBigInt decided_by FK "users(id)"
         string status "pending(default) / approved"
         datetime original_clocked_in_at
         datetime original_clocked_out_at
@@ -86,7 +88,7 @@ erDiagram
 
     break_time_corrections {
         unsignedBigInt id PK
-        unsignedBigInt attendance_correction_id FK attendance_corrections(id)
+        unsignedBigInt attendance_correction_id FK "attendance_corrections(id)"
         unsignedBigInt break_time_id FK "break_times(id), nullable"
         string correction_type "update(default) / add"
         datetime original_started_at
