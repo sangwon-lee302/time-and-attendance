@@ -33,9 +33,9 @@ erDiagram
     users ||..o{ attendances: "have"
     users ||..o{ attendance_corrections: "request"
     users ||..o{ attendance_corrections: "decide"
-    attendances ||..o{ break_times: "contain"
+    attendances ||..o{ break_times: "have"
     attendances ||..o{ attendance_corrections: "have"
-    attendance_corrections ||..o{ break_time_corrections: "contain"
+    attendance_corrections ||..o{ break_time_corrections: "have"
     break_times |o..o{ break_time_corrections: "have"
 
     users {
