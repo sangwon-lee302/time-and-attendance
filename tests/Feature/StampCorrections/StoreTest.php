@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\StampCorrections;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
@@ -138,7 +138,7 @@ class StoreTest extends TestCase
         $this->requestFullCorrections();
 
         AttendanceCorrection::query()->update([
-            'status' => ApprovalStatus::Approved,
+            'status' => CorrectionStatus::Approved,
         ]);
 
         $this

@@ -1,6 +1,6 @@
 <?php
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,13 +17,23 @@ return new class extends Migration
             $table
                 ->foreignId('attendance_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table
-                ->unsignedTinyInteger('status')
-                ->default(ApprovalStatus::Pending->value);
-            $table->dateTime('clocked_in_at');
-            $table->dateTime('clocked_out_at');
-            $table->text('remarks');
+                ->foreignId('requested_by')
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table
+                ->foreignId('decided_by')
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table
+                ->string('status')
+                ->default(CorrectionStatus::Pending->value);
+            $table->dateTime('original_clocked_in_at');
+            $table->dateTime('original_clocked_out_at');
+            $table->dateTime('requested_clocked_in_at');
+            $table->dateTime('requested_clocked_out_at');
+            $table->string('remarks');
             $table->datetimes();
         });
     }

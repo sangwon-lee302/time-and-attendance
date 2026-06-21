@@ -17,9 +17,10 @@ return new class extends Migration
                 ->foreignId('attendance_id')
                 ->index()
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table->dateTime('started_at');
             $table->dateTime('ended_at')->nullable();
+            $table->softDeletesDatetime();
             $table->datetimes();
         });
     }

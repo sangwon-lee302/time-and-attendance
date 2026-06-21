@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTimeCorrection;
@@ -54,7 +54,7 @@ class StampCorrectionService
     public function approveStampCorrection(
         AttendanceCorrection $attendanceCorrection
     ): AttendanceCorrection {
-        if ($attendanceCorrection->status !== ApprovalStatus::Pending) {
+        if ($attendanceCorrection->status !== CorrectionStatus::Pending) {
             throw new RuntimeException('Only pending corrections can be approved');
         }
 
@@ -90,7 +90,7 @@ class StampCorrectionService
                     $breakTime->save();
                 });
 
-            $attendanceCorrection->update(['status' => ApprovalStatus::Approved]);
+            $attendanceCorrection->update(['status' => CorrectionStatus::Approved]);
 
             return $attendanceCorrection;
         });

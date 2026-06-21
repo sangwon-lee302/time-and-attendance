@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
@@ -38,7 +38,7 @@ class AttendanceCorrectionFactory extends Factory
     public function approved(): static
     {
         return $this->state(fn () => [
-            'status' => ApprovalStatus::Approved,
+            'status' => CorrectionStatus::Approved,
         ]);
     }
 

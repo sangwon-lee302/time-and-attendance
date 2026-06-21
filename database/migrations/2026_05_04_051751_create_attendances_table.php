@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->restrictOnDelete();
             $table->date('date');
             $table->dateTime('clocked_in_at');
             $table->dateTime('clocked_out_at')->nullable();
+            $table->softDeletesDatetime();
             $table->datetimes();
 
             $table->unique(['user_id', 'date']);

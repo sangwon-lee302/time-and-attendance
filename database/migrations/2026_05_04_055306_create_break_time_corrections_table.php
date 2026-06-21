@@ -1,5 +1,6 @@
 <?php
 
+use App\BreakTimeCorrectionType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,14 +17,19 @@ return new class extends Migration
             $table
                 ->foreignId('attendance_correction_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table
                 ->foreignId('break_time_id')
                 ->nullable()
                 ->constrained()
-                ->cascadeOnDelete();
-            $table->dateTime('started_at');
-            $table->dateTime('ended_at');
+                ->restrictOnDelete();
+            $table
+                ->string('correction_type')
+                ->default(BreakTimeCorrectionType::Update->value);
+            $table->dateTime('original_started_at');
+            $table->dateTime('original_ended_at');
+            $table->dateTime('requested_started_at');
+            $table->dateTime('requested_ended_at');
             $table->datetimes();
         });
     }

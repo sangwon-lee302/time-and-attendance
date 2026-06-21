@@ -43,16 +43,18 @@ erDiagram
         datetime email_verified_at "nullable"
         tinyint(1) is_admin "default 0"
         varchar(255) password
+        datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     attendances {
         unsignedBigInt id PK
-        unsignedBigInt user_id FK, UK "unique([user_id, date])"
+        unsignedBigInt user_id FK, UK "users(id), unique([user_id, date])"
         date date UK "unique([user_id, date])"
         datetime clocked_in_at
         datetime clocked_out_at "nullable"
+        datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
@@ -62,27 +64,35 @@ erDiagram
         unsignedBigInt attendance_id FK "index"
         datetime started_at
         datetime ended_at "nullable"
+        datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     attendance_corrections {
         unsignedBigInt id PK
-        unsignedBigInt attendance_id FK
-        unsignedTinyInt status "0:pending 1:approved / default 0"
-        datetime clocked_in_at
-        datetime clocked_out_at
-        text remarks
+        unsignedBigInt attendance_id FK attendances(id)
+        unsignedBigInt requested_by FK users(id)
+        unsignedBigInt decided_by FK users(id)
+        string status "pending(default) / approved"
+        datetime original_clocked_in_at
+        datetime original_clocked_out_at
+        datetime requested_clocked_in_at
+        datetime requested_clocked_out_at
+        varchar(255) remarks
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     break_time_corrections {
         unsignedBigInt id PK
-        unsignedBigInt attendance_correction_id FK
-        unsignedBigInt break_time_id FK "nullable"
-        datetime started_at
-        datetime ended_at
+        unsignedBigInt attendance_correction_id FK attendance_corrections(id)
+        unsignedBigInt break_time_id FK "break_times(id), nullable"
+        string correction_type "update(default) / add"
+        datetime original_started_at
+        datetime original_ended_at
+        datetime requested_started_at
+        datetime requested_ended_at
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }

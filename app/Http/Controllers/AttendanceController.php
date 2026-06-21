@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Services\AttendanceService;
 use Carbon\CarbonImmutable;
@@ -40,7 +40,7 @@ class AttendanceController extends Controller
             'user:id,name',
             'breakTimes:id,attendance_id,started_at,ended_at',
             'attendanceCorrections' => fn ($query) => $query
-                ->where('status', ApprovalStatus::Pending)
+                ->where('status', CorrectionStatus::Pending)
                 ->select('id', 'attendance_id', 'remarks'),
         ]);
 

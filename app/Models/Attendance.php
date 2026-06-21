@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
 /**
@@ -40,7 +41,7 @@ use Override;
 #[Fillable(['date', 'clocked_in_at', 'clocked_out_at'])]
 class Attendance extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
@@ -54,6 +55,7 @@ class Attendance extends Model
             'date'           => 'date',
             'clocked_in_at'  => 'datetime',
             'clocked_out_at' => 'datetime',
+            'deleted_at'     => 'datetime',
             'created_at'     => 'datetime',
             'updated_at'     => 'datetime',
         ];

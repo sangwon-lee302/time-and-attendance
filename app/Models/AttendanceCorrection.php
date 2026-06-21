@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,7 +15,7 @@ use Override;
 /**
  * @property int $id
  * @property int $attendance_id
- * @property ApprovalStatus $status
+ * @property CorrectionStatus $status
  * @property CarbonImmutable $clocked_in_at
  * @property CarbonImmutable $clocked_out_at
  * @property string $remarks
@@ -33,7 +33,7 @@ use Override;
  *
  * @mixin \Eloquent
  */
-#[Fillable('status', 'clocked_in_at', 'clocked_out_at', 'remarks')]
+#[Fillable('status', 'requested_clocked_in_at', 'requested_clocked_out_at', 'remarks')]
 class AttendanceCorrection extends Model
 {
     use HasFactory;
@@ -47,18 +47,20 @@ class AttendanceCorrection extends Model
     protected function casts(): array
     {
         return [
-            'status'         => ApprovalStatus::class,
-            'clocked_in_at'  => 'datetime',
-            'clocked_out_at' => 'datetime',
-            'created_at'     => 'datetime',
-            'updated_at'     => 'datetime',
+            'status'                   => CorrectionStatus::class,
+            'original_clocked_in_at'   => 'datetime',
+            'original_clocked_out_at'  => 'datetime',
+            'requested_clocked_in_at'  => 'datetime',
+            'requested_clocked_out_at' => 'datetime',
+            'created_at'               => 'datetime',
+            'updated_at'               => 'datetime',
         ];
     }
 
     /**
      * The model's default values for attributes.
      */
-    protected $attributes = ['status' => ApprovalStatus::Pending];
+    protected $attributes = ['status' => CorrectionStatus::Pending];
 
     /**
      * Get the attendance that owns the attendance correction.
@@ -105,7 +107,7 @@ class AttendanceCorrection extends Model
             'remarks'     => $this->remarks,
             'isPending'   => true,
             'breaksCount' => $this->breakTimeCorrections->count(),
-            'isApproved'  => $this->status === ApprovalStatus::Approved,
+            'isApproved'  => $this->status === CorrectionStatus::Approved,
         ];
     }
 }

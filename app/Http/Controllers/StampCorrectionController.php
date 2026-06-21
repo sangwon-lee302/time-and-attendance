@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Http\Requests\StoreStampCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
@@ -30,8 +30,8 @@ class StampCorrectionController extends Controller
         )
             ->when(
                 $request->query('status') === 'approved',
-                fn ($query) => $query->where('status', ApprovalStatus::Approved),
-                fn ($query) => $query->where('status', ApprovalStatus::Pending),
+                fn ($query) => $query->where('status', CorrectionStatus::Approved),
+                fn ($query) => $query->where('status', CorrectionStatus::Pending),
             )
             ->with([
                 'attendance:id,date,user_id',
