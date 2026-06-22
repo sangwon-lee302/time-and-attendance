@@ -12,7 +12,7 @@ class StoreAttendanceCorrection
 {
     /**
      * Store a new attendance correction in database.
-     * 
+     *
      * @throws RuntimeException
      */
     public function store(
@@ -83,7 +83,7 @@ class StoreAttendanceCorrection
             !== $attributes['clocked_out_at'];
 
         $isBreakTimeCorrected = false;
-        $breakTimes = $attendance->breakTimes;
+        $breakTimes           = $attendance->breakTimes;
         foreach ($attributes['breaks'] as $breakTimeAttributes) {
             if (! array_key_exists('break_time_id', $breakTimeAttributes)) {
                 continue;
