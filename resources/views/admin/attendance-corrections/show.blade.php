@@ -15,7 +15,9 @@
             @endforeach
         @endunless
         <form
-            action="{{ route('admin.attendance-corrections.approve', $data['id']) }}"
+            action="{{ route('admin.attendance-corrections.approve', [
+                'attendance_correction' => $data['id'],
+            ]) }}"
             method="POST"
             class="mr-0 ml-auto w-max"
         >

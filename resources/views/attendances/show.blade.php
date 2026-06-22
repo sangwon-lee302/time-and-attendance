@@ -22,8 +22,12 @@
             <form
                 id="attendance-correction"
                 action="{{ auth()->user()?->is_admin
-                    ? route('admin.attendances.update', $data['id'])
-                    : route('attendance-corrections.store', $data['id']) }}"
+                    ? route('admin.attendances.update', [
+                        'attendance' => $data['id'],
+                    ])
+                    : route('attendance-corrections.store', [
+                        'attendance' => $data['id'],
+                    ]) }}"
                 method="POST"
                 class="mt-8 mr-0 ml-auto w-max"
             >
