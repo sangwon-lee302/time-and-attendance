@@ -32,18 +32,18 @@
 erDiagram
     users ||..o{ attendances: "have"
     users ||..o{ attendance_corrections: "request"
-    attendances ||..o{ break_times: "have"
+    attendances ||..o{ break_times: "contain"
     attendances ||..o{ attendance_corrections: "have"
     break_times |o..o{ break_time_corrections: "have"
-    attendance_corrections ||..o{ break_time_corrections: "have"
+    attendance_corrections ||..o{ break_time_corrections: "contain"
 
     users {
         unsignedBigInt id PK
-        varchar(255) name
-        varchar(255) email UK
+        string name
+        string email UK
         datetime email_verified_at "nullable"
         tinyint(1) is_admin "default 0"
-        varchar(255) password
+        string password
         datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
@@ -77,7 +77,7 @@ erDiagram
         string status "pending(default) / approved"
         datetime clocked_in_at
         datetime clocked_out_at
-        varchar(255) remarks
+        string remarks
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
