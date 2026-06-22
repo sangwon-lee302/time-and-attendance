@@ -4,13 +4,15 @@ namespace App\Actions\AttendanceCorrections;
 
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
+use Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class StoreAttendanceCorrection
 {
     /**
-     * Store a new attendance correction and its break time corrections.
+     * Store a new attendance correction in database.
      */
     public function store(
         array $attributes,
@@ -30,10 +32,17 @@ class StoreAttendanceCorrection
             return null;
         }
 
+        if (Auth::guest()) {
+            throw new RuntimeException(
+                'Authentication is required to make a correction',
+            );
+        }
+
         return DB::transaction(function () use ($attributes, $attendance) {
             $attendanceCorrection = $attendance
                 ->attendanceCorrections()
                 ->create([
+                    'requested_by'   => Auth::id(),
                     'clocked_in_at'  => $attributes['clocked_in_at'],
                     'clocked_out_at' => $attributes['clocked_out_at'],
                     'remarks'        => $attributes['remarks'],

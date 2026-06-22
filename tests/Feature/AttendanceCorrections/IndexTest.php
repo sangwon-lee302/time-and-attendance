@@ -31,7 +31,7 @@ class IndexTest extends TestCase
         $attendance           = Attendance::factory()->recycle($user)->create();
         $remark               = '備考です';
         $attendanceCorrection = AttendanceCorrection::factory()
-            ->recycle($attendance)
+            ->ofAttendance($attendance)
             ->create(['remarks' => $remark]);
 
         $response = $this->actingAs($user)->get('stamp_correction_request/list');
@@ -41,7 +41,6 @@ class IndexTest extends TestCase
         $response->assertSee($attendance->date->format('Y/m/d'));
         $response->assertSee($remark);
         $response->assertSee($attendanceCorrection->created_at->format('Y/m/d'));
-        // check if links to attendances.show page exists
         $response->assertSee(url('attendance/detail/'.$attendance->id));
     }
 
@@ -51,7 +50,7 @@ class IndexTest extends TestCase
         $attendance           = Attendance::factory()->recycle($user)->create();
         $remark               = '備考です';
         $attendanceCorrection = AttendanceCorrection::factory()
-            ->recycle($attendance)
+            ->ofAttendance($attendance)
             ->approved()
             ->create(['remarks' => $remark]);
 
@@ -64,7 +63,6 @@ class IndexTest extends TestCase
         $response->assertSee($attendance->date->format('Y/m/d'));
         $response->assertSee($remark);
         $response->assertSee($attendanceCorrection->created_at->format('Y/m/d'));
-        // check if links to attendances.show page exists
         $response->assertSee(url('attendance/detail/'.$attendance->id));
     }
 }

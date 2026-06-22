@@ -83,7 +83,7 @@ class AttendanceController extends Controller
         } catch (Throwable $th) {
             Log::error('勤怠情報更新エラー: '.$th->getMessage(), ['exception' => $th]);
 
-            return redirect()->back()->withInput();
+            return redirect()->back()->withInput(); // ユーザーに何も知らせないの？
         }
     }
 

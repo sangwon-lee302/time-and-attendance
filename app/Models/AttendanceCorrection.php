@@ -33,7 +33,7 @@ use Override;
  *
  * @mixin \Eloquent
  */
-#[Fillable('status', 'clocked_in_at', 'clocked_out_at', 'remarks')]
+#[Fillable('requested_by', 'status', 'clocked_in_at', 'clocked_out_at', 'remarks')]
 class AttendanceCorrection extends Model
 {
     use HasFactory;
