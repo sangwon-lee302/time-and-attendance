@@ -36,7 +36,7 @@ class AttendanceController extends Controller
         $attendance->load([
             'user:id,name',
             'breakTimes:id,attendance_id,started_at,ended_at',
-            'attendanceCorrections' => fn ($query) => $query
+            'attendanceCorrections' => fn ($attendanceCorrectionQuery) => $attendanceCorrectionQuery
                 ->where('status', CorrectionStatus::Pending)
                 ->select('id', 'attendance_id', 'remarks'),
         ]);

@@ -61,6 +61,16 @@ class AttendanceCorrection extends Model
     protected $attributes = ['status' => CorrectionStatus::Pending];
 
     /**
+     * Get the user that requested the attendance correction.
+     * 
+     * @return BelongsTo<User, $this>
+     */
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by');
+    }
+
+    /**
      * Get the attendance that owns the attendance correction.
      *
      * @return BelongsTo<Attendance, $this>

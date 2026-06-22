@@ -21,13 +21,20 @@ class AttendanceCorrectionController extends Controller
      */
     public function index(Request $request): View
     {
-        $attendanceCorrections = AttendanceCorrection::when(
-            ! Auth::user()->is_admin,
-            fn ($query) => $query->whereHas(
-                'attendance',
-                fn ($subQuery) => $subQuery->where('user_id', Auth::id()),
-            ),
+        $attendanceCorrections = AttendanceCorrection::whereHas(
+            'requester',
+            fn ($requesterQuery) => $requesterQuery->where('is_admin', false),
         )
+            ->when(
+                ! Auth::user()->is_admin,
+                fn ($query) => $query->whereHas(
+                    'attendance',
+                    fn ($attendanceQuery) => $attendanceQuery->where(
+                        'user_id',
+                        Auth::id(),
+                    ),
+                ),
+            )
             ->when(
                 $request->query('status') === 'approved',
                 fn ($query) => $query->where('status', CorrectionStatus::Approved),

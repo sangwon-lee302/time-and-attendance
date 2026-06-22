@@ -36,7 +36,7 @@ class AttendanceController extends Controller
         ])
             ->with([
                 'user:id,name',
-                'breakTimes' => fn ($query) => $query
+                'breakTimes' => fn ($breakTimeQuery) => $breakTimeQuery
                     ->whereNotNull('ended_at')
                     ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])

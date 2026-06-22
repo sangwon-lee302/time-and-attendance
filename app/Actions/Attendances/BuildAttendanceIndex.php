@@ -26,7 +26,7 @@ class BuildAttendanceIndex
         $attendances = $user
             ->attendances()
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->with(['breakTimes' => fn ($query) => $query
+            ->with(['breakTimes' => fn ($breakTimeQuery) => $breakTimeQuery
                 ->whereNotNull('ended_at')
                 ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])
