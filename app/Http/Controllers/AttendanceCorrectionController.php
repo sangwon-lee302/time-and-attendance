@@ -53,7 +53,17 @@ class AttendanceCorrectionController extends Controller
         StoreAttendanceCorrection $action,
     ): RedirectResponse {
         try {
-            $action->store($request->validated(), $attendance);
+            $attendanceCorrection = $action->store(
+                $request->validated(),
+                $attendance,
+            );
+
+            if (! $attendanceCorrection) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('custom_message', '修正箇所がありません');
+            }
 
             return redirect()->back();
         } catch (Throwable $th) {
@@ -61,7 +71,10 @@ class AttendanceCorrectionController extends Controller
                 'exception' => $th,
             ]);
 
-            return redirect()->back()->withInput(); // ユーザーに何も知らせないの？
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('custom_message', 'エラーが発生しました');
         }
     }
 }

@@ -40,7 +40,9 @@ class AttendanceCorrectionController extends Controller
         } catch (Throwable $th) {
             Log::error('勤怠修正申請承認エラー: '.$th->getMessage(), ['exception' => $th]);
 
-            return redirect()->back(); // ユーザーに何も知らせないの？
+            return redirect()
+                ->back()
+                ->with('custom_message', 'エラーが発生しました');
         }
     }
 }
