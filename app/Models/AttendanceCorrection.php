@@ -62,7 +62,7 @@ class AttendanceCorrection extends Model
 
     /**
      * Get the user that requested the attendance correction.
-     * 
+     *
      * @return BelongsTo<User, $this>
      */
     public function requester(): BelongsTo
