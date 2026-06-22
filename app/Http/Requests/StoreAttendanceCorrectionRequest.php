@@ -93,7 +93,7 @@ class StoreAttendanceCorrectionRequest extends FormRequest
     {
         return $this
             ->user()
-            ->can('createAttendanceCorrection', $this->route('attendance'));
+            ->can('createCorrection', $this->route('attendance'));
     }
 
     /**

@@ -25,10 +25,10 @@ class AttendancePolicy
     }
 
     /**
-     * Determine if the attendance correction for the given attendance can be created by
-     * the user.
+     * Determine if a correction for the given attendance can be created by the
+     * given user.
      */
-    public function createAttendanceCorrection(User $user, Attendance $attendance): bool
+    public function createCorrection(User $user, Attendance $attendance): bool
     {
         return $user->is_admin
             || (
