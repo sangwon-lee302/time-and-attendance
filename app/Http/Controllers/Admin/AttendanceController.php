@@ -60,9 +60,9 @@ class AttendanceController extends Controller
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $action->build($user, $month);
+        $data = $action->build($user, $month);
 
-        return view('attendances.index', ['displayData' => $displayData]);
+        return view('attendances.index', ['data' => $data]);
     }
 
     /**

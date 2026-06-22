@@ -22,10 +22,10 @@ class AttendanceCorrectionController extends Controller
                 ->select('id', 'attendance_id', 'started_at', 'ended_at'),
         ]);
 
-        $displayData = $attendanceCorrection->toDisplayData();
+        $data = $attendanceCorrection->toDisplayData();
 
         return view('admin.attendance-corrections.show', [
-            'displayData' => $displayData,
+            'data' => $data,
         ]);
     }
 

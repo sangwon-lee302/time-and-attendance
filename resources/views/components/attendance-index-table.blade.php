@@ -1,4 +1,4 @@
-@props (['displayData'])
+@props (['data'])
 
 <table>
     <thead>
@@ -11,7 +11,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($displayData['table'] as $row)
+        @foreach ($data['table'] as $row)
             <tr>
                 <td class="text-left">
                     {{ $row['date']->isoFormat('MM/DD(ddd)') }}

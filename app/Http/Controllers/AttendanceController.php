@@ -23,9 +23,9 @@ class AttendanceController extends Controller
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $action->build(Auth::user(), $month);
+        $data = $action->build(Auth::user(), $month);
 
-        return view('attendances.index', ['displayData' => $displayData]);
+        return view('attendances.index', ['data' => $data]);
     }
 
     /**
@@ -41,8 +41,8 @@ class AttendanceController extends Controller
                 ->select('id', 'attendance_id', 'remarks'),
         ]);
 
-        $displayData = $attendance->toDisplayData();
+        $data = $attendance->toDisplayData();
 
-        return view('attendances.show', ['displayData' => $displayData]);
+        return view('attendances.show', ['data' => $data]);
     }
 }

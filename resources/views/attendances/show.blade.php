@@ -2,10 +2,10 @@
     <x-layouts.header />
     <x-layouts.main>
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
-        <x-attendance-detail-table :display-data="$displayData" />
-        {{-- hidden field for break time ids --}}
-        @unless ($displayData['isPending'])
-            @foreach ($displayData['breakTimes'] as $breakTime)
+        <x-attendance-detail-table :data="$data" />
+        {{-- hidden fields for break time ids --}}
+        @unless ($data['isPending'])
+            @foreach ($data['breakTimes'] as $breakTime)
                 <input
                     form="attendance-correction"
                     type="hidden"
@@ -14,7 +14,7 @@
                 />
             @endforeach
         @endunless
-        @if ($displayData['isPending'])
+        @if ($data['isPending'])
             <p
                 class="mt-8 mr-0 ml-auto w-max font-bold text-red-400"
             >*承認待ちのため修正はできません。</p>
@@ -22,8 +22,8 @@
             <form
                 id="attendance-correction"
                 action="{{ auth()->user()?->is_admin
-                    ? route('admin.attendances.update', $displayData['id'])
-                    : route('attendance-corrections.store', $displayData['id']) }}"
+                    ? route('admin.attendances.update', $data['id'])
+                    : route('attendance-corrections.store', $data['id']) }}"
                 method="POST"
                 class="mt-8 mr-0 ml-auto w-max"
             >

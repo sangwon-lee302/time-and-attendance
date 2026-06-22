@@ -81,7 +81,8 @@ class AttendanceCorrection extends Model
     }
 
     /**
-     * Convert the given attendance correction into a display data for attendance detail table.
+     * Convert the given attendance correction into a display data for attendance detail
+     * table.
      *
      * @return array<string, int|string|bool|array<string, int|string>>
      */
@@ -96,7 +97,8 @@ class AttendanceCorrection extends Model
             'date'         => $attendance->date->format('n月j日'),
             'clockedInAt'  => $this->clocked_in_at->format('H:i'),
             'clockedOutAt' => $this->clocked_out_at->format('H:i'),
-            'breakTimes'   => $this->breakTimeCorrections
+            'breakTimes'   => $this
+                ->breakTimeCorrections
                 ->map(fn (BreakTimeCorrection $breakTimeCorrection) => [
                     'id'        => $breakTimeCorrection->id,
                     'startedAt' => $breakTimeCorrection->started_at->format('H:i'),

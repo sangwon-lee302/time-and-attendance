@@ -2,10 +2,10 @@
     <x-layouts.header />
     <x-layouts.main>
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
-        <x-attendance-detail-table :display-data="$displayData" />
-        {{-- hidden field for break time ids --}}
-        @unless ($displayData['isPending'])
-            @foreach ($displayData['breakTimes'] as $breakTime)
+        <x-attendance-detail-table :data="$data" />
+        {{-- hidden fields for break time ids --}}
+        @unless ($data['isPending'])
+            @foreach ($data['breakTimes'] as $breakTime)
                 <input
                     form="attendance-correction"
                     type="hidden"
@@ -15,7 +15,7 @@
             @endforeach
         @endunless
         <form
-            action="{{ route('admin.attendance-corrections.approve', $displayData['id']) }}"
+            action="{{ route('admin.attendance-corrections.approve', $data['id']) }}"
             method="POST"
             class="mr-0 ml-auto w-max"
         >
@@ -24,11 +24,11 @@
             <button
                 @class ([
                     'btn btn-primary mt-12 px-8',
-                    'cursor-default' => $displayData['isApproved'],
+                    'cursor-default' => $data['isApproved'],
                 ])
-                @disabled ($displayData['isApproved'])
+                @disabled ($data['isApproved'])
             >
-                {{ $displayData['isApproved'] ? '承認済み' : '承認' }}
+                {{ $data['isApproved'] ? '承認済み' : '承認' }}
             </button>
         </form>
     </x-layouts.main>
