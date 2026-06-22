@@ -1,60 +1,24 @@
 <?php
 
-namespace App\Services;
+namespace App\Actions\AttendanceCorrections;
 
-use App\ApprovalStatus;
-use App\Models\Attendance;
+use App\CorrectionStatus;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTimeCorrection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class StampCorrectionService
+class ApproveAttendanceCorrection
 {
     /**
-     * Store a new stamp correction.
+     * Approve the given attendance correction.
+     *
+     * @throws RuntimeException
      */
-    public function storeStampCorrection(
-        array $attributes,
-        Attendance $attendance
-    ): AttendanceCorrection {
-        $attributes['breaks'] = collect($attributes['breaks'] ?? [])
-            ->filter(fn (array $break) => ! empty($break['break_time_id'])
-                || ! empty($break['started_at']),
-            )
-            ->all();
-
-        return DB::transaction(function () use ($attributes, $attendance) {
-            $attendanceCorrection = $attendance
-                ->attendanceCorrections()
-                ->create([
-                    'clocked_in_at'  => $attributes['clocked_in_at'],
-                    'clocked_out_at' => $attributes['clocked_out_at'],
-                    'remarks'        => $attributes['remarks'],
-                ]);
-
-            $attendanceCorrection
-                ->breakTimeCorrections()
-                ->createMany(collect($attributes['breaks'])
-                    ->map(fn (array $break) => [
-                        'break_time_id' => $break['break_time_id'] ?? null,
-                        'started_at'    => $break['started_at'],
-                        'ended_at'      => $break['ended_at'],
-                    ])
-                    ->all()
-                );
-
-            return $attendanceCorrection;
-        });
-    }
-
-    /**
-     * Approve the given stamp correction and reflect it to storage.
-     */
-    public function approveStampCorrection(
+    public function approve(
         AttendanceCorrection $attendanceCorrection
     ): AttendanceCorrection {
-        if ($attendanceCorrection->status !== ApprovalStatus::Pending) {
+        if ($attendanceCorrection->status !== CorrectionStatus::Pending) {
             throw new RuntimeException('Only pending corrections can be approved');
         }
 
@@ -90,7 +54,7 @@ class StampCorrectionService
                     $breakTime->save();
                 });
 
-            $attendanceCorrection->update(['status' => ApprovalStatus::Approved]);
+            $attendanceCorrection->update(['status' => CorrectionStatus::Approved]);
 
             return $attendanceCorrection;
         });

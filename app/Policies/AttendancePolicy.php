@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\User;
 
@@ -25,16 +25,16 @@ class AttendancePolicy
     }
 
     /**
-     * Determine if the stamp correction for the given attendance can be created by
-     * the user.
+     * Determine if a correction for the given attendance can be created by the
+     * given user.
      */
-    public function createStampCorrection(User $user, Attendance $attendance): bool
+    public function createCorrection(User $user, Attendance $attendance): bool
     {
         return $user->is_admin
             || (
                 $user->id === $attendance->user_id
                 && $attendance->attendanceCorrections()
-                    ->where('status', ApprovalStatus::Pending)
+                    ->where('status', CorrectionStatus::Pending)
                     ->doesntExist()
             );
     }

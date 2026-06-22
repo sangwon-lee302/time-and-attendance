@@ -31,10 +31,11 @@
 ```mermaid
 erDiagram
     users ||..o{ attendances: "have"
-    attendances ||..o{ break_times: "contain"
+    users ||..o{ attendance_corrections: "request"
+    attendances ||..o{ break_times: "have"
     attendances ||..o{ attendance_corrections: "have"
-    attendance_corrections ||..o{ break_time_corrections: "contain"
     break_times |o..o{ break_time_corrections: "have"
+    attendance_corrections ||..o{ break_time_corrections: "have"
 
     users {
         unsignedBigInt id PK
@@ -43,44 +44,48 @@ erDiagram
         datetime email_verified_at "nullable"
         tinyint(1) is_admin "default 0"
         varchar(255) password
+        datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     attendances {
         unsignedBigInt id PK
-        unsignedBigInt user_id FK, UK "unique([user_id, date])"
+        unsignedBigInt user_id FK, UK "users(id), unique([user_id, date])"
         date date UK "unique([user_id, date])"
         datetime clocked_in_at
         datetime clocked_out_at "nullable"
+        datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     break_times {
         unsignedBigInt id PK
-        unsignedBigInt attendance_id FK "index"
+        unsignedBigInt attendance_id FK "attendances(id) index"
         datetime started_at
         datetime ended_at "nullable"
+        datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     attendance_corrections {
         unsignedBigInt id PK
-        unsignedBigInt attendance_id FK
-        unsignedTinyInt status "0:pending 1:approved / default 0"
+        unsignedBigInt attendance_id FK "attendances(id)"
+        unsignedBigInt requested_by FK "users(id)"
+        string status "pending(default) / approved"
         datetime clocked_in_at
         datetime clocked_out_at
-        text remarks
+        varchar(255) remarks
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
 
     break_time_corrections {
         unsignedBigInt id PK
-        unsignedBigInt attendance_correction_id FK
-        unsignedBigInt break_time_id FK "nullable"
+        unsignedBigInt attendance_correction_id FK "attendance_corrections(id)"
+        unsignedBigInt break_time_id FK "break_times(id), nullable"
         datetime started_at
         datetime ended_at
         datetime created_at "nullable"

@@ -2,45 +2,47 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\AttendanceCorrections\ApproveAttendanceCorrection;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceCorrection;
-use App\Services\StampCorrectionService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Log;
 use Throwable;
 
-class StampCorrectionController extends Controller
+class AttendanceCorrectionController extends Controller
 {
     public function show(AttendanceCorrection $attendanceCorrection): View
     {
         $attendanceCorrection->load([
             'attendance:id,date,user_id',
             'attendance.user:id,name',
-            'attendance.breakTimes' => fn ($query) => $query
+            'attendance.breakTimes' => fn ($breakTimeQuery) => $breakTimeQuery
                 ->whereNotNull('ended_at')
                 ->select('id', 'attendance_id', 'started_at', 'ended_at'),
         ]);
 
-        $displayData = $attendanceCorrection->toDisplayData();
+        $data = $attendanceCorrection->toDisplayData();
 
-        return view('admin.stamp-corrections.show', [
-            'displayData' => $displayData,
+        return view('admin.attendance-corrections.show', [
+            'data' => $data,
         ]);
     }
 
     public function approve(
         AttendanceCorrection $attendanceCorrection,
-        StampCorrectionService $stampCorrectionService,
+        ApproveAttendanceCorrection $action,
     ): RedirectResponse {
         try {
-            $stampCorrectionService->approveStampCorrection($attendanceCorrection);
+            $action->approve($attendanceCorrection);
 
             return redirect()->back();
         } catch (Throwable $th) {
             Log::error('勤怠修正申請承認エラー: '.$th->getMessage(), ['exception' => $th]);
 
-            return redirect()->back();
+            return redirect()
+                ->back()
+                ->with('custom_message', 'エラーが発生しました');
         }
     }
 }

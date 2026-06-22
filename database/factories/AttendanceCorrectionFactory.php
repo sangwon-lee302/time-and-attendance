@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
 use App\Models\BreakTimeCorrection;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use LengthException;
 
@@ -22,10 +23,15 @@ class AttendanceCorrectionFactory extends Factory
      */
     public function definition(): array
     {
+        $user        = User::factory()->create();
         $clockedInAt = fake()->dateTimeBetween(today()->startOfDay());
 
         return [
-            'attendance_id'  => Attendance::factory(),
+            'attendance_id' => Attendance::factory()
+                ->recycle($user)
+                ->create()
+                ->id,
+            'requested_by'   => $user->id,
             'clocked_in_at'  => $clockedInAt,
             'clocked_out_at' => fake()->dateTimeBetween($clockedInAt),
             'remarks'        => fake()->realText(),
@@ -38,7 +44,18 @@ class AttendanceCorrectionFactory extends Factory
     public function approved(): static
     {
         return $this->state(fn () => [
-            'status' => ApprovalStatus::Approved,
+            'status' => CorrectionStatus::Approved,
+        ]);
+    }
+
+    /**
+     * Indicate that the model is associated with the given attendance.
+     */
+    public function ofAttendance(Attendance $attendance): static
+    {
+        return $this->state(fn () => [
+            'attendance_id' => $attendance->id,
+            'requested_by'  => $attendance->user->id,
         ]);
     }
 

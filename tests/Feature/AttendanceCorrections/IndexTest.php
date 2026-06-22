@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\StampCorrections;
+namespace Tests\Feature\AttendanceCorrections;
 
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
@@ -12,7 +12,7 @@ class IndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_stamp_correction_page_can_be_rendered(): void
+    public function test_attendance_correction_page_can_be_rendered(): void
     {
         $user = User::factory()->create();
         Attendance::factory()->recycle($user)->create();
@@ -25,13 +25,13 @@ class IndexTest extends TestCase
         $response->assertSee('status=approved');
     }
 
-    public function test_pending_stamp_corrections_can_be_shown(): void
+    public function test_pending_attendance_corrections_can_be_shown(): void
     {
         $user                 = User::factory()->create();
         $attendance           = Attendance::factory()->recycle($user)->create();
         $remark               = '備考です';
         $attendanceCorrection = AttendanceCorrection::factory()
-            ->recycle($attendance)
+            ->ofAttendance($attendance)
             ->create(['remarks' => $remark]);
 
         $response = $this->actingAs($user)->get('stamp_correction_request/list');
@@ -41,17 +41,16 @@ class IndexTest extends TestCase
         $response->assertSee($attendance->date->format('Y/m/d'));
         $response->assertSee($remark);
         $response->assertSee($attendanceCorrection->created_at->format('Y/m/d'));
-        // check if links to attendances.show page exists
         $response->assertSee(url('attendance/detail/'.$attendance->id));
     }
 
-    public function test_approved_stamp_corrections_can_be_shown(): void
+    public function test_approved_attendance_corrections_can_be_shown(): void
     {
         $user                 = User::factory()->create();
         $attendance           = Attendance::factory()->recycle($user)->create();
         $remark               = '備考です';
         $attendanceCorrection = AttendanceCorrection::factory()
-            ->recycle($attendance)
+            ->ofAttendance($attendance)
             ->approved()
             ->create(['remarks' => $remark]);
 
@@ -64,7 +63,6 @@ class IndexTest extends TestCase
         $response->assertSee($attendance->date->format('Y/m/d'));
         $response->assertSee($remark);
         $response->assertSee($attendanceCorrection->created_at->format('Y/m/d'));
-        // check if links to attendances.show page exists
         $response->assertSee(url('attendance/detail/'.$attendance->id));
     }
 }

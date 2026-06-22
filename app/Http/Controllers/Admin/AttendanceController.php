@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\AttendanceCorrections\ApproveAttendanceCorrection;
+use App\Actions\AttendanceCorrections\StoreAttendanceCorrection;
+use App\Actions\Attendances\BuildAttendanceIndex;
+use App\Actions\Attendances\ExportAttendanceCsv;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreStampCorrectionRequest;
+use App\Http\Requests\StoreAttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\User;
-use App\Services\AttendanceService;
-use App\Services\StampCorrectionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +36,7 @@ class AttendanceController extends Controller
         ])
             ->with([
                 'user:id,name',
-                'breakTimes' => fn ($query) => $query
+                'breakTimes' => fn ($breakTimeQuery) => $breakTimeQuery
                     ->whereNotNull('ended_at')
                     ->select('id', 'attendance_id', 'started_at', 'ended_at'),
             ])
@@ -52,15 +54,15 @@ class AttendanceController extends Controller
     public function monthlyIndex(
         User $user,
         Request $request,
-        AttendanceService $attendanceService
+        BuildAttendanceIndex $action,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $attendanceService->prepareMonthlyIndexView($user, $month);
+        $data = $action->build($user, $month);
 
-        return view('attendances.index', ['displayData' => $displayData]);
+        return view('attendances.index', ['data' => $data]);
     }
 
     /**
@@ -68,22 +70,23 @@ class AttendanceController extends Controller
      */
     public function update(
         Attendance $attendance,
-        StoreStampCorrectionRequest $request,
-        StampCorrectionService $stampCorrectionService,
+        StoreAttendanceCorrectionRequest $request,
+        StoreAttendanceCorrection $storeAction,
+        ApproveAttendanceCorrection $approveAction,
     ): RedirectResponse {
         try {
-            $stampCorrectionService->approveStampCorrection(
-                $stampCorrectionService->storeStampCorrection(
-                    $request->validated(),
-                    $attendance,
-                ),
+            $approveAction->approve(
+                $storeAction->store($request->validated(), $attendance),
             );
 
             return redirect()->back();
         } catch (Throwable $th) {
             Log::error('勤怠情報更新エラー: '.$th->getMessage(), ['exception' => $th]);
 
-            return redirect()->back()->withInput();
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('custom_message', 'エラーが発生しました');
         }
     }
 
@@ -93,8 +96,8 @@ class AttendanceController extends Controller
     public function export(
         User $user,
         Request $request,
-        AttendanceService $attendanceService
+        ExportAttendanceCsv $action,
     ): StreamedResponse {
-        return $attendanceService->CSVExport($user, $request);
+        return $action->export($user, $request);
     }
 }

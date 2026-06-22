@@ -16,12 +16,12 @@ return new class extends Migration
             $table
                 ->foreignId('attendance_correction_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table
                 ->foreignId('break_time_id')
                 ->nullable()
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table->dateTime('started_at');
             $table->dateTime('ended_at');
             $table->datetimes();

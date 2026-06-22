@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Admin\StampCorrections;
+namespace Tests\Feature\Admin\AttendanceCorrections;
 
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTimeCorrection;
@@ -28,7 +28,7 @@ class IndexTest extends TestCase
         $this->admin = User::factory()->admin()->create();
     }
 
-    public function test_pending_stamp_corrections_can_be_shown(): void
+    public function test_pending_attendance_corrections_can_be_shown(): void
     {
         $attendanceCorrection = AttendanceCorrection::factory()->create();
 
@@ -78,7 +78,7 @@ class IndexTest extends TestCase
             ->assertSee($breakTimeCorrection->ended_at->format('H:i'));
     }
 
-    public function test_admin_can_approve_stamp_correction(): void
+    public function test_admin_can_approve_attendance_correction(): void
     {
         $attendanceCorrection = AttendanceCorrection::factory()
             ->hasNonOverlappingBreakTimeCorrections(1)
@@ -92,7 +92,7 @@ class IndexTest extends TestCase
 
         $this
             ->actingAs($this->admin)
-            ->put(route('admin.stamp-corrections.approve', $attendanceCorrection));
+            ->put(route('admin.attendance-corrections.approve', $attendanceCorrection));
 
         $this->assertDatabaseHas('attendances', [
             'clocked_in_at'  => $attendanceCorrection->clocked_in_at,

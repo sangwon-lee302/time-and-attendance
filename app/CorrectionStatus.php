@@ -2,10 +2,10 @@
 
 namespace App;
 
-enum ApprovalStatus: int
+enum CorrectionStatus: string
 {
-    case Pending  = 0;
-    case Approved = 1;
+    case Pending  = 'pending';
+    case Approved = 'approved';
 
     /**
      * Get the label for each case.

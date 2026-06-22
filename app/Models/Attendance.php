@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
 /**
@@ -19,14 +20,9 @@ use Override;
  * @property CarbonImmutable $date
  * @property CarbonImmutable $clocked_in_at
  * @property CarbonImmutable|null $clocked_out_at
+ * @property CarbonImmutable|null $deleted_at
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- *
- * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
- *
  * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
@@ -35,12 +31,20 @@ use Override;
  * @property-read CarbonInterval $total_break_time
  * @property-read CarbonInterval $total_working_time
  *
+ * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 #[Fillable(['date', 'clocked_in_at', 'clocked_out_at'])]
 class Attendance extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
@@ -54,6 +58,7 @@ class Attendance extends Model
             'date'           => 'date',
             'clocked_in_at'  => 'datetime',
             'clocked_out_at' => 'datetime',
+            'deleted_at'     => 'datetime',
             'created_at'     => 'datetime',
             'updated_at'     => 'datetime',
         ];
@@ -157,13 +162,13 @@ class Attendance extends Model
     }
 
     /**
-     * Convert the given attendance into a display data for the stamp detail table.
+     * Convert the given attendance into a display data for the attendance detail table.
      *
      * @return array<string, int|string|bool|array<string, int|string>>
      */
     public function toDisplayData(): array
     {
-        $pendingStampCorrection = $this->attendanceCorrections()->first();
+        $pendingAttendanceCorrection = $this->attendanceCorrections()->first();
 
         return [
             'id'           => $this->id,
@@ -177,8 +182,8 @@ class Attendance extends Model
                 'startedAt' => $breakTime->started_at->format('H:i'),
                 'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
             ]),
-            'remarks'     => $pendingStampCorrection->remarks ?? '',
-            'isPending'   => $pendingStampCorrection !== null,
+            'remarks'     => $pendingAttendanceCorrection->remarks ?? '',
+            'isPending'   => $pendingAttendanceCorrection !== null,
             'breaksCount' => $this->breakTimes->count(),
         ];
     }

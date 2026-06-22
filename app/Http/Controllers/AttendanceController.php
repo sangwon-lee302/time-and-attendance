@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\ApprovalStatus;
+use App\Actions\Attendances\BuildAttendanceIndex;
+use App\CorrectionStatus;
 use App\Models\Attendance;
-use App\Services\AttendanceService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -17,18 +17,15 @@ class AttendanceController extends Controller
      */
     public function index(
         Request $request,
-        AttendanceService $attendanceService
+        BuildAttendanceIndex $action,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $attendanceService->prepareMonthlyIndexView(
-            Auth::user(),
-            $month,
-        );
+        $data = $action->build(Auth::user(), $month);
 
-        return view('attendances.index', ['displayData' => $displayData]);
+        return view('attendances.index', ['data' => $data]);
     }
 
     /**
@@ -39,13 +36,13 @@ class AttendanceController extends Controller
         $attendance->load([
             'user:id,name',
             'breakTimes:id,attendance_id,started_at,ended_at',
-            'attendanceCorrections' => fn ($query) => $query
-                ->where('status', ApprovalStatus::Pending)
+            'attendanceCorrections' => fn ($attendanceCorrectionQuery) => $attendanceCorrectionQuery
+                ->where('status', CorrectionStatus::Pending)
                 ->select('id', 'attendance_id', 'remarks'),
         ]);
 
-        $displayData = $attendance->toDisplayData();
+        $data = $attendance->toDisplayData();
 
-        return view('attendances.show', ['displayData' => $displayData]);
+        return view('attendances.show', ['data' => $data]);
     }
 }

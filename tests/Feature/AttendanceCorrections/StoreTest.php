@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Feature\StampCorrections;
+namespace Tests\Feature\AttendanceCorrections;
 
-use App\ApprovalStatus;
+use App\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakTime;
@@ -42,7 +42,7 @@ class StoreTest extends TestCase
             ->create();
     }
 
-    public function test_user_cannot_make_stamp_correction_with_invalid_clock_in_and_out_time(): void
+    public function test_user_cannot_make_attendance_correction_with_invalid_clock_in_and_out_time(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -57,7 +57,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function test_user_cannot_make_stamp_correction_with_too_late_break_start_time(): void
+    public function test_user_cannot_make_attendance_correction_with_too_late_break_start_time(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -72,7 +72,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function test_user_cannot_make_stamp_correction_with_too_late_break_end_time(): void
+    public function test_user_cannot_make_attendance_correction_with_too_late_break_end_time(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -87,7 +87,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function test_user_cannot_make_stamp_correction_with_empty_remarks(): void
+    public function test_user_cannot_make_attendance_correction_with_empty_remarks(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -99,7 +99,7 @@ class StoreTest extends TestCase
             ]);
     }
 
-    public function test_user_can_make_stamp_correction_with_valid_input(): void
+    public function test_user_can_make_attendance_correction_with_valid_input(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -138,7 +138,7 @@ class StoreTest extends TestCase
         $this->requestFullCorrections();
 
         AttendanceCorrection::query()->update([
-            'status' => ApprovalStatus::Approved,
+            'status' => CorrectionStatus::Approved,
         ]);
 
         $this
@@ -175,7 +175,7 @@ class StoreTest extends TestCase
     {
         return $this
             ->actingAs($this->user)
-            ->post(route('stamp-corrections.store', array_merge(
+            ->post(route('attendance-corrections.store', array_merge(
                 ['attendance' => $this->attendance],
                 $data,
             )));

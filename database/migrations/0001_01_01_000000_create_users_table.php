@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('email_verified_at')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->string('password');
+            $table->softDeletesDatetime();
             $table->datetimes();
         });
 
