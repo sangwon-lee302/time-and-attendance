@@ -17,13 +17,13 @@ class AttendanceController extends Controller
      */
     public function index(
         Request $request,
-        BuildAttendanceIndex $buildAttendanceIndex,
+        BuildAttendanceIndex $action,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $buildAttendanceIndex->build(Auth::user(), $month);
+        $displayData = $action->build(Auth::user(), $month);
 
         return view('attendances.index', ['displayData' => $displayData]);
     }

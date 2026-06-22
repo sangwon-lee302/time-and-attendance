@@ -54,13 +54,13 @@ class AttendanceController extends Controller
     public function monthlyIndex(
         User $user,
         Request $request,
-        BuildAttendanceIndex $buildAttendanceIndex,
+        BuildAttendanceIndex $action,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $buildAttendanceIndex->build($user, $month);
+        $displayData = $action->build($user, $month);
 
         return view('attendances.index', ['displayData' => $displayData]);
     }
@@ -71,15 +71,12 @@ class AttendanceController extends Controller
     public function update(
         Attendance $attendance,
         StoreAttendanceCorrectionRequest $request,
-        StoreAttendanceCorrection $storeAttendanceCorrection,
-        ApproveAttendanceCorrection $approveAttendanceCorrection,
+        StoreAttendanceCorrection $storeAction,
+        ApproveAttendanceCorrection $approveAction,
     ): RedirectResponse {
         try {
-            $approveAttendanceCorrection->approve(
-                $storeAttendanceCorrection->store(
-                    $request->validated(),
-                    $attendance,
-                ),
+            $approveAction->approve(
+                $storeAction->store($request->validated(), $attendance),
             );
 
             return redirect()->back();
@@ -96,8 +93,8 @@ class AttendanceController extends Controller
     public function export(
         User $user,
         Request $request,
-        ExportAttendanceCsv $exportAttendanceCsv,
+        ExportAttendanceCsv $action,
     ): StreamedResponse {
-        return $exportAttendanceCsv->export($user, $request);
+        return $action->export($user, $request);
     }
 }

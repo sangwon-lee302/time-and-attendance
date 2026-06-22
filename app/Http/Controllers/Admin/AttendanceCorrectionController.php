@@ -31,14 +31,16 @@ class AttendanceCorrectionController extends Controller
 
     public function approve(
         AttendanceCorrection $attendanceCorrection,
-        ApproveAttendanceCorrection $approveAttendanceCorrection,
+        ApproveAttendanceCorrection $action,
     ): RedirectResponse {
         try {
-            $approveAttendanceCorrection->approve($attendanceCorrection);
+            $action->approve($attendanceCorrection);
+
+            return redirect()->back();
         } catch (Throwable $th) {
             Log::error('勤怠修正申請承認エラー: '.$th->getMessage(), ['exception' => $th]);
-        }
 
-        return redirect()->back();
+            return redirect()->back(); // ユーザーに何も知らせないの？
+        }
     }
 }

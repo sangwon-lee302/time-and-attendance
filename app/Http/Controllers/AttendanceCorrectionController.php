@@ -50,10 +50,10 @@ class AttendanceCorrectionController extends Controller
     public function store(
         Attendance $attendance,
         StoreAttendanceCorrectionRequest $request,
-        StoreAttendanceCorrection $storeAttendanceCorrection,
+        StoreAttendanceCorrection $action,
     ): RedirectResponse {
         try {
-            $storeAttendanceCorrection->store($request->validated(), $attendance);
+            $action->store($request->validated(), $attendance);
 
             return redirect()->back();
         } catch (Throwable $th) {
