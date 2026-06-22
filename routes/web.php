@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
-use App\Http\Controllers\Admin\StampCorrectionController as AdminStampCorrectionController;
+use App\Http\Controllers\Admin\AttendanceCorrectionController as AdminAttendanceCorrectionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\StampCorrectionController;
+use App\Http\Controllers\AttendanceCorrectionController;
 use App\Http\Controllers\TimeLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,12 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->name('show');
         });
 
-    // for stamp corrections
-    Route::controller(StampCorrectionController::class)
-        ->name('stamp-corrections.')
+    // for attendance corrections
+    Route::controller(AttendanceCorrectionController::class)
+        ->name('attendance-corrections.')
         ->group(function () {
             Route::get('stamp_correction_request/list', 'index')->name('index');
-            Route::post('stamp-correction/{attendance}', 'store')->name('store');
+            Route::post('attendance-correction/{attendance}', 'store')->name('store');
         });
 });
 
@@ -80,13 +80,14 @@ Route::middleware(['auth', 'admin'])
             ->name('users.index');
     });
 
-// for admin stamp corrections
+// for admin attendance corrections
 // URIs aren't prefixed by 'admin/' to comply with the specs
 Route::middleware(['auth', 'admin'])
-    ->controller(AdminStampCorrectionController::class)
-    ->prefix('stamp_correction_request/approve/{attendance_correction}')
-    ->name('admin.stamp-corrections.')
+    ->controller(AdminAttendanceCorrectionController::class)
+    ->name('admin.attendance-corrections.')
     ->group(function () {
-        Route::get('/', 'show')->name('show');
-        Route::put('/', 'approve')->name('approve');
+        Route::get('stamp_correction_request/approve/{attendance_correction}', 'show')
+            ->name('show');
+        Route::put('attendance-correction/approve/{attendance_correction}', 'approve')
+            ->name('approve');
     });

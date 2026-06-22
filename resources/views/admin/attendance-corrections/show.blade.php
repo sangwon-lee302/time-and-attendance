@@ -2,12 +2,12 @@
     <x-layouts.header />
     <x-layouts.main>
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
-        <x-stamp-detail-table :display-data="$displayData" />
+        <x-attendance-detail-table :display-data="$displayData" />
         {{-- hidden field for break time ids --}}
         @unless ($displayData['isPending'])
             @foreach ($displayData['breakTimes'] as $breakTime)
                 <input
-                    form="stamp-correction"
+                    form="attendance-correction"
                     type="hidden"
                     value="{{ $breakTime['id'] }}"
                     name="breaks[{{ $loop->index }}][id]"
@@ -15,7 +15,7 @@
             @endforeach
         @endunless
         <form
-            action="{{ route('admin.stamp-corrections.approve', $displayData['id']) }}"
+            action="{{ route('admin.attendance-corrections.approve', $displayData['id']) }}"
             method="POST"
             class="mr-0 ml-auto w-max"
         >

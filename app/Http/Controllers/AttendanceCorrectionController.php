@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AttendanceCorrections\StoreAttendanceCorrection;
 use App\CorrectionStatus;
-use App\Http\Requests\StoreStampCorrectionRequest;
+use App\Http\Requests\StoreAttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use App\Services\StampCorrectionService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Auth;
 use Log;
 use Throwable;
 
-class StampCorrectionController extends Controller
+class AttendanceCorrectionController extends Controller
 {
     /**
-     * Display a listing of stamp corrections.
+     * Display a listing of attendance corrections.
      */
     public function index(Request $request): View
     {
-        $stampCorrections = AttendanceCorrection::when(
+        $attendanceCorrections = AttendanceCorrection::when(
             ! Auth::user()->is_admin,
             fn ($query) => $query->whereHas(
                 'attendance',
@@ -39,30 +39,29 @@ class StampCorrectionController extends Controller
             ])
             ->get();
 
-        return view('stamp-corrections.index', [
-            'stampCorrections' => $stampCorrections,
+        return view('attendance-corrections.index', [
+            'attendanceCorrections' => $attendanceCorrections,
         ]);
     }
 
     /**
-     * Store a newly created stamp correction in storage.
+     * Store a newly created attendance correction in database.
      */
     public function store(
         Attendance $attendance,
-        StoreStampCorrectionRequest $request,
-        StampCorrectionService $stampCorrectionService
+        StoreAttendanceCorrectionRequest $request,
+        StoreAttendanceCorrection $storeAttendanceCorrection,
     ): RedirectResponse {
         try {
-            $stampCorrectionService->storeStampCorrection(
-                $request->validated(),
-                $attendance
-            );
+            $storeAttendanceCorrection->store($request->validated(), $attendance);
 
             return redirect()->back();
         } catch (Throwable $th) {
-            Log::error('勤怠修正申請保存エラー: '.$th->getMessage(), ['exception' => $th]);
+            Log::error('勤怠修正申請保存エラー: '.$th->getMessage(), [
+                'exception' => $th,
+            ]);
 
-            return redirect()->back()->withInput();
+            return redirect()->back()->withInput(); // ユーザーに何も知らせないの？
         }
     }
 }

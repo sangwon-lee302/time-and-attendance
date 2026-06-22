@@ -2,12 +2,12 @@
     <x-layouts.header />
     <x-layouts.main>
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
-        <x-stamp-detail-table :display-data="$displayData" />
+        <x-attendance-detail-table :display-data="$displayData" />
         {{-- hidden field for break time ids --}}
         @unless ($displayData['isPending'])
             @foreach ($displayData['breakTimes'] as $breakTime)
                 <input
-                    form="stamp-correction"
+                    form="attendance-correction"
                     type="hidden"
                     value="{{ $breakTime['id'] }}"
                     name="breaks[{{ $loop->index }}][break_time_id]"
@@ -20,10 +20,10 @@
             >*承認待ちのため修正はできません。</p>
         @else
             <form
-                id="stamp-correction"
+                id="attendance-correction"
                 action="{{ auth()->user()?->is_admin
                     ? route('admin.attendances.update', $displayData['id'])
-                    : route('stamp-corrections.store', $displayData['id']) }}"
+                    : route('attendance-corrections.store', $displayData['id']) }}"
                 method="POST"
                 class="mt-8 mr-0 ml-auto w-max"
             >

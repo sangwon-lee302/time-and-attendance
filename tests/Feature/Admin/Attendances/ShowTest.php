@@ -63,7 +63,7 @@ class ShowTest extends TestCase
             ]);
     }
 
-    public function test_admin_cannot_make_stamp_correction_with_too_late_break_start_time(): void
+    public function test_admin_cannot_make_attendance_correction_with_too_late_break_start_time(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -78,7 +78,7 @@ class ShowTest extends TestCase
             ]);
     }
 
-    public function test_admin_cannot_make_stamp_correction_with_too_late_break_end_time(): void
+    public function test_admin_cannot_make_attendance_correction_with_too_late_break_end_time(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 
@@ -93,7 +93,7 @@ class ShowTest extends TestCase
             ]);
     }
 
-    public function test_admin_cannot_make_stamp_correction_with_empty_remarks(): void
+    public function test_admin_cannot_make_attendance_correction_with_empty_remarks(): void
     {
         $this->accessToAttendanceShowPage()->assertOk();
 

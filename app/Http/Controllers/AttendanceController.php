@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Attendances\BuildAttendanceIndex;
 use App\CorrectionStatus;
 use App\Models\Attendance;
-use App\Services\AttendanceService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -17,16 +17,13 @@ class AttendanceController extends Controller
      */
     public function index(
         Request $request,
-        AttendanceService $attendanceService
+        BuildAttendanceIndex $buildAttendanceIndex,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $attendanceService->prepareMonthlyIndexView(
-            Auth::user(),
-            $month,
-        );
+        $displayData = $buildAttendanceIndex->build(Auth::user(), $month);
 
         return view('attendances.index', ['displayData' => $displayData]);
     }

@@ -162,13 +162,13 @@ class Attendance extends Model
     }
 
     /**
-     * Convert the given attendance into a display data for the stamp detail table.
+     * Convert the given attendance into a display data for the attendance detail table.
      *
      * @return array<string, int|string|bool|array<string, int|string>>
      */
     public function toDisplayData(): array
     {
-        $pendingStampCorrection = $this->attendanceCorrections()->first();
+        $pendingAttendanceCorrection = $this->attendanceCorrections()->first();
 
         return [
             'id'           => $this->id,
@@ -182,8 +182,8 @@ class Attendance extends Model
                 'startedAt' => $breakTime->started_at->format('H:i'),
                 'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
             ]),
-            'remarks'     => $pendingStampCorrection->remarks ?? '',
-            'isPending'   => $pendingStampCorrection !== null,
+            'remarks'     => $pendingAttendanceCorrection->remarks ?? '',
+            'isPending'   => $pendingAttendanceCorrection !== null,
             'breaksCount' => $this->breakTimes->count(),
         ];
     }

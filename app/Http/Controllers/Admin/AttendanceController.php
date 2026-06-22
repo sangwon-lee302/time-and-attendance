@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\AttendanceCorrections\ApproveAttendanceCorrection;
+use App\Actions\AttendanceCorrections\StoreAttendanceCorrection;
+use App\Actions\Attendances\BuildAttendanceIndex;
+use App\Actions\Attendances\ExportAttendanceCsv;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreStampCorrectionRequest;
+use App\Http\Requests\StoreAttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\User;
-use App\Services\AttendanceService;
-use App\Services\StampCorrectionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -52,13 +54,13 @@ class AttendanceController extends Controller
     public function monthlyIndex(
         User $user,
         Request $request,
-        AttendanceService $attendanceService
+        BuildAttendanceIndex $buildAttendanceIndex,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
         );
 
-        $displayData = $attendanceService->prepareMonthlyIndexView($user, $month);
+        $displayData = $buildAttendanceIndex->build($user, $month);
 
         return view('attendances.index', ['displayData' => $displayData]);
     }
@@ -68,12 +70,13 @@ class AttendanceController extends Controller
      */
     public function update(
         Attendance $attendance,
-        StoreStampCorrectionRequest $request,
-        StampCorrectionService $stampCorrectionService,
+        StoreAttendanceCorrectionRequest $request,
+        StoreAttendanceCorrection $storeAttendanceCorrection,
+        ApproveAttendanceCorrection $approveAttendanceCorrection,
     ): RedirectResponse {
         try {
-            $stampCorrectionService->approveStampCorrection(
-                $stampCorrectionService->storeStampCorrection(
+            $approveAttendanceCorrection->approve(
+                $storeAttendanceCorrection->store(
                     $request->validated(),
                     $attendance,
                 ),
@@ -93,8 +96,8 @@ class AttendanceController extends Controller
     public function export(
         User $user,
         Request $request,
-        AttendanceService $attendanceService
+        ExportAttendanceCsv $exportAttendanceCsv,
     ): StreamedResponse {
-        return $attendanceService->CSVExport($user, $request);
+        return $exportAttendanceCsv->export($user, $request);
     }
 }

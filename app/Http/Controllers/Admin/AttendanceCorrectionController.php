@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\AttendanceCorrections\ApproveAttendanceCorrection;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceCorrection;
-use App\Services\StampCorrectionService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Log;
 use Throwable;
 
-class StampCorrectionController extends Controller
+class AttendanceCorrectionController extends Controller
 {
     public function show(AttendanceCorrection $attendanceCorrection): View
     {
@@ -24,23 +24,21 @@ class StampCorrectionController extends Controller
 
         $displayData = $attendanceCorrection->toDisplayData();
 
-        return view('admin.stamp-corrections.show', [
+        return view('admin.attendance-corrections.show', [
             'displayData' => $displayData,
         ]);
     }
 
     public function approve(
         AttendanceCorrection $attendanceCorrection,
-        StampCorrectionService $stampCorrectionService,
+        ApproveAttendanceCorrection $approveAttendanceCorrection,
     ): RedirectResponse {
         try {
-            $stampCorrectionService->approveStampCorrection($attendanceCorrection);
-
-            return redirect()->back();
+            $approveAttendanceCorrection->approve($attendanceCorrection);
         } catch (Throwable $th) {
             Log::error('勤怠修正申請承認エラー: '.$th->getMessage(), ['exception' => $th]);
-
-            return redirect()->back();
         }
+
+        return redirect()->back();
     }
 }

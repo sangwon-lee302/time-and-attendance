@@ -3,7 +3,7 @@
         @if ($textAreaEnabled)
             <textarea
                 name="{{ $inputName }}"
-                form="stamp-correction"
+                form="attendance-correction"
                 rows="5"
                 class="rounded-sm border border-neutral-200 px-2 py-1"
                 >{{ old($field, $placeHolder) }}</textarea
@@ -12,7 +12,7 @@
             <input
                 type="{{ $inputType }}"
                 name="{{ $inputName }}"
-                form="stamp-correction"
+                form="attendance-correction"
                 value="{{ old($field, $placeHolder) }}"
                 class="rounded-sm border border-neutral-200 px-2 py-1 text-center"
             />

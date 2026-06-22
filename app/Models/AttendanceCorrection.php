@@ -81,7 +81,7 @@ class AttendanceCorrection extends Model
     }
 
     /**
-     * Convert the given attendance correction into a display data for stamp detail table.
+     * Convert the given attendance correction into a display data for attendance detail table.
      *
      * @return array<string, int|string|bool|array<string, int|string>>
      */
