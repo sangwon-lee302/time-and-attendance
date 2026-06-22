@@ -20,14 +20,9 @@ use Override;
  * @property CarbonImmutable $date
  * @property CarbonImmutable $clocked_in_at
  * @property CarbonImmutable|null $clocked_out_at
+ * @property CarbonImmutable|null $deleted_at
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- *
- * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
- *
  * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
@@ -35,6 +30,14 @@ use Override;
  * @property-read int|null $attendance_corrections_count
  * @property-read CarbonInterval $total_break_time
  * @property-read CarbonInterval $total_working_time
+ *
+ * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance withoutTrashed()
  *
  * @mixin \Eloquent
  */

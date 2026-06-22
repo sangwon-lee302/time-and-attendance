@@ -75,12 +75,9 @@ erDiagram
         unsignedBigInt id PK
         unsignedBigInt attendance_id FK "attendances(id)"
         unsignedBigInt requested_by FK "users(id)"
-        unsignedBigInt decided_by FK "users(id)"
         string status "pending(default) / approved"
-        datetime original_clocked_in_at
-        datetime original_clocked_out_at
-        datetime requested_clocked_in_at
-        datetime requested_clocked_out_at
+        datetime clocked_in_at
+        datetime clocked_out_at
         varchar(255) remarks
         datetime created_at "nullable"
         datetime updated_at "nullable"
@@ -90,11 +87,8 @@ erDiagram
         unsignedBigInt id PK
         unsignedBigInt attendance_correction_id FK "attendance_corrections(id)"
         unsignedBigInt break_time_id FK "break_times(id), nullable"
-        string correction_type "update(default) / add"
-        datetime original_started_at
-        datetime original_ended_at
-        datetime requested_started_at
-        datetime requested_ended_at
+        datetime started_at
+        datetime ended_at
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }

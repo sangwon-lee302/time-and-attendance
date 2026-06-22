@@ -1,6 +1,5 @@
 <?php
 
-use App\BreakTimeCorrectionType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,13 +22,8 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->restrictOnDelete();
-            $table
-                ->string('correction_type')
-                ->default(BreakTimeCorrectionType::Update->value);
-            $table->dateTime('original_started_at');
-            $table->dateTime('original_ended_at');
-            $table->dateTime('requested_started_at');
-            $table->dateTime('requested_ended_at');
+            $table->dateTime('started_at');
+            $table->dateTime('ended_at');
             $table->datetimes();
         });
     }

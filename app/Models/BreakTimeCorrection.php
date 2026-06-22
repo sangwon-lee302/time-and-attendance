@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\BreakTimeCorrectionType;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,7 +24,7 @@ use Override;
  *
  * @mixin \Eloquent
  */
-#[Fillable(['break_time_id', 'requested_started_at', 'requested_ended_at'])]
+#[Fillable(['break_time_id', 'started_at', 'ended_at'])]
 class BreakTimeCorrection extends Model
 {
     use HasFactory;
@@ -34,18 +33,10 @@ class BreakTimeCorrection extends Model
     protected function casts()
     {
         return [
-            'correction_type'      => BreakTimeCorrectionType::class,
-            'original_started_at'  => 'datetime',
-            'original_ended_at'    => 'datetime',
-            'requested_started_at' => 'datetime',
-            'requested_ended_at'   => 'datetime',
-            'created_at'           => 'datetime',
-            'updated_at'           => 'datetime',
+            'started_at' => 'datetime',
+            'ended_at'   => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
-
-    /**
-     * The model's default values for attributes.
-     */
-    protected $attributes = ['correction_type' => BreakTimeCorrectionType::Update];
 }

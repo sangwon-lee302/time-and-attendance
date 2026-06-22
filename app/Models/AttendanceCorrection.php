@@ -15,25 +15,25 @@ use Override;
 /**
  * @property int $id
  * @property int $attendance_id
+ * @property int $requested_by
  * @property CorrectionStatus $status
  * @property CarbonImmutable $clocked_in_at
  * @property CarbonImmutable $clocked_out_at
  * @property string $remarks
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
+ * @property-read Attendance $attendance
+ * @property-read Collection<int, BreakTimeCorrection> $breakTimeCorrections
+ * @property-read int|null $break_time_corrections_count
  *
  * @method static \Database\Factories\AttendanceCorrectionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AttendanceCorrection query()
  *
- * @property-read Attendance $attendance
- * @property-read Collection<int, BreakTimeCorrection> $breakTimeCorrections
- * @property-read int|null $break_time_corrections_count
- *
  * @mixin \Eloquent
  */
-#[Fillable('status', 'requested_clocked_in_at', 'requested_clocked_out_at', 'remarks')]
+#[Fillable('status', 'clocked_in_at', 'clocked_out_at', 'remarks')]
 class AttendanceCorrection extends Model
 {
     use HasFactory;
@@ -47,13 +47,11 @@ class AttendanceCorrection extends Model
     protected function casts(): array
     {
         return [
-            'status'                   => CorrectionStatus::class,
-            'original_clocked_in_at'   => 'datetime',
-            'original_clocked_out_at'  => 'datetime',
-            'requested_clocked_in_at'  => 'datetime',
-            'requested_clocked_out_at' => 'datetime',
-            'created_at'               => 'datetime',
-            'updated_at'               => 'datetime',
+            'status'         => CorrectionStatus::class,
+            'clocked_in_at'  => 'datetime',
+            'clocked_out_at' => 'datetime',
+            'created_at'     => 'datetime',
+            'updated_at'     => 'datetime',
         ];
     }
 

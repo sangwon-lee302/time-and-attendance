@@ -23,16 +23,10 @@ return new class extends Migration
                 ->constrained('users')
                 ->restrictOnDelete();
             $table
-                ->foreignId('decided_by')
-                ->constrained('users')
-                ->restrictOnDelete();
-            $table
                 ->string('status')
                 ->default(CorrectionStatus::Pending->value);
-            $table->dateTime('original_clocked_in_at');
-            $table->dateTime('original_clocked_out_at');
-            $table->dateTime('requested_clocked_in_at');
-            $table->dateTime('requested_clocked_out_at');
+            $table->dateTime('clocked_in_at');
+            $table->dateTime('clocked_out_at');
             $table->string('remarks');
             $table->datetimes();
         });
