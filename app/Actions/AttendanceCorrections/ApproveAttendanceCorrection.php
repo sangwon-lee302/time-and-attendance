@@ -12,7 +12,7 @@ class ApproveAttendanceCorrection
 {
     /**
      * Approve the given attendance correction.
-     * 
+     *
      * @throws RuntimeException
      */
     public function approve(
