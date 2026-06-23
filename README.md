@@ -1,19 +1,17 @@
-# 模擬案件「勤怠管理システム」
+# 模擬案件「勤怠管理アプリ」
 
 ## 概要
 
-プログラミング学習のための勤怠管理システム。
-一般ユーザー（スタッフ）は勤怠登録（打刻）、勤怠一覧確認、勤怠修正申請などの
-機能を使用でき、管理者ユーザーは一般ユーザーの勤怠情報の閲覧や修正、修正申請
-の承認などができる。
+一般ユーザーは勤怠登録（打刻）、勤怠一覧確認、勤怠修正申請などが可能であり、
+管理者は一般ユーザーの勤怠情報の閲覧、修正および修正申請の承認などができる。
 
 ## 使用技術
 
-- Laravel 13.7.0
-- PHP 8.5.7
+- Laravel
+- PHP 8.5
 - Mysql 8.4.9
 - Mailpit v1.29.7
-- Node 24.17.0
+- Node.js
 
 ## 環境構築の手順
 
@@ -32,18 +30,18 @@
 erDiagram
     users ||..o{ attendances: "have"
     users ||..o{ attendance_corrections: "request"
-    attendances ||..o{ break_times: "have"
+    attendances ||..o{ break_times: "contain"
     attendances ||..o{ attendance_corrections: "have"
     break_times |o..o{ break_time_corrections: "have"
-    attendance_corrections ||..o{ break_time_corrections: "have"
+    attendance_corrections ||..o{ break_time_corrections: "contain"
 
     users {
         unsignedBigInt id PK
-        varchar(255) name
-        varchar(255) email UK
+        string name
+        string email UK
         datetime email_verified_at "nullable"
         tinyint(1) is_admin "default 0"
-        varchar(255) password
+        string password
         datetime deleted_at "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
@@ -77,7 +75,7 @@ erDiagram
         string status "pending(default) / approved"
         datetime clocked_in_at
         datetime clocked_out_at
-        varchar(255) remarks
+        string remarks
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
@@ -106,3 +104,4 @@ erDiagram
 
 - `Mailhog`や`Mailtrap`の代わりに`Mailpit`を使用
 - 日時取得機能およびステータス確認機能のテストコードはともに`tests/Feature/TimeLogs/CreateTest.php`にて実装
+- 修正申請をした際に、修正箇所がない場合は、「修正箇所がありません」というメッセージを表示し修正申請を行わない
