@@ -133,10 +133,7 @@ class Attendance extends Model
     /** @return array<string, int|string|array<string, int|string>|bool> */
     public function toDisplayData(): array
     {
-        $pendingAttendanceCorrection = $this
-            ->attendanceCorrections()
-            ->where('status', CorrectionStatus::Pending)
-            ->first();
+        $attendanceCorrections = $this->attendanceCorrections()->get();
 
         return [
             'id'           => $this->id,
@@ -150,8 +147,12 @@ class Attendance extends Model
                 'startedAt' => $breakTime->started_at->format('H:i'),
                 'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
             ]),
-            'remarks'     => $pendingAttendanceCorrection->remarks ?? '',
-            'isPending'   => $pendingAttendanceCorrection !== null,
+            'remarks'   => $attendanceCorrections->implode('remarks', "\n"),
+            'isPending' => $attendanceCorrections
+                ->contains(fn (AttendanceCorrection $attendanceCorrection) => $attendanceCorrection
+                    ->status
+                    === CorrectionStatus::Pending
+                ),
             'breaksCount' => $this->endedBreakTimes()->count(),
         ];
     }
