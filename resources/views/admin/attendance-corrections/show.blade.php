@@ -3,17 +3,6 @@
     <x-layouts.main>
         <h1 class="bd-l-h1 mb-8">勤怠詳細</h1>
         <x-attendance-detail-table :data="$data" />
-        {{-- hidden fields for break time ids --}}
-        @unless ($data['isPending'])
-            @foreach ($data['breakTimes'] as $breakTime)
-                <input
-                    form="attendance-correction"
-                    type="hidden"
-                    value="{{ $breakTime['id'] }}"
-                    name="breaks[{{ $loop->index }}][id]"
-                />
-            @endforeach
-        @endunless
         <form
             action="{{ route('admin.attendance-corrections.approve', [
                 'attendance_correction' => $data['id'],
