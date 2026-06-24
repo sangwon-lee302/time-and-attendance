@@ -9,19 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class TimeLogController extends Controller
 {
-    /**
-     * Show time log creation view.
-     */
     public function create(): View
     {
-        $status = Attendance::resolveStatusForToday(Auth::user());
+        $status = Auth::user()->current_attendance_status;
 
         return view('time-logs.create', ['status' => $status]);
     }
 
-    /**
-     * Store a newly created attendance resource in storage.
-     */
     public function clockIn(): RedirectResponse
     {
         Auth::user()->attendances()->create([
@@ -32,33 +26,24 @@ class TimeLogController extends Controller
         return redirect()->route('time-logs.create');
     }
 
-    /**
-     * Update clocked out time for the attendance resource in storage.
-     */
     public function clockOut(): RedirectResponse
     {
-        $this->getAttendanceOfToday()->update(['clocked_out_at' => now()]);
+        $this->getTodaysAttendance()->update(['clocked_out_at' => now()]);
 
         return redirect()->route('time-logs.create');
     }
 
-    /**
-     * Store a newly created break time resource in storage.
-     */
     public function startBreak(): RedirectResponse
     {
-        $this->getAttendanceOfToday()->breakTimes()->create(['started_at' => now()]);
+        $this->getTodaysAttendance()->breakTimes()->create(['started_at' => now()]);
 
         return redirect()->route('time-logs.create');
     }
 
-    /**
-     * Update break end time for the attendance resource in storage.
-     */
     public function endBreak(): RedirectResponse
     {
         $this
-            ->getAttendanceOfToday()
+            ->getTodaysAttendance()
             ->breakTimes()
             ->whereNull('ended_at')
             ->firstOrFail()
@@ -67,10 +52,7 @@ class TimeLogController extends Controller
         return redirect()->route('time-logs.create');
     }
 
-    /**
-     * Get an attendance of today for an authenticated user.
-     */
-    protected function getAttendanceOfToday(): Attendance
+    protected function getTodaysAttendance(): Attendance
     {
         return Auth::user()
             ->attendances()

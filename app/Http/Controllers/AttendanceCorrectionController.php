@@ -17,7 +17,7 @@ use Throwable;
 class AttendanceCorrectionController extends Controller
 {
     /**
-     * Display a listing of attendance corrections.
+     * Display a listing of the attendance corrections requested by non-admin users.
      */
     public function index(Request $request): View
     {
@@ -29,10 +29,7 @@ class AttendanceCorrectionController extends Controller
                 ! Auth::user()->is_admin,
                 fn ($query) => $query->whereHas(
                     'attendance',
-                    fn ($attendanceQuery) => $attendanceQuery->where(
-                        'user_id',
-                        Auth::id(),
-                    ),
+                    fn ($attendanceQuery) => $attendanceQuery->where('user_id', Auth::id()),
                 ),
             )
             ->when(
@@ -60,10 +57,7 @@ class AttendanceCorrectionController extends Controller
         StoreAttendanceCorrection $action,
     ): RedirectResponse {
         try {
-            $attendanceCorrection = $action->store(
-                $request->validated(),
-                $attendance,
-            );
+            $attendanceCorrection = $action->store($request->validated(), $attendance);
 
             if (! $attendanceCorrection) {
                 return redirect()

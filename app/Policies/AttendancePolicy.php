@@ -33,7 +33,8 @@ class AttendancePolicy
         return $user->is_admin
             || (
                 $user->id === $attendance->user_id
-                && $attendance->attendanceCorrections()
+                && $attendance
+                    ->attendanceCorrections()
                     ->where('status', CorrectionStatus::Pending)
                     ->doesntExist()
             );

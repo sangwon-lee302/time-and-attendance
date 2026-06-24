@@ -9,9 +9,6 @@ use Override;
 
 class AdminLoginRequest extends LoginRequest
 {
-    /**
-     * Prepare the data for validation.
-     */
     #[Override]
     protected function prepareForValidation(): void
     {

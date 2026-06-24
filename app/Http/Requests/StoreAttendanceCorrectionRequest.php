@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\MessageBag;
@@ -12,11 +11,7 @@ use Override;
 
 class StoreAttendanceCorrectionRequest extends FormRequest
 {
-    /**
-     * Prepare the data for validation.
-     *
-     * @throws HttpResponseException
-     */
+    /** Normalize time inputs from G:i into Y-m-d H:i:s */
     #[Override]
     protected function prepareForValidation(): void
     {
@@ -59,9 +54,6 @@ class StoreAttendanceCorrectionRequest extends FormRequest
         }
     }
 
-    /**
-     * Canonicalize the given time into datetime string.
-     */
     private function canonicalizeTime(
         ?string $time,
         MessageBag $errors,
@@ -86,9 +78,6 @@ class StoreAttendanceCorrectionRequest extends FormRequest
             ->format('Y-m-d H:i:s');
     }
 
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return $this
@@ -96,11 +85,6 @@ class StoreAttendanceCorrectionRequest extends FormRequest
             ->can('createCorrection', $this->route('attendance'));
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -132,15 +116,11 @@ class StoreAttendanceCorrectionRequest extends FormRequest
                 'after_or_equal:breaks.*.started_at',
                 'before_or_equal:clocked_out_at',
             ],
-            'remarks' => ['required', 'string', 'max:65535'],
+            'remarks' => ['required', 'string', 'max:255'],
         ];
     }
 
-    /**
-     * Get custom attributes for validator errors.
-     *
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     #[Override]
     public function attributes(): array
     {
@@ -153,11 +133,7 @@ class StoreAttendanceCorrectionRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get the error messasges for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     #[Override]
     public function messages(): array
     {

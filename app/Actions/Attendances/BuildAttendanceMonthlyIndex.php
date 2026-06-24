@@ -8,7 +8,7 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Illuminate\Support\Facades\Auth;
 
-class BuildAttendanceIndex
+class BuildAttendanceMonthlyIndex
 {
     /**
      * Run a query for the given user's attendances of the given month and
@@ -26,10 +26,7 @@ class BuildAttendanceIndex
         $attendances = $user
             ->attendances()
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->with(['breakTimes' => fn ($breakTimeQuery) => $breakTimeQuery
-                ->whereNotNull('ended_at')
-                ->select('id', 'attendance_id', 'started_at', 'ended_at'),
-            ])
+            ->withEndedBreakTimes()
             ->get()
             ->keyBy(fn (Attendance $attendance) => $attendance->date->day);
 

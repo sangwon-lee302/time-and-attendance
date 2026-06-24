@@ -21,7 +21,7 @@ class ExportAttendanceCsv
         $attendances = $user
             ->attendances()
             ->whereBetween('date', [$month->startOfMonth(), $month->endOfMonth()])
-            ->with(['breakTimes:id,attendance_id,started_at,ended_at'])
+            ->withEndedBreakTimes()
             ->lazy();
 
         $response = new StreamedResponse(function () use ($attendances) {

@@ -15,9 +15,8 @@ class ApproveAttendanceCorrection
      *
      * @throws RuntimeException
      */
-    public function approve(
-        AttendanceCorrection $attendanceCorrection
-    ): AttendanceCorrection {
+    public function approve(AttendanceCorrection $attendanceCorrection): AttendanceCorrection
+    {
         if ($attendanceCorrection->status !== CorrectionStatus::Pending) {
             throw new RuntimeException('Only pending corrections can be approved');
         }
@@ -38,12 +37,10 @@ class ApproveAttendanceCorrection
             // update or create corresponding break time resources
             $attendanceCorrection
                 ->breakTimeCorrections
-                ->each(function (BreakTimeCorrection $breakTimeCorrection) use (
-                    $attendance,
-                ) {
+                ->each(function (BreakTimeCorrection $breakTimeCorrection) use ($attendance) {
                     $breakTime = $breakTimeCorrection->break_time_id
                         ? $attendance
-                            ->breakTimes()
+                            ->endedBreakTimes()
                             ->findOrFail($breakTimeCorrection->break_time_id)
                         : $attendance->breakTimes()->make();
 
@@ -51,6 +48,7 @@ class ApproveAttendanceCorrection
                         'started_at' => $breakTimeCorrection->started_at,
                         'ended_at'   => $breakTimeCorrection->ended_at,
                     ]);
+
                     $breakTime->save();
                 });
 
