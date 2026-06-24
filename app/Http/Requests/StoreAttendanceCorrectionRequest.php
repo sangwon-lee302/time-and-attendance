@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\MessageBag;
