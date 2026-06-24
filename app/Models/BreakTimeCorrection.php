@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
+use Database\Factories\BreakTimeCorrectionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,12 +22,20 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereAttendanceCorrectionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereBreakTimeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereEndedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BreakTimeCorrection whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
 #[Fillable(['break_time_id', 'started_at', 'ended_at'])]
 class BreakTimeCorrection extends Model
 {
+    /** @use HasFactory<BreakTimeCorrectionFactory> */
     use HasFactory;
 
     #[Override]

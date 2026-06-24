@@ -15,27 +15,16 @@ class StoreAttendanceCorrection
      *
      * @throws RuntimeException
      */
-    public function store(
-        array $attributes,
-        Attendance $attendance,
-    ): ?AttendanceCorrection {
+    public function store(array $attributes, Attendance $attendance): ?AttendanceCorrection
+    {
         $attributes['breaks'] = collect($attributes['breaks'] ?? [])
-            ->filter(fn (array $breakTimeAttributes) => array_key_exists(
-                'break_time_id',
-                $breakTimeAttributes,
-            )
-                || filled($breakTimeAttributes['started_at']),
+            ->filter(fn (array $break) => array_key_exists('break_time_id', $break)
+                || filled($break['started_at']),
             )
             ->all();
 
         if (! $this->checkForCorrections($attributes, $attendance)) {
             return null;
-        }
-
-        if (Auth::guest()) {
-            throw new RuntimeException(
-                'Authentication is required to make a correction',
-            );
         }
 
         return DB::transaction(function () use ($attributes, $attendance) {
@@ -66,10 +55,8 @@ class StoreAttendanceCorrection
     /**
      * Check if the given attribute indeed has corrections.
      */
-    protected function checkForCorrections(
-        array $attributes,
-        Attendance $attendance,
-    ): bool {
+    protected function checkForCorrections(array $attributes, Attendance $attendance): bool
+    {
         $isClockedInAtCorrected = $attendance
             ->clocked_in_at
             ->setSecond(0)
@@ -83,24 +70,24 @@ class StoreAttendanceCorrection
             !== $attributes['clocked_out_at'];
 
         $isBreakTimeCorrected = false;
-        $breakTimes           = $attendance->breakTimes;
-        foreach ($attributes['breaks'] as $breakTimeAttributes) {
-            if (! array_key_exists('break_time_id', $breakTimeAttributes)) {
+        $endedBreakTimes      = $attendance->endedBreakTimes;
+        foreach ($attributes['breaks'] as $break) {
+            if (! array_key_exists('break_time_id', $break)) {
                 continue;
             }
 
-            $isStartedAtCorrected = $breakTimes
-                ->find($breakTimeAttributes['break_time_id'])
+            $isStartedAtCorrected = $endedBreakTimes
+                ->find($break['break_time_id'])
                 ->started_at
                 ->setSecond(0)
                 ->format('Y-m-d H:i:s')
-                !== $breakTimeAttributes['started_at'];
-            $isEndedAtCorrected = $breakTimes
-                ->find($breakTimeAttributes['break_time_id'])
+                !== $break['started_at'];
+            $isEndedAtCorrected = $endedBreakTimes
+                ->find($break['break_time_id'])
                 ->ended_at
                 ->setSecond(0)
                 ->format('Y-m-d H:i:s')
-                !== $breakTimeAttributes['ended_at'];
+                !== $break['ended_at'];
 
             if ($isStartedAtCorrected || $isEndedAtCorrected) {
                 $isBreakTimeCorrected = true;

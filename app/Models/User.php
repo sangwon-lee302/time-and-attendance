@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,6 +32,7 @@ use Override;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Attendance> $attendances
  * @property-read int|null $attendances_count
+ * @property-read string $current_attendance_status
  *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
@@ -49,11 +51,6 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     #[Override]
     protected function casts(): array
     {
@@ -67,18 +64,38 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    /**
-     * The model's default values for attributes.
-     */
     protected $attributes = ['is_admin' => false];
 
-    /**
-     * Get the attendances for the user.
-     *
-     * @return HasMany<Attendance, $this>
-     */
+    /** @return HasMany<Attendance, $this> */
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /** @return Attribute<string, never> */
+    protected function currentAttendanceStatus(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $attendance = $this
+                    ->attendances()
+                    ->whereDate('date', now())
+                    ->withExists([
+                        'breakTimes as active_break_time_exists' => fn ($breakTimeQuery) => $breakTimeQuery
+                            ->whereNull('ended_at'),
+                    ])
+                    ->first();
+
+                if (! $attendance) {
+                    return '勤務外';
+                } elseif ($attendance->clocked_out_at) {
+                    return '退勤済';
+                } elseif ($attendance->active_break_time_exists) {
+                    return '休憩中';
+                } else {
+                    return '出勤中';
+                }
+            },
+        );
     }
 }

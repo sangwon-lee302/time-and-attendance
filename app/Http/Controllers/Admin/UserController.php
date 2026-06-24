@@ -9,7 +9,7 @@ use Illuminate\Contracts\View\View;
 class UserController extends Controller
 {
     /**
-     * Display a listing of all non-admin users.
+     * Display a listing of non-admin users.
      */
     public function index(): View
     {

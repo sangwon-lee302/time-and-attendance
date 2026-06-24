@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
+use Database\Factories\BreakTimeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,13 +32,9 @@ use Override;
 #[Fillable(['started_at', 'ended_at'])]
 class BreakTime extends Model
 {
+    /** @use HasFactory<BreakTimeFactory> */
     use HasFactory, SoftDeletes;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     #[Override]
     protected function casts()
     {

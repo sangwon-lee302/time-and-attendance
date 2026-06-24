@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\AttendanceCorrections\ApproveAttendanceCorrection;
 use App\Actions\AttendanceCorrections\StoreAttendanceCorrection;
-use App\Actions\Attendances\BuildAttendanceIndex;
+use App\Actions\Attendances\BuildAttendanceMonthlyIndex;
 use App\Actions\Attendances\ExportAttendanceCsv;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAttendanceCorrectionRequest;
@@ -21,7 +21,7 @@ use Throwable;
 class AttendanceController extends Controller
 {
     /**
-     * Display a listing of the attendances.
+     * Display a listing of the daily attendances.
      */
     public function dailyIndex(Request $request): View
     {
@@ -30,16 +30,9 @@ class AttendanceController extends Controller
             $request->query('date', now()->format('Y-m-d')),
         );
 
-        $attendances = Attendance::whereBetween('date', [
-            $date->startOfDay(),
-            $date->endOfDay(),
-        ])
-            ->with([
-                'user:id,name',
-                'breakTimes' => fn ($breakTimeQuery) => $breakTimeQuery
-                    ->whereNotNull('ended_at')
-                    ->select('id', 'attendance_id', 'started_at', 'ended_at'),
-            ])
+        $attendances = Attendance::whereBetween('date', [$date->startOfDay(), $date->endOfDay()])
+            ->with(['user:id,name'])
+            ->withEndedBreaktimes()
             ->get();
 
         return view('admin.attendances.index', [
@@ -49,15 +42,16 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Display a listing of attendance resources of the given user.
+     * Display a listing of the monthly attendances of the given user.
      */
     public function monthlyIndex(
         User $user,
         Request $request,
-        BuildAttendanceIndex $action,
+        BuildAttendanceMonthlyIndex $action,
     ): View {
-        $month = CarbonImmutable::createFromFormat('Y-m',
-            $request->query('month', now()->format('Y-m'))
+        $month = CarbonImmutable::createFromFormat(
+            'Y-m',
+            $request->query('month', now()->format('Y-m')),
         );
 
         $data = $action->build($user, $month);

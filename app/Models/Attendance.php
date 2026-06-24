@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\CorrectionStatus;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
+use Database\Factories\AttendanceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +30,8 @@ use Override;
  * @property-read User $user
  * @property-read Collection<int, BreakTime> $breakTimes
  * @property-read int|null $break_times_count
+ * @property-read Collection<int, BreakTime> $endedBreakTimes
+ * @property-read int|null $ended_break_times_count
  * @property-read Collection<int, AttendanceCorrection> $attendanceCorrections
  * @property-read int|null $attendance_corrections_count
  * @property-read CarbonInterval $total_break_time
@@ -38,19 +44,16 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance withoutTrashed()
+ * @method static Builder<static>|Attendance withEndedBreakTimes()
  *
  * @mixin \Eloquent
  */
 #[Fillable(['date', 'clocked_in_at', 'clocked_out_at'])]
 class Attendance extends Model
 {
+    /** use HasFactory<AttendanceFactory> */
     use HasFactory, SoftDeletes;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     #[Override]
     protected function casts(): array
     {
@@ -64,86 +67,46 @@ class Attendance extends Model
         ];
     }
 
-    /**
-     * Get the user that owns the attendance.
-     *
-     * @return BelongsTo<User, $this>
-     */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the attendance corrections for the attendance.
-     *
-     * @return HasMany<AttendanceCorrection, $this>
-     */
+    /** @return HasMany<AttendanceCorrection, $this> */
     public function attendanceCorrections(): HasMany
     {
         return $this->hasMany(AttendanceCorrection::class);
     }
 
-    /**
-     * Get the break times for the attendance.
-     *
-     * @return HasMany<BreakTime, $this>
-     */
+    /** @return HasMany<BreakTime, $this> */
     public function breakTimes(): HasMany
     {
         return $this->hasMany(BreakTime::class);
     }
 
-    /**
-     * Resolve the attendance status of the given user for today.
-     *
-     * Return '勤務外' if no attendance exists, '退勤済' if the user has already
-     * clocked out, '休憩中' if a break is currently ongoing, or '出勤中' otherwise.
-     */
-    public static function resolveStatusForToday(User $user): string
+    /** @return HasMany<BreakTime, $this> */
+    public function endedBreakTimes(): HasMany
     {
-        $attendance = $user->attendances()->where('date', today())->first();
-
-        if (! $attendance) {
-            return '勤務外';
-        }
-
-        if ($attendance->clocked_out_at) {
-            return '退勤済';
-        }
-
-        return $attendance->breakTimes()
-            ->whereNull('ended_at')
-            ->exists()
-                ? '休憩中'
-                : '出勤中';
+        return $this->hasMany(BreakTime::class)->whereNotNull('ended_at');
     }
 
-    /**
-     * Get the total break time for the attendance.
-     *
-     * @return Attribute<CarbonInterval, never>
-     */
+    /** @return Attribute<CarbonInterval, never> */
     protected function totalBreakTime(): Attribute
     {
         return Attribute::make(
             get: fn () => CarbonInterval::seconds($this
-                ->breakTimes
-                ->filter(fn (BreakTime $breakTime) => $breakTime->ended_at !== null)
+                ->endedBreakTimes
                 ->sum(fn (BreakTime $breakTime) => $breakTime
                     ->started_at
-                    ->diffInSeconds($breakTime->ended_at)
+                    ->diffInSeconds($breakTime->ended_at),
                 )
             )
                 ->cascade(),
         );
     }
 
-    /**
-     * Get the total working time for the attendance.
-     *
-     * @return Attribute<CarbonInterval|null, never>
-     */
+    /** @return Attribute<CarbonInterval|null, never> */
     protected function totalWorkingTime(): Attribute
     {
         return Attribute::make(
@@ -161,14 +124,19 @@ class Attendance extends Model
         );
     }
 
-    /**
-     * Convert the given attendance into a display data for the attendance detail table.
-     *
-     * @return array<string, int|string|bool|array<string, int|string>>
-     */
+    #[Scope]
+    protected function withEndedBreakTimes(Builder $query): void
+    {
+        $query->with('endedBreakTimes:id,attendance_id,started_at,ended_at');
+    }
+
+    /** @return array<string, int|string|array<string, int|string>|bool> */
     public function toDisplayData(): array
     {
-        $pendingAttendanceCorrection = $this->attendanceCorrections()->first();
+        $pendingAttendanceCorrection = $this
+            ->attendanceCorrections()
+            ->where('status', CorrectionStatus::Pending)
+            ->first();
 
         return [
             'id'           => $this->id,
@@ -177,14 +145,14 @@ class Attendance extends Model
             'date'         => $this->date->format('n月j日'),
             'clockedInAt'  => $this->clocked_in_at->format('H:i'),
             'clockedOutAt' => $this->clocked_out_at?->format('H:i') ?? '',
-            'breakTimes'   => $this->breakTimes->map(fn (BreakTime $breakTime) => [
+            'breakTimes'   => $this->endedBreakTimes->map(fn (BreakTime $breakTime) => [
                 'id'        => $breakTime->id,
                 'startedAt' => $breakTime->started_at->format('H:i'),
                 'endedAt'   => $breakTime->ended_at?->format('H:i') ?? '',
             ]),
             'remarks'     => $pendingAttendanceCorrection->remarks ?? '',
             'isPending'   => $pendingAttendanceCorrection !== null,
-            'breaksCount' => $this->breakTimes->count(),
+            'breaksCount' => $this->endedBreakTimes()->count(),
         ];
     }
 }

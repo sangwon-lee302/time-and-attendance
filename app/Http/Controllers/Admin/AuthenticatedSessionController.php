@@ -97,7 +97,7 @@ class AuthenticatedSessionController extends Controller
      *
      * @throws ValidationException
      */
-    protected function throwFailedAuthenticationException(Request $request): void
+    protected function throwFailedAuthenticationException(AdminLoginRequest $request): void
     {
         $this->limiter->increment($request);
 
@@ -109,7 +109,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Prepare for an authenticated session.
      */
-    protected function prepareAuthenticatedSession(Request $request)
+    protected function prepareAuthenticatedSession(AdminLoginRequest $request)
     {
         if ($request->hasSession()) {
             $request->session()->regenerate();

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Attendances\BuildAttendanceIndex;
+use App\Actions\Attendances\BuildAttendanceMonthlyIndex;
 use App\CorrectionStatus;
 use App\Models\Attendance;
 use Carbon\CarbonImmutable;
@@ -17,7 +17,7 @@ class AttendanceController extends Controller
      */
     public function index(
         Request $request,
-        BuildAttendanceIndex $action,
+        BuildAttendanceMonthlyIndex $action,
     ): View {
         $month = CarbonImmutable::createFromFormat('Y-m',
             $request->query('month', now()->format('Y-m'))
